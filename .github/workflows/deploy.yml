@@ -40,6 +40,11 @@ jobs:
         cp -r docs/guide/book/* public/
         cp -r docs/reference/html public/reference/
 
+    # Copy the script files
+    - name: Copy script files
+      run: |
+        cp -r docs/scripts public/
+
     # deploy to GitHub Pages
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4

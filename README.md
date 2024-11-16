@@ -1,5 +1,10 @@
 # artemis-crib
 
+**NOTE: This is being transferred from [okawak's repository](https://github.com/okawak/artemis_crib).**
+**Still this repository is in development, so please refer the personal repository so far.**
+
+[The New Manual page is in development](https://crib-project.github.io/artemis_crib/index.html).
+
 Artemis work directory for online+offline analysis of CRIB experiment
 
 # License
