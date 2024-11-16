@@ -1,0 +1,34 @@
+Processor:
+  - name: proc_rf_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_rf_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/rf/ch2ns.dat
+      OutputTransparency: 1
+
+
+  - name: proc_rf_raw
+    type: art::crib::TTimingDataMappingProcessor
+    parameter:
+      CatID:         1
+      DataTypeID:    0
+      Sparse:        1
+      OutputCollection: rf_raw
+
+
+  - name: proc_rf
+    type: art::TTimingChargeCalibrationProcessor
+    parameter:
+      TimingConverterArray: prm_rf_ch2ns
+      InputCollection:      rf_raw
+      OutputCollection:     rf_cal
+
+
+  - name: proc_rf_cal_sep
+    type: art::TSeparateOutputProcessor
+    parameter:
+      InputCollection: rf_cal
+      OutputCollections:
+        - rf_cal_0
+        - rf_cal_1

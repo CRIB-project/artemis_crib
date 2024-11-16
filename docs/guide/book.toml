@@ -1,0 +1,6 @@
+[book]
+authors = ["CRIB group"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Manual for CRIB artemis"

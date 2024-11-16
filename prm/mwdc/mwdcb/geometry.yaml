@@ -1,0 +1,4 @@
+position: [1.5,1.0,-171.5] #from PPAC 562.0mm (target 733.5mm)
+angle: 0.
+turned: 0
+plane_config: prm/mwdc/config/xxyy_mwdcb.yaml

@@ -1,0 +1,110 @@
+anchor: 
+  - &rf0 ["rf_cal_0.fTiming",1000,-1550.,-1370.]
+  #- &rf1 ["rf_cal_1.fTiming",1000,-1550.,-1370.]
+  - &tof ["cathb_cal.fTiming-catha_cal.fTiming",1000,-120.,120.]
+  - &dcaX ["mwdca.GetTrack().GetX()",400,-40.,40.]
+  - &dcaY ["mwdca.GetTrack().GetY()",400,-40.,40.]
+  - &dcbX ["mwdcb.GetTrack().GetX()",400,-40.,40.]
+  - &dcbY ["mwdcb.GetTrack().GetY()",400,-40.,40.]
+  #- &dcaC ["mwdca_raw.GetCharge()",500,0.,2000.]
+  - &dcbC ["mwdcb_raw.GetCharge()",500,0.,2000.]
+  - &targetX ["f3mwdc.fX",400,-40.,40.]
+  - &targetY ["f3mwdc.fY",400,-40.,40.]
+  - &tel1_dE ["tel1.fdE",300,0.,35.]
+  - &tel1_Etotal ["tel1.fEtotal",400,0.,60.]
+  - &tel2_dE ["tel2.fdE",300,0.,35.]
+  - &tel2_Etotal ["tel2.fEtotal",400,0.,60.]
+  - &tel3_dE ["tel3.fdE",300,0.,20.]
+  - &tel3_Etotal ["tel3.fEtotal",400,0.,45.]
+  - &tel4_dE ["tel4.fdE",300,0.,15.]
+  - &tel4_Etotal ["tel4.fEtotal",400,0.,40]
+  - &tel5_dE ["tel5.fdE",150,0.,15.]
+  - &tel5_Etotal ["tel5.fEtotal",150,0.,35]
+  - &tel6_dE ["tel6.fdE",150,0.,15.]
+  - &tel6_Etotal ["tel6.fEtotal",100,0.,60]
+
+alias:
+  single_cut: single.fID == 0;
+  coin_cut: coin.fID == 0;
+  pileup_cut: pileup.fID == 0;
+
+group:
+  - name: f3phys
+    title: f3phys
+    contents:
+      - name: rf(single)
+        title: RF (single)
+        x: *rf0
+        cut: single_cut
+      - name: rf(coin)
+        title: RF (coin)
+        x: *rf0
+        cut: coin_cut
+      - name: mwdca_y_x(single)
+        title: MWDCa Y vs X (single)
+        x: *dcaX
+        y: *dcaY
+        cut: single_cut
+      - name: mwdcb_y_x(single)
+        title: MWDCb Y vs X (single)
+        x: *dcbX
+        y: *dcbY
+        cut: single_cut
+      - name: target_y_x(single)
+        title: F3 Target Position (single)
+        x: *targetX
+        y: *targetY
+        cut: single_cut
+      - name: target_y_x(coin)
+        title: F3 Target Position (coin)
+        x: *targetX
+        y: *targetY
+        cut: coin_cut
+      - name: rf_mwdc_tof(single)
+        title: RF vs MWDC TOF (single)
+        x: *tof
+        y: *rf0
+        cut: single_cut
+      - name: rf_mwdc_x(single)
+        title: RF vs MWDCb X (single)
+        x: *dcbX
+        y: *rf0
+        cut: single_cut
+      - name: rf_mwdc_charge(single)
+        title: RF vs MWDCb Charge (single)
+        x: *dcbC
+        y: *rf0
+        cut: single_cut
+
+      # dE-E plot
+      - name: tel1_dE_E(coin)
+        title: tel1 dE-E plot (coin)
+        x: *tel1_dE
+        y: *tel1_Etotal
+        cut: coin_cut
+      - name: tel2_dE_E(coin)
+        title: tel2 dE-E plot (coin)
+        x: *tel2_dE
+        y: *tel2_Etotal
+        cut: coin_cut
+      - name: tel3_dE_E(coin)
+        title: tel3 dE-E plot (coin)
+        x: *tel3_dE
+        y: *tel3_Etotal
+        cut: coin_cut
+      - name: tel4_dE_E(coin)
+        title: tel4 dE-E plot (coin)
+        x: *tel4_dE
+        y: *tel4_Etotal
+        cut: coin_cut
+      - name: tel5_dE_E(coin)
+        title: tel5 dE-E plot (coin)
+        x: *tel5_dE
+        y: *tel5_Etotal
+        cut: coin_cut
+      - name: tel6_dE_E(coin)
+        title: tel6 dE-E plot (coin)
+        x: *tel6_dE
+        y: *tel6_Etotal
+        cut: coin_cut
+

@@ -1,0 +1,93 @@
+#!/bin/bash
+
+a() {
+  if [ ! -e artemislogon.C ]; then
+    printf "\33[1ma\33[0m: not found artemislogin.C\n"
+    return 1
+  fi
+
+  if [ -z "$SSH_CONNECTION" ]; then
+    artemis -l "$@"
+  elif [ -f .vncdisplay ]; then
+    DISPLAY=:$(cat .vncdisplay) artemis -l "$@"
+  else
+    artemis -l "$@"
+  fi
+}
+
+artlogin() {
+  export ART_EXP_NAME="${EXP_NAME}"
+
+  # shellcheck disable=SC1090
+  if [ -e "${HOME}/art_analysis/.conf/${ART_EXP_NAME}.sh" ]; then
+    source "${HOME}/art_analysis/.conf/${ART_EXP_NAME}.sh"
+  else
+    printf "\33[1martlogin\33[0m: make %s environment by using \"artnew\" command.\n" "${ART_EXP_NAME}"
+    return 1
+  fi
+
+  # shellcheck disable=SC1091
+  source "${HOME}/art_analysis/.conf/artlogin.sh" "$@"
+}
+
+artlogin2() {
+  export ART_EXP_NAME="${EXP_NAME_OLD}"
+
+  # shellcheck disable=SC1090
+  if [ -e "${HOME}/art_analysis/.conf/${ART_EXP_NAME}.sh" ]; then
+    source "${HOME}/art_analysis/.conf/${ART_EXP_NAME}.sh"
+  else
+    printf "\33[1martlogin\33[0m: make %s environment by using \"artnew\" command.\n" "${ART_EXP_NAME}"
+    return 1
+  fi
+
+  # shellcheck disable=SC1091
+  source "${HOME}/art_analysis/.conf/artlogin.sh" "$@"
+}
+
+art_usage() {
+  cat <<EOF
+USAGE:
+    1. artlogin
+
+        enter the artemis environment
+        > artlogin
+        this is for default (shared) user
+        > artlogin username
+        make a new user or enter personal environment
+
+        after this command, "acd" alias is available
+        > acd
+        acd = cd "your artemis work directory"
+
+    2. a
+
+        start the artemis
+        NOTE: need to execute after artlogin command
+        > artlogin
+        > a
+
+        this can be used when you want to use macro files
+        > a 'macro/somefile.C("hoge")'
+
+    3. art_usage (this)
+
+        show the USAGE
+EOF
+}
+
+while getopts ":q" OPT; do
+  case $OPT in
+  q)
+    return 0
+    ;;
+  :)
+    break
+    ;;
+  \?)
+    break
+    ;;
+  esac
+done
+
+art_usage

@@ -1,0 +1,27 @@
+anchor:
+  - &f2ppacx ["f2ppac.fX",200,-50.,50.]
+  - &f2ppacy ["f2ppac.fY",200,-50.,50.]
+  - &f2ppacx1 ["f2ppac.fTX1",200,-50.,50.]
+  - &f2ppacx2 ["f2ppac.fTX2",200,-50.,50.]
+  - &f2ppacy1 ["f2ppac.fTX1",200,-50.,50.]
+  - &f2ppacy2 ["f2ppac.fTX2",200,-50.,50.]
+  - &f2ppacx_sum ["f2ppac.fTXsum",200,-50.,50.]
+  - &f2ppacy_sum ["f2ppac.fTYsum",200,-50.,50.]
+alias:
+#  ex_cut: example.fval > 0;
+group:
+  - name: f2tuning
+    title: f2tuning
+    contents:
+      - name: F2PPAC X
+        title: f2ppac x
+        x: *f2ppacx
+#        cut: ex_cut
+      - name: F2PPAC Y
+        title: f2ppac y
+        x: *f2ppacy
+      - name: F2PPAC XY
+        title: f2ppac Y Vs X
+        x: *f2ppacx
+        y: *f2ppacy
+

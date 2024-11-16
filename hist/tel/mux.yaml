@@ -1,0 +1,60 @@
+anchor:
+  - &tel4dEX_P1_raw ["tel4dEX_raw.fP1",800,3800.,4600.]
+  - &tel4dEX_P2_raw ["tel4dEX_raw.fP2",800,0.,8000.]
+  - &tel4dEY_P1_raw ["tel4dEY_raw.fP1",800,3300.,4100.]
+  - &tel4dEY_P2_raw ["tel4dEY_raw.fP2",800,0.,8000.]
+  - &tel5dEX_P1_raw ["tel5dEX_raw.fP1",800,2900.,3700.]
+  - &tel5dEX_P2_raw ["tel5dEX_raw.fP2",800,0.,8000.]
+  - &tel5dEY_P1_raw ["tel5dEY_raw.fP1",800,2400.,3200.]
+  - &tel5dEY_P2_raw ["tel5dEY_raw.fP2",800,0.,8000.]
+  - &tel6dEX_P1_raw ["tel6dEX_raw.fP1",800,1600.,2400.]
+  - &tel6dEX_P2_raw ["tel6dEX_raw.fP2",800,0.,8000.]
+  - &tel6dEY_P1_raw ["tel6dEY_raw.fP1",800,1500.,2000.]
+  - &tel6dEY_P2_raw ["tel6dEY_raw.fP2",800,0.,8000.]
+
+alias:
+  single: single.fID == 0;
+  coin: coin.fID == 0;
+  pileup: pileup.fID == 0;
+
+group:
+  - name: MUX
+    title: MUX
+    contents:
+      - name: tel4dEX pos1
+        title: tel4dEX pos1
+        x: *tel4dEX_P1_raw
+      - name: tel4dEY pos1
+        title: tel4dEY pos1
+        x: *tel4dEY_P1_raw
+      - name: tel5dEX pos1
+        title: tel5dEX pos1
+        x: *tel5dEX_P1_raw
+      - name: tel5dEY pos1
+        title: tel5dEY pos1
+        x: *tel5dEY_P1_raw
+      - name: tel6dEX pos1
+        title: tel6dEX pos1
+        x: *tel6dEX_P1_raw
+      - name: tel6dEY pos1
+        title: tel6dEY pos1
+        x: *tel6dEY_P1_raw
+      - name: tel4dEX pos2
+        title: tel4dEX pos2
+        x: *tel4dEX_P2_raw
+      - name: tel4dEY pos2
+        title: tel4dEY pos2
+        x: *tel4dEY_P2_raw
+      - name: tel5dEX pos2
+        title: tel5dEX pos2
+        x: *tel5dEX_P2_raw
+      - name: tel5dEY pos2
+        title: tel5dEY pos2
+        x: *tel5dEY_P2_raw
+      - name: tel6dEX pos2
+        title: tel6dEX pos2
+        x: *tel6dEX_P2_raw
+      - name: tel6dEY pos2
+        title: tel6dEY pos2
+        x: *tel6dEY_P2_raw
+

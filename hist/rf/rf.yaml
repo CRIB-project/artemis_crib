@@ -1,0 +1,20 @@
+anchor:
+  - &rf0 ["rf_cal_0.fTiming",200,0.,120.]
+  - &rf1 ["rf_cal_1.fTiming",200,0.,120.]
+alias:
+#  ex_cut: example.fval > 0;
+group:
+  - name: rf
+    title: rf
+    contents:
+      - name: rf1
+        title: rf1
+        x: *rf0
+#        cut: ex_cut
+      - name: rf2
+        title: rf2
+        x: *rf1
+      - name: rf1 rf2
+        title: rf2 vs rf1
+        x: *rf0
+        y: *rf1

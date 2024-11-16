@@ -1,0 +1,11 @@
+Processor:
+  - name: MyTRandomNumberEventStore
+    type: art::TRandomNumberEventStore
+    parameter:
+      Max: @MAX@  # [Float_t] the maximum value
+      MaxLoop: 10000  # [Int_t] the maximum number of loop
+      Min: 0  # [Float_t] the minimum value
+      OutputCollection: random  # [TString] output name of random values
+      OutputTransparency: 0  # [Bool_t] Output is persistent if false (default)
+      Verbose: 1  # [Int_t] verbose level (default 1 : non quiet)
+

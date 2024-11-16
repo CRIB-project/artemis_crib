@@ -1,0 +1,137 @@
+Processor:
+# telescope 1
+  - include:
+      name: dssd_raw.inc.yaml
+      replace:
+        NAME: tel1
+        SIDE: dEX
+        CATID: 10
+
+  - include:
+      name: dssd_raw.inc.yaml
+      replace:
+        NAME: tel1
+        SIDE: dEY
+        CATID: 11
+
+  - include:
+      name: ssd_raw.inc.yaml
+      replace:
+        NAME: tel1
+        CATID: 12
+
+
+# telescope 2
+  - include:
+      name: dssd_raw.inc.yaml
+      replace:
+        NAME: tel2
+        SIDE: dEX
+        CATID: 20
+
+  - include:
+      name: dssd_raw.inc.yaml
+      replace:
+        NAME: tel2
+        SIDE: dEY
+        CATID: 21
+
+  - include:
+      name: ssd_raw.inc.yaml
+      replace:
+        NAME: tel2
+        CATID: 22
+
+
+# telescope 3
+  - include:
+      name: dssd_raw.inc.yaml
+      replace:
+        NAME: tel3
+        SIDE: dEX
+        CATID: 30
+
+  - include:
+      name: dssd_raw.inc.yaml
+      replace:
+        NAME: tel3
+        SIDE: dEY
+        CATID: 31
+
+  - include:
+      name: ssd_raw.inc.yaml
+      replace:
+        NAME: tel3
+        CATID: 32
+
+
+# telescope 4
+  - include:
+      name: dssd_mux_raw.inc.yaml
+      replace:
+        NAME: tel4
+        SIDE: dEX
+        CATID: 40
+        REFLECT: 0 # 0:no 1:yes
+
+  - include:
+      name: dssd_mux_raw.inc.yaml
+      replace:
+        NAME: tel4
+        SIDE: dEY
+        CATID: 41
+        REFLECT: 1 # 0:no 1:yes
+
+  - include:
+      name: ssd_raw.inc.yaml
+      replace:
+        NAME: tel4
+        CATID: 42
+
+
+# telescope 5
+  - include:
+      name: dssd_mux_raw.inc.yaml
+      replace:
+        NAME: tel5
+        SIDE: dEX
+        CATID: 50
+        REFLECT: 0 # 0:no 1:yes
+
+  - include:
+      name: dssd_mux_raw.inc.yaml
+      replace:
+        NAME: tel5
+        SIDE: dEY
+        CATID: 51
+        REFLECT: 1 # 0:no 1:yes
+
+  - include:
+      name: ssd_raw.inc.yaml
+      replace:
+        NAME: tel5
+        CATID: 52
+
+
+# telescope 6
+  - include:
+      name: dssd_mux_raw.inc.yaml
+      replace:
+        NAME: tel6
+        SIDE: dEX
+        CATID: 60
+        REFLECT: 0 # 0:no 1:yes
+
+  - include:
+      name: dssd_mux_raw.inc.yaml
+      replace:
+        NAME: tel6
+        SIDE: dEY
+        CATID: 61
+        REFLECT: 1 # 0:no 1:yes
+
+  - include:
+      name: ssd_raw.inc.yaml
+      replace:
+        NAME: tel6
+        CATID: 62

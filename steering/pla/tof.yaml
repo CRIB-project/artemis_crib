@@ -1,0 +1,20 @@
+Processor:
+  - name: proc_tof35_multi
+    type: art::TTimingSubtractionProcessor
+    parameter:
+      StartTimingCollection: f3pla
+      InputCollection: f5pla
+      OutputCollection: tof35
+      StartTimingDetID: 0
+      UseMultipleStartTiming: 1
+
+  - name: proc_tof3s2_multi
+    type: art::TTimingSubtractionProcessor
+    parameter:
+      StartTimingCollection: f3pla
+      InputCollection: s2pla
+      OutputCollection: tof3s2
+      StartTimingDetID: 0
+      UseMultipleStartTiming: 1
+
+

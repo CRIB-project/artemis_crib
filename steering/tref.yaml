@@ -1,0 +1,24 @@
+Processor:
+  # J1 V1190A
+  - name: proc_tref_v1190A_j1
+    type: art::TTimeReferenceProcessor
+    parameter:
+      # [[device] [focus] [detector] [geo] [ch]]
+      RefConfig: [12, 2, 7, 0, 15]
+      SegConfig: [12, 2, 7, 0]
+
+  # F3 MWDCa
+  - name: proc_tref_v1190_mwdca
+    type: art::TTimeReferenceProcessor
+    parameter:
+      # [[device] [focus] [detector] [geo] [ch]]
+      RefConfig: [12, 0, 7, 0, 0]
+      SegConfig: [12, 0, 7, 0]
+
+  # F3 MWDCb
+  - name: proc_tref_v1190_mwdcb
+    type: art::TTimeReferenceProcessor
+    parameter:
+      # [[device] [focus] [detector] [geo] [ch]]
+      RefConfig: [12, 0, 7, 1, 0]
+      SegConfig: [12, 0, 7, 1]

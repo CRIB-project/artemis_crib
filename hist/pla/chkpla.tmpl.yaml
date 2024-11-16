@@ -1,0 +1,45 @@
+# for xxyy MWDC, CRIB exp
+anchor:
+  - &traw_l ["@plane@pla_l.fTiming",1000,0.,4000.]
+  - &qraw_l ["@plane@pla_l.fCharge",1000,0.,4000.]
+  - &traw_r ["@plane@pla_r.fTiming",1000,0.,4000.]
+  - &qraw_r ["@plane@pla_r.fCharge",1000,0.,4000.]
+
+alias:
+#  pidgate: "abs(f5pla[0].fTiming-dia3strip[0].fTiming-1242.0)<1.0 && abs(f5pla[0].fCharge-18200.)<900."
+
+group:
+  - name: @plane@pla
+    title: @plane@pla
+    contents:
+
+      - name: l_time
+        title: @plane@pla_l Timing
+        x: *traw_l
+      - name: l_charge
+        title: @plane@pla_l Charge
+        x: *qraw_l
+      - name: r_time
+        title: @plane@pla_r Timing
+        x: *traw_r
+      - name: r_charge
+        title: @plane@pla_r Charge
+        x: *qraw_r
+
+      - name: traw_charge l
+        title: @plane@pla_l t_{raw} vs charge
+        x: *traw_l
+        y: *qraw_l
+      - name: traw_charge r
+        title: @plane@pla_r t_{raw} vs charge
+        x: *traw_r
+        y: *qraw_r
+      - name: traw l and r
+        title: @plane@pla t_{raw} l vs t_{raw} r
+        x: *traw_l
+        y: *traw_r
+      - name: charge l and r
+        title: @plane@pla_r charge_l vs charge_r
+        x: *qraw_l
+        y: *qraw_r
+

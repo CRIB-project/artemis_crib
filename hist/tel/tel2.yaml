@@ -1,0 +1,130 @@
+anchor:
+  - &ex_raw ["tel2dEX_raw.fCharge",1000,100.,4000.]
+  - &ey_raw ["tel2dEY_raw.fCharge",1000,100.,4000.]
+  - &e_raw ["tel2E_raw.fCharge",1000,200.,4000.]
+  - &tx_raw ["tel2dEX_raw.fTiming",2000,0.,4000.]
+  - &ty_raw ["tel2dEY_raw.fTiming",2000,0.,4000.]
+  - &t_raw ["tel2E_raw.fTiming",2000,0.,4000.]
+
+  - &ex_cal ["tel2dEX_cal.fCharge",500,0.,30.]
+  - &ey_cal ["tel2dEY_cal.fCharge",500,0.,30.]
+  - &e_cal ["tel2E_cal.fCharge",500,0.,40.]
+  - &tx_cal ["tel2dEX_cal.fTiming",500,-1000.,1000.]
+  - &ty_cal ["tel2dEY_cal.fTiming",500,-1000.,1000.]
+  - &t_cal ["tel2E_cal.fTiming",1000,-1000.,1000.]
+
+  - &ex_id ["tel2dEX_cal.fID",16,-0.5,15.5]
+  - &ey_id ["tel2dEY_cal.fID",16,-0.5,15.5]
+  - &e_id ["tel2E_cal.fID",3,-0.5,2.5]
+  - &tel_xid ["tel2.fXID",16,-0.5,15.5]
+  - &tel_yid ["tel2.fYID",16,-0.5,15.5]
+
+  - &tel_dE ["tel2.E(0)",500,0.,30.]
+  - &tel_Eb ["tel2.E(1)",500,0.,40.]
+  - &tel_Ec ["tel2.E(2)",500,0.,40.]
+  - &tel_Ed ["tel2.E(3)",500,0.,40.]
+  #- &tel_E ["tel2.fE",500,0.,55.]
+  - &tel_Etotal ["tel2.fEtotal",500,0.,50.]
+  - &tel_A ["tel2.A()",50,0.,50.]
+  - &tof ["cathb_cal.fTiming-tel2.T(1)",1000,-3000.,-1500.]
+
+alias:
+  single_cut: single.fID == 0;
+  coin_cut: coin.fID == 0;
+  pileup_cut: pileup.fID == 0;
+
+group:
+  - name: tel2
+    title: tel2
+    contents:
+      - name: dE_E(coin)
+        title: tel2 dE-E plot (coin)
+        x: *tel_dE
+        y: *tel_Etotal
+        cut: coin_cut
+      - name: Etotal_angle(coin)
+        title: tel2 Etotal vs Angle(deg) (coin)
+        x: *tel_A
+        y: *tel_Etotal
+        cut: coin_cut
+      - name: Etotal_timing(coin)
+        title: tel2 Etotal vs Timing (coin)
+        x: *tof
+        y: *tel_Etotal
+        cut: coin_cut
+      - name: Eb_dE(coin)
+        title: tel2 Eb vs dE (coin)
+        x: *tel_dE
+        y: *tel_Eb
+        cut: coin_cut
+      - name: Ec_Eb(coin)
+        title: tel2 Ec vs Eb (coin)
+        x: *tel_Eb
+        y: *tel_Ec
+        cut: coin_cut
+      - name: Ed_Ec(coin)
+        title: tel2 Ed vs Ec (coin)
+        x: *tel_Ec
+        y: *tel_Ed
+        cut: coin_cut
+
+      - name: yid_xid(coin)
+        title: tel2 strip YID vs XID (coin)
+        x: *tel_xid
+        y: *tel_yid
+        cut: coin_cut
+
+
+  - name: tel2_raw
+    title: tel2_raw
+    contents:
+      - name: dEXraw_id
+        title: tel2 dEX E_raw vs ID
+        x: *ex_id
+        y: *ex_raw
+      - name: dEYraw_id
+        title: tel2 dEY E_raw vs ID
+        x: *ey_id
+        y: *ey_raw
+      - name: Eraw_id
+        title: tel2 E E_raw vs ID
+        x: *e_id
+        y: *e_raw
+      - name: dEXTraw_id
+        title: tel2 dEX T_raw vs ID
+        x: *ex_id
+        y: *tx_raw
+      - name: dEYTraw_id
+        title: tel2 dEY T_raw vs ID
+        x: *ey_id
+        y: *ty_raw
+      - name: ETraw_id
+        title: tel2 E T_raw vs ID
+        x: *e_id
+        y: *t_raw
+
+      - name: dEXcal_id
+        title: tel2 dEX E_cal vs ID
+        x: *ex_id
+        y: *ex_cal
+      - name: dEYcal_id
+        title: tel2 dEY E_cal vs ID
+        x: *ey_id
+        y: *ey_cal
+      - name: Ecal_id
+        title: tel2 E E_cal vs ID
+        x: *e_id
+        y: *e_cal
+      - name: dEXTcal_id
+        title: tel2 dEX T_cal vs ID
+        x: *ex_id
+        y: *tx_cal
+      - name: dEYTcal_id
+        title: tel2 dEY T_cal vs ID
+        x: *ey_id
+        y: *ty_cal
+      - name: ETcal_id
+        title: tel2 E T_cal vs ID
+        x: *e_id
+        y: *t_cal
+

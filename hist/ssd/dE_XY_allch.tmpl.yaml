@@ -1,0 +1,312 @@
+anchor: 
+  - &ex_raw ["@dssd@X_raw.fCharge",1024,0.,4095.]
+  - &ey_raw ["@dssd@Y_raw.fCharge",1024,0.,4095.]
+  - &eb2_raw ["tel2E_raw.fCharge",500,0,4000]
+  - &t_raw ["@dssd@X_raw.fTiming",2000,0.,10000.]
+  - &idx ["@dssd@X_raw.fID",16,-0.5,15.5]
+  - &idy ["@dssd@Y_raw.fID",16,-0.5,15.5]
+alias:
+  x1: @dssd@X_raw.fID == 0;
+  x2: @dssd@X_raw.fID == 1;
+  x3: @dssd@X_raw.fID == 2;
+  x4: @dssd@X_raw.fID == 3;
+  x5: @dssd@X_raw.fID == 4;
+  x6: @dssd@X_raw.fID == 5;
+  x7: @dssd@X_raw.fID == 6;
+  x8: @dssd@X_raw.fID == 7;
+  x9: @dssd@X_raw.fID == 8;
+  x10: @dssd@X_raw.fID == 9;
+  x11: @dssd@X_raw.fID == 10;
+  x12: @dssd@X_raw.fID == 11;
+  x13: @dssd@X_raw.fID == 12;
+  x14: @dssd@X_raw.fID == 13;
+  x15: @dssd@X_raw.fID == 14;
+  x16: @dssd@X_raw.fID == 15;
+  y1: @dssd@Y_raw.fID == 0;
+  y2: @dssd@Y_raw.fID == 1;
+  y3: @dssd@Y_raw.fID == 2;
+  y4: @dssd@Y_raw.fID == 3;
+  y5: @dssd@Y_raw.fID == 4;
+  y6: @dssd@Y_raw.fID == 5;
+  y7: @dssd@Y_raw.fID == 6;
+  y8: @dssd@Y_raw.fID == 7;
+  y9: @dssd@Y_raw.fID == 8;
+  y10: @dssd@Y_raw.fID == 9;
+  y11: @dssd@Y_raw.fID == 10;
+  y12: @dssd@Y_raw.fID == 11;
+  y13: @dssd@Y_raw.fID == 12;
+  y14: @dssd@Y_raw.fID == 13;
+  y15: @dssd@Y_raw.fID == 14;
+  y16: @dssd@Y_raw.fID == 15;
+
+group:
+  - name: @dssd@_raw
+    title: @dssd@_raw
+    contents:
+
+     - name: EX1
+       title: @dssd@X_raw ch1 E
+       x: *ex_raw
+       cut: x1
+
+     - name: EX2
+       title: @dssd@X_raw ch2 E
+       x: *ex_raw
+       cut: x2
+
+     - name: EX3
+       title: @dssd@X_raw ch3 E
+       x: *ex_raw
+       cut: x3
+
+     - name: EX4
+       title: @dssd@X_raw ch4 E
+       x: *ex_raw
+       cut: x4
+
+     - name: EX5
+       title: @dssd@X_raw ch5 E
+       x: *ex_raw
+       cut: x5
+
+     - name: EX6
+       title: @dssd@X_raw ch6 E
+       x: *ex_raw
+       cut: x6
+
+     - name: EX7
+       title: @dssd@X_raw ch7 E
+       x: *ex_raw
+       cut: x7
+
+     - name: EX8
+       title: @dssd@X_raw ch8 E
+       x: *ex_raw
+       cut: x8
+
+     - name: EX9
+       title: @dssd@X_raw ch9 E
+       x: *ex_raw
+       cut: x9
+
+     - name: EX10
+       title: @dssd@X_raw ch10 E
+       x: *ex_raw
+       cut: x10
+
+     - name: EX11
+       title: @dssd@X_raw ch11 E
+       x: *ex_raw
+       cut: x11
+
+     - name: EX12
+       title: @dssd@X_raw ch12 E
+       x: *ex_raw
+       cut: x12
+
+     - name: EX13
+       title: @dssd@X_raw ch13 E
+       x: *ex_raw
+       cut: x13
+
+     - name: EX14
+       title: @dssd@X_raw ch14 E
+       x: *ex_raw
+       cut: x14
+
+     - name: EX15
+       title: @dssd@X_raw ch15 E
+       x: *ex_raw
+       cut: x15
+
+     - name: EX16
+       title: @dssd@X_raw ch16 E
+       x: *ex_raw
+       cut: x16
+     - name: EY1
+       title: @dssd@Y_raw ch1 E
+       x: *ey_raw
+       cut: y1
+
+     - name: EY2
+       title: @dssd@Y_raw ch2 E
+       x: *ey_raw
+       cut: y2
+
+     - name: EY3
+       title: @dssd@Y_raw ch3 E
+       x: *ey_raw
+       cut: y3
+
+     - name: EY4
+       title: @dssd@Y_raw ch4 E
+       x: *ey_raw
+       cut: y4
+
+     - name: EY5
+       title: @dssd@Y_raw ch5 E
+       x: *ey_raw
+       cut: y5
+
+     - name: EY6
+       title: @dssd@Y_raw ch6 E
+       x: *ey_raw
+       cut: y6
+
+     - name: EY7
+       title: @dssd@Y_raw ch7 E
+       x: *ey_raw
+       cut: y7
+
+     - name: EY8
+       title: @dssd@Y_raw ch8 E
+       x: *ey_raw
+       cut: y8
+
+     - name: EY9
+       title: @dssd@Y_raw ch9 E
+       x: *ey_raw
+       cut: y9
+
+     - name: EY10
+       title: @dssd@Y_raw ch10 E
+       x: *ey_raw
+       cut: y10
+
+     - name: EY11
+       title: @dssd@Y_raw ch11 E
+       x: *ey_raw
+       cut: y11
+
+     - name: EY12
+       title: @dssd@Y_raw ch12 E
+       x: *ey_raw
+       cut: y12
+
+     - name: EY13
+       title: @dssd@Y_raw ch13 E
+       x: *ey_raw
+       cut: y13
+
+     - name: EY14
+       title: @dssd@Y_raw ch14 E
+       x: *ey_raw
+       cut: y14
+
+     - name: EY15
+       title: @dssd@Y_raw ch15 E
+       x: *ey_raw
+       cut: y15
+
+     - name: EY16
+       title: @dssd@Y_raw ch16 E
+       x: *ey_raw
+       cut: y16
+
+     - name: TX1
+       title: @dssd@X_raw ch1 T
+       x: *t_raw
+       cut: x1
+
+     - name: TX2
+       title: @dssd@X_raw ch2 T
+       x: *t_raw
+       cut: x2
+
+     - name: TX3
+       title: @dssd@X_raw ch3 T
+       x: *t_raw
+       cut: x3
+
+     - name: TX4
+       title: @dssd@X_raw ch4 T
+       x: *t_raw
+       cut: x4
+
+     - name: TX5
+       title: @dssd@X_raw ch5 T
+       x: *t_raw
+       cut: x5
+
+     - name: TX6
+       title: @dssd@X_raw ch6 T
+       x: *t_raw
+       cut: x6
+
+     - name: TX7
+       title: @dssd@X_raw ch7 T
+       x: *t_raw
+       cut: x7
+
+     - name: TX8
+       title: @dssd@X_raw ch8 T
+       x: *t_raw
+       cut: x8
+
+     - name: TX9
+       title: @dssd@X_raw ch9 T
+       x: *t_raw
+       cut: x9
+
+     - name: TX10
+       title: @dssd@X_raw ch10 T
+       x: *t_raw
+       cut: x10
+
+     - name: TX11
+       title: @dssd@X_raw ch11 T
+       x: *t_raw
+       cut: x11
+
+     - name: TX12
+       title: @dssd@X_raw ch12 T
+       x: *t_raw
+       cut: x12
+
+     - name: TX13
+       title: @dssd@X_raw ch13 T
+       x: *t_raw
+       cut: x13
+
+     - name: TX14
+       title: @dssd@X_raw ch14 T
+       x: *t_raw
+       cut: x14
+
+     - name: TX15
+       title: @dssd@X_raw ch15 T
+       x: *t_raw
+       cut: x15
+
+     - name: TX16
+       title: @dssd@X_raw ch16 T
+       x: *t_raw
+       cut: x16
+
+     - name: EX1B
+       title: @dssd@ Eb vs @dssd@X_raw ch1 E 
+       x: *ex_raw
+       y: *eb2_raw
+       cut: x1
+
+     - name: EX16B
+       title: @dssd@ Eb vs @dssd@X_raw ch16 E 
+       x: *ex_raw
+       y: *eb2_raw
+       cut: x16
+
+     - name: ID_EX
+       title: @dssd@X_raw EX vs ID
+       x: *idx
+       y: *ex_raw
+
+     - name: ID_EY
+       title: @dssd@Y_raw EY vs ID
+       x: *idy
+       y: *ey_raw
+
+     - name: ID_timing
+       title: @dssd@X_raw T vs ID
+       x: *idx
+       y: *t_raw
+

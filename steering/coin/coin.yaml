@@ -1,0 +1,17 @@
+Processor:
+  - name: proc_coin_map
+    type: art::crib::TTimingDataMappingProcessor
+    parameter:
+      CatID: 2
+      DataTypeID: 0
+      Sparse: 1
+      OutputCollection: coin_raw
+
+  - name: proc_coin_map_sep
+    type: art::TSeparateOutputProcessor
+    parameter:
+      InputCollection: coin_raw
+      OutputCollections:
+        - single
+        - coin
+        - pileup

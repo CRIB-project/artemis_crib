@@ -1,0 +1,9 @@
+group:
+  - name: test@SUFFIX@
+    title: test (@SUFFIX@)
+    contents:
+      - name: hRndm@SUFFIX@
+        title: random number
+        x: ["@BRANCH@.fValue",100, 0., @MAX@]
+    
+

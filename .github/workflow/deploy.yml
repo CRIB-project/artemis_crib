@@ -1,0 +1,50 @@
+---
+name: Build and Deploy Docs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # install Rust
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+
+    # install and build mdBook
+    - name: Install mdBook
+      run: cargo install mdbook
+    - name: Build mdBook
+      working-directory: ./docs/guide
+      run: mdbook build
+
+    # install and build Doxygen
+    - name: Install Doxygen
+      run: sudo apt-get install -y doxygen graphviz
+    - name: Generate Doxygen documentation
+      working-directory: ./docs/reference
+      run: doxygen Doxyfile
+
+    # combine outputs to public directory
+    - name: Combine outputs
+      run: |
+        rm -rf public
+        mkdir -p public
+        cp -r docs/guide/book/* public/
+        cp -r docs/reference/html public/reference/
+
+    # deploy to GitHub Pages
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./public
+        destination_branch: gh-pages

@@ -1,0 +1,82 @@
+anchor:
+  - &rf0 ["rf_cal_0.fTiming",200,-1050.,-860.]
+  - &rf1 ["rf_cal_1.fTiming",200,-1050.,-860.]
+  - &ppacax ["f3appac.fX",200,-50.,50.]
+  - &ppacay ["f3appac.fY",200,-50.,50.]
+  - &ppacaxsum ["f3appac.fTXSum",200,0.,200.]
+  - &ppacaysum ["f3appac.fTXSum",200,0.,200.]
+  - &ppacbx ["f3bppac.fX",200,-50.,50.]
+  - &ppacby ["f3bppac.fY",200,-50.,50.]
+  - &ppacbxsum ["f3bppac.fTXSum",200,0.,200.]
+  - &ppacbysum ["f3bppac.fTXSum",200,0.,200.]
+  - &ppactof ["f3bppac.fTAnode - f3appac.fTAnode",80,5.,40.]
+  - &trackx ["f3ppac.GetX()",200,-50.,50.]
+  - &tracky ["f3ppac.GetY()",200,-50.,50.]
+  - &tracka ["180.0/3.14*f3ppac.GetA()",200,-5.,5.]
+  - &trackb ["180.0/3.14*f3ppac.GetB()",200,-5.,5.]
+
+alias:
+  single: single.fID == 0;
+  coin: coin.fID == 0;
+  pileup: pileup.fID == 0;
+group:
+  - name: f3check
+    title: f3check
+    contents:
+      - name: PPACa X
+        title: PPACa X
+        x: *ppacax
+      - name: PPACa Y
+        title: PPACa Y
+        x: *ppacay
+
+      - name: PPACa Y vs X
+        title: PPACa Y vs X
+        x: *ppacax
+        y: *ppacay
+#        cut: ex_cut
+      - name: PPACa TYSum vs TXSum
+        title: PPACa TYSum vs TXSum
+        x: *ppacaxsum
+        y: *ppacaysum
+
+      - name: PPACb X
+        title: PPACb X
+        x: *ppacbx
+      - name: PPACb Y
+        title: PPACb Y
+        x: *ppacby
+
+      - name: PPACb Y vs X
+        title: PPACb Y vs X
+        x: *ppacbx
+        y: *ppacby
+      - name: PPACb TYSum vs TXSum
+        title: PPACb TYSum vs TXSum
+        x: *ppacbxsum
+        y: *ppacbysum
+      - name: PPAC TOF vs rf0
+        title: PPAC TOF vs rf0
+        x: *rf0
+        y: *ppactof
+      - name: rf0 vs PPACa X
+        title: rf0 vs PPACa X
+        x: *ppacax
+        y: *rf0
+      - name: rf0 vs PPACb X
+        title: rf0 vs PPACb X
+        x: *ppacbx
+        y: *rf0
+      - name: TOF vs PPACa X
+        title: TOF vs PPACa X
+        x: *ppacax
+        y: *ppactof
+      - name: Target Y vs X
+        title: Target Y vs X
+        x: *trackx
+        y: *tracky
+      - name: Beam angle B vs A
+        title: Beam angle B vs A
+        x: *tracka
+        y: *trackb
+

@@ -1,0 +1,17 @@
+[project]
+name = "artemis-crib"
+version = "2024.11.0"
+description = "artemis work directory for crib experiments"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "argparse>=1.4.0",
+    "ipykernel>=6.29.5",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.9.2",
+    "numpy>=2.1.3",
+    "opencv-python>=4.10.0.84",
+    "pandas>=2.2.3",
+    "ruamel-yaml>=0.18.6",
+    "scipy>=1.14.1",
+]

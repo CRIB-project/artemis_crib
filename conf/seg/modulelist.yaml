@@ -1,0 +1,51 @@
+#Fixed16:
+#  id: 1
+#  ch: 6
+#  values:
+
+V7XX:
+  id: 21
+  ch: 32
+  values:
+    - adc: [4000, 0., 4000.]
+    - tdc: [4000, 0., 4000.] # no use, but seems it needed...
+
+MADC32:
+  id: 32
+  ch: 32
+  values:
+    - adc: [4000, 0., 4000.]
+    - tdc: [4000, 0., 4000.] # no use, but seems it needed...
+
+V1190A:
+  id: 24
+  ch: 128
+  values:
+    - tdcL: [300, -5000., 300000.]
+    - tdcT: [300, -5000., 300000.]
+
+SIS3820:
+  id: 36
+  ch: 32
+  values:
+    - adc: [4000, 0., 4000.]
+    - tdc: [4000, 0., 4000.] # no use, but seems it needed...
+
+#V1190B:
+#  id: 24
+#  ch: 64
+#  values:
+#    - tdcL: [300,-5000.,300000.]
+#    - tdcT: [300,-5000.,300000.]
+
+#V1290:
+#  id: 25
+#  ch: 32
+#  values:
+#    - tdcL: [100,-100000.,2000000.]
+#    - tdcT: [100,-100000.,2000000.]
+
+Skip:
+  id: 0
+  ch: 0
+  values:

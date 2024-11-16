@@ -1,0 +1,85 @@
+Processor:
+  - name: proc_gateinit
+    type: art::TGateArrayInitializer
+    parameter:
+      OutputTransparency: 1
+
+  - name: proc_gate
+    type: art::TTreeFormulaGateProcessor
+    parameter:
+      Definitions:
+        - "nopileup; coin_raw@.GetEntriesFast()==1"
+        - "coin; abs(coin.fTiming - 1200.) < 100."
+        - "ppaca_normal; abs(f3appac.fX) < 50.0 && abs(f3appac.fY) < 50.0"
+        - "ppacb_normal; abs(f3bppac.fX) < 50.0 && abs(f3bppac.fY) < 50.0"
+        - "ppaca_trig; abs(f3appac.fTAnode + 27.0) < 5.0" # RUNNUM >= 249
+        - "ppacb_trig; abs(f3bppac.fTAnode) < 1.0"
+        - "al25_rf0; abs(rf_cal_0.fTiming - 60.5 - 2.23) < 4.5 || rf_cal_0.fTiming > 108.5 + 2.23 || rf_cal_0.fTiming < 13.0 + 2.23"
+        - "al25_tof; abs((f3bppac.fTAnode - f3appac.fTAnode) - 26.0) < 2.0" # RUNNUM >= 249
+      OutputTransparency: 1
+      Verbose: 1
+
+  - name: nopileup_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: nopileup
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: single_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: coin
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: ppaca_normal_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: ppaca_normal
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: ppacb_normal_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: ppacb_normal
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: ppaca_trig_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: ppaca_trig
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: ppacb_trig_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: ppacb_trig
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: al25_rf0_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: al25_rf0
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: al25_tof_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: al25_tof
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+

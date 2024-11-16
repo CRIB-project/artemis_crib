@@ -1,0 +1,74 @@
+anchor:
+  - &f2ppacx ["f2ppac.fX",200,-50.,50.]
+  - &f2ppacy ["f2ppac.fY",200,-50.,50.]
+  #- &f2ppacx1 ["f2ppac.fTX1",200,-50.,50.]
+  #- &f2ppacx2 ["f2ppac.fTX2",200,-50.,50.]
+  #- &f2ppacy1 ["f2ppac.fTX1",200,-50.,50.]
+  #- &f2ppacy2 ["f2ppac.fTX2",200,-50.,50.]
+  #- &f2ppacx_sum ["f2ppac.fTXsum",200,-50.,50.]
+  #- &f2ppacy_sum ["f2ppac.fTYsum",200,-50.,50.]
+  - &f2ssd_raw ["f2ssd_raw.fCharge",4000,0.5,4000.5]
+  - &f2ssd_raw_low ["f2ssd_raw.fCharge",1000,0.5,1000.5]
+  - &f2ssd_cal ["f2ssd_cal.fCharge",400,60.,120.]
+  - &rf0 ["rf_cal_0.fTiming",200,-980,-920]
+  #- &rf1 ["rf_cal_1.fTiming",200,-1530,-1380]
+  - &rf0w ["rf_cal_0.fTiming",200,-10000,10000.]
+  #- &rf1w ["rf_cal_1.fTiming",200,-10000,10000.]
+alias:
+  #ex_cut: example.fval > 0;
+group:
+  - name: f2check
+    title: f2check
+    contents:
+      - name: f2ppacx
+        title: F2PPAC X
+        x: *f2ppacx
+        #cut: ex_cut
+      - name: f2ppacy
+        title: F2PPAC Y
+        x: *f2ppacy
+      - name: f2ssd_raw
+        title: F2SSD raw
+        x: *f2ssd_raw
+      - name: f2ssd_raw(low)
+        title: F2SSD_raw(low)
+        x: *f2ssd_raw_low
+      - name: f2ssd_cal
+        title: F2SSD_cal
+        x: *f2ssd_cal
+      - name: f2ppac_pos
+        title: F2PPAC Y vs X
+        x: *f2ppacx
+        y: *f2ppacy
+      - name: rf_f2ppacx
+        title: RF vs F2PPAC X
+        x: *f2ppacx
+        y: *rf0
+      - name: rf_f2ppacy
+        title: RF vs F2PPAC Y
+        x: *f2ppacy
+        y: *rf0
+      - name: f2ssd_raw_rf
+        title: F2SSD raw vs RF
+        x: *rf0
+        y: *f2ssd_raw
+      - name: f2ssd_cal_rf
+        title: F2SSD cal vs RF
+        x: *rf0
+        y: *f2ssd_cal
+      - name: f2ssd_raw_f2ppacx
+        title: F2SSD_raw vs F2PPAC X
+        x: *f2ppacx
+        y: *f2ssd_raw
+      - name: f2ssd_cal_f2ppacx
+        title: F2SSD_cal vs F2PPAC X
+        x: *f2ppacx
+        y: *f2ssd_cal
+      - name: f2ssd_cal_f2ppacy
+        title: F2SSD_cal vs F2PPAC Y
+        x: *f2ppacy
+        y: *f2ssd_cal
+      - name: rf(wide)
+        title: RF(wide to check the range)
+        x: *rf0w
+

@@ -1,0 +1,9 @@
+Processor:
+  - include:
+#      name: tmpl_qdc.yaml
+      name: tmpl_v1190.yaml
+      replace:
+        CID: 11
+        FP: f3
+
+#  - include: tof.yaml

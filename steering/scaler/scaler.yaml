@@ -1,0 +1,9 @@
+Processor:
+  - name: proc_scaler
+    type: art::TScalerMappingProcessor
+    parameter:
+      CatID:        100
+      NumChannel:   32
+      OutputCollectionDiff:  scadiff
+      OutputCollectionTotal: scatot
+

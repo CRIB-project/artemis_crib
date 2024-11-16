@@ -1,0 +1,112 @@
+anchor: 
+  - &tel_dEX ["tel.fdEX",1000,0.,30.]
+  - &tel_dEY ["tel.fdEY",1000,0.,30.]
+  - &tel_E1 ["tel.GetEvec(0)",1000,0.,45.]
+  - &tel_E2 ["tel.GetEvec(1)",1000,0.,25.]
+  - &tel_E3 ["tel.GetEvec(2)",1000,0.,25.]
+  - &tel_dE ["tel.fdE",1000,0.,30.]
+  - &tel_E ["tel.fE",1000,0.,50.]
+  - &tel_Etot ["tel.fEtotal",1000,0.,50.]
+  - &tel_dEXs ["tel.fdEX",300,0.,30.]
+  - &tel_dEYs ["tel.fdEY",300,0.,30.]
+  - &tel_E1s ["tel.GetEvec(0)",300,0.,45.]
+  - &tel_E2s ["tel.GetEvec(1)",300,0.,25.]
+  - &tel_E3s ["tel.GetEvec(2)",300,0.,25.]
+  - &tel_dEs ["tel.fdE",300,0.,30.]
+  - &tel_Es ["tel.fE",300,0.,50.]
+  - &tel_Etots ["tel.fEtotal",300,0.,50.]
+  - &tel_dEX_t ["tel.fdEXTiming",1000,-1000.,1000.]
+  - &tel_dEY_t ["tel.fdEYTiming",1000,-1000.,1000.]
+  - &tel_E1_t ["tel.GetETimingvec(0)",1000,-1000.,-1000.]
+  - &tel_E2_t ["tel.GetETimingvec(1)",1000,-1000.,-1000.]
+  - &tel_E3_t ["tel.GetETimingvec(2)",1000,-1000.,-1000.]
+  - &rf0 ["rf_cal_0.fTiming",200,0.,120.]
+  - &rf1 ["rf_cal_1.fTiming",200,0.,120.]
+  - &trackXa ["mwdca.GetTrack().GetX()",400,-120.,80.]
+  - &trackYa ["mwdca.GetTrack().GetY()",400,-100.,100.]
+  - &trackXb ["mwdcb.GetTrack().GetX()",400,-120.,80.]
+  - &trackYb ["mwdcb.GetTrack().GetY()",400,-100.,100.]
+  - &trackXt ["mwdcb.GetTrack().GetX()",400,-120.,80.]
+  - &trackYt ["mwdcb.GetTrack().GetY()",400,-100.,100.]
+
+alias:
+  single: coin_raw.fID == 0;
+  coin: coin_raw.fID == 1;
+  pileup: coin_raw.fID == 2;
+
+group:
+  - name: f3check
+    title: f3check
+    contents:
+      - name: MWDCa Y vs X (single)
+        title: MWDCa Y vs X (single)
+        x: *trackXa
+        y: *trackYa
+        cut: single
+      - name: MWDCb Y vs X (single)
+        title: MWDCb Y vs X (single)
+        x: *trackXb
+        y: *trackYb
+        cut: single
+      - name: Target Y vs X (single)
+        title: Target Y vs X (single)
+        x: *trackXt
+        y: *trackYt
+        cut: single
+      - name: MWDCa Y vs X (coin)
+        title: MWDCa Y vs X (coin)
+        x: *trackXa
+        y: *trackYa
+        cut: coin
+      - name: MWDCb Y vs X (coin)
+        title: MWDCb Y vs X (coin)
+        x: *trackXb
+        y: *trackYb
+        cut: coin
+      - name: Target Y vs X (coin)
+        title: Target Y vs X (coin)
+        x: *trackXt
+        y: *trackYt
+        cut: coin
+      - name: RF0 Vs MWDCa X
+        title: rf0 Vs MWDCa X
+        x: *trackXa
+        y: *rf0
+#       cut: E1cut
+      - name: tel_dEX
+        title: tel_dEX
+        x: *tel_dEX
+      - name: tel_E1
+        title: tel_E1
+        x: *tel_E1
+      - name: tel_E2
+        title: tel_dE2
+        x: *tel_E2
+      - name: tel_E3
+        title: tel_E3
+        x: *tel_E3
+      - name: Etot vs dEX
+        title: Etot vs dEX
+        x: *tel_dEXs
+	y: *tel_Etots
+      - name: E1 vs dEX
+        title: E1 vs dEX
+        x: *tel_dEXs
+	y: *tel_E1
+      - name: E2 vs E1
+        title: E2 vs E1
+        x: *tel_E1
+	y: *tel_E2
+      - name: E3 vs E2
+        title: E3 vs E2
+        x: *tel_E2
+	y: *tel_E3
+      - name: dEXt vs Etot
+        title: dEXt vs Etot
+        x: *tel_dtots
+	y: *tel_dEXt
+      - name: E1t vs Etot
+        title: E1t vs Etot
+        x: *tel_dtots
+	y: *tel_E1t
+

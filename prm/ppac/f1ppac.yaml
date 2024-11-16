@@ -1,0 +1,26 @@
+# treated as dl-ppac
+Type: art::TPPACParameter
+Contents:
+  f1ppac:
+    ns2mm:
+    - 250.2
+    - 100.92
+    delayoffset:
+    - 0.00026
+    - 0.00015
+    linecalib:
+    - -0.043
+    - 0.411
+    exchange: 0
+    reflectx: 0
+    geometry:
+    - 0.0
+    - 0.0
+    - 0.0
+    TXSumLimit:
+    - -800.0
+    - 2000.0
+    TYSumLimit:
+    - -800.0
+    - 2000.0
+

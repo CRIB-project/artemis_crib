@@ -1,0 +1,29 @@
+#treated as dlppac
+Processor:
+  - name: proc_f1_ppac_ch2q
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_f1_ppac_ch2q
+      Type: art::TAffineConverter
+      FileName: prm/ppac/ch2q.prm
+# ---------------------------------------
+  - name: proc_f1_ppac_param
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_f1_ppac
+      Type: art::TPPACParameter
+      FileName: prm/ppac/f1ppac.yaml
+      FileFormat: yaml
+# ---------------------------------------
+  - name: proc_f1_ppac
+    type: art::crib::TF1PPACProcessor
+    parameter:
+      CatID: 3
+      PPACParameter: prm_f1_ppac
+      TimingConverterArray: prm_f1_ppac_ch2q
+      HasEachChConverter: 1
+      DoSeparatePPACs: 1
+      OutputCollection: q_ppac
+      OutputTransparency: 0
+      ListOfPPACNames:
+        - f1ppac

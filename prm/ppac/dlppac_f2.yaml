@@ -1,0 +1,26 @@
+Type: art::TPPACParameter
+Contents:
+#---------------------------------
+# #2 PPAC from 2023/12/14
+  f2ppac:
+    ns2mm:
+    - 1.256
+    - 1.256
+    delayoffset:
+    - 0.17
+    - 0.11
+    linecalib:
+    - 4.02
+    - 0.661
+    exchange: 0
+    reflectx: 0
+    geometry:
+    - 0.0
+    - 0.0
+    - 0.0
+    TXSumLimit:
+    - -800.0
+    - 2000.0
+    TYSumLimit:
+    - -800.0
+    - 2000.0

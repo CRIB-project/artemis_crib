@@ -1,0 +1,10 @@
+Processor:
+  - name: proc_lowgain_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         8
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: lowgain_raw

@@ -1,0 +1,11 @@
+Processor:
+  - name: proc_@NAME@_E_raw
+    #type: art::TTimingChargeMappingProcessor
+    type: art::crib::TTimingChargeAllMappingProcessor
+    parameter:
+      CatID:         @CATID@
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: @NAME@E_raw

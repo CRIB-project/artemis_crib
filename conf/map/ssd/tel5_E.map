@@ -1,0 +1,8 @@
+# map for ssd of STM circuit
+# [category] [id] [[device] [focus] [detector] [module] [ch]] ....
+#
+# for telescope 5 single pad SSD
+# Map: energy, timing
+#
+#--------------------------------------------------------------------
+52, 0,  12 1  6   5  15,  12 2  7  0  127 #Eb 

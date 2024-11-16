@@ -1,0 +1,7 @@
+# map for ADC of F2SSD
+# [category] [id] [[device] [focus] [detector] [geo] [ch]] ....
+#
+# Map: energy, timing
+#
+#--------------------------------------------------------------------
+   5,   0,  12,   1,  6,   0,   4,  12,   2,  7,   0,   14

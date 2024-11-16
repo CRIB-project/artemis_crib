@@ -1,0 +1,234 @@
+#!/bin/bash
+
+set -u
+
+# default variables
+ART_ANALYSIS_DIR="${HOME}/art_analysis"
+ART_REPOSITORY="https://github.com/okawak/artemis_crib.git"
+
+main() {
+  need_cmd git
+  need_cmd echo
+  need_cmd mkdir
+  need_cmd rm
+
+  check_initialize || return 1
+  git_setting || return 1
+
+  # read experiment name
+  readline "Input experimental name: "
+  local default_name="$RETVAL"
+  printf "Input value: %s\n\n" "${default_name}"
+
+  expdir="${ART_ANALYSIS_DIR}/${default_name}"
+  if [ -d "${expdir}" ]; then
+    err "${expdir} already exist."
+  elif [ -e "${expdir}" ]; then
+    err "strange file ${expdir} already exist."
+  fi
+
+  # default repository setting
+  say "If no input is provided, the default value is used."
+  readline "Input base repository path or URL (default: ${ART_REPOSITORY}): "
+  local _art_repo="$RETVAL"
+  if [ -n "${_art_repo}" ]; then
+    ART_REPOSITORY=${_art_repo}
+  fi
+  printf "Input value: %s\n\n" "$ART_REPOSITORY"
+
+  # raw data directory
+  rawdata_dir="/data/${default_name}/ridf"
+  readline "Input rawdata directory path (default: ${rawdata_dir}): "
+  local _data_dir="$RETVAL"
+  if [ -n "${_data_dir}" ]; then
+    rawdata_dir=${_data_dir}
+  fi
+  printf "Input value: %s\n\n" "$rawdata_dir"
+
+  # output rootfile directory
+  outdata_dir="/data/${default_name}/user"
+  readline "Input output data directory path (default: ${outdata_dir}): "
+  local _root_dir="$RETVAL"
+  if [ -n "${_root_dir}" ]; then
+    outdata_dir=${_root_dir}
+  fi
+  printf "Input value: %s\n\n" "$outdata_dir"
+
+  # user git configuration
+  user_repos=${ART_REPOSITORY}
+  while true; do
+    read -rp "Based on the repository, do you make your own repository? (y/n): " _input
+    case ${_input} in
+    y)
+      while true; do
+        read -rp "is it local repository (y/n): " _answer
+        case ${_answer} in
+        y)
+          say "making LOCAL repository of ${default_name}"
+
+          art_local_repos_dir="${HOME}/repos/exp"
+          readline "Input the local repository path (default: \$HOME/repos/exp): "
+          local _retval="$RETVAL"
+          if [ -n "${_retval}" ]; then
+            art_local_repos_dir=${_retval}
+          fi
+          printf "Input value: %s\n\n" "$art_local_repos_dir"
+
+          if [ ! -d "${art_local_repos_dir}" ]; then
+            ensure mkdir -p "${art_local_repos_dir}"
+          fi
+
+          seed=${expdir}/.tmp
+
+          ensure mkdir "${expdir}"
+          ensure git clone -b main "${ART_REPOSITORY}" "${seed}" --depth 1
+
+          cd "${seed}" || exit 1
+          ensure rm -rf .git/
+          ensure git init
+          ensure git init --bare "${default_name}.git"
+
+          gitdir=${art_local_repos_dir}/${default_name}.git
+          if [ -d "${gitdir}" ]; then
+            ensure rm -rf "${gitdir}"
+          fi
+          ensure mv -f "${seed}/${default_name}.git" "${gitdir}"
+          ensure git add .
+          ensure git commit -m "Initial commit" 1>/dev/null
+          ensure git push -u "${gitdir}" master
+
+          cd - || exit 1
+          ensure rm -rf "${seed}"
+          user_repos=${gitdir}
+
+          break
+          ;;
+        n)
+          say "making from REMOTE repository for ${default_name}"
+          say "please prepare empty repository at github or gitlab"
+          readline "Input the remote repository SSH/URL (ex git@github.com:okawak/si26a.git): "
+          local art_remote_repos_url="$RETVAL"
+          printf "Input value: %s\n\n" "$art_remote_repos_url"
+
+          seed=$expdir/.tmp
+
+          ensure mkdir "${expdir}"
+          ensure git clone -b main "${ART_REPOSITORY}" "${seed}" --depth 1
+
+          cd "${seed}" || exit 1
+          ensure rm -rf .git/
+          ensure git init
+          ensure git add .
+          ensure git commit -m "Initial commit" 1>/dev/null
+          ensure git branch -M main
+          ensure git remote add origin "${art_remote_repos_url}"
+          ensure git push -u origin main
+
+          cd - || exit 1
+          ensure rm -rf "${seed}"
+          user_repos=${art_remote_repos_url}
+
+          break
+          ;;
+        esac
+      done
+
+      break
+      ;;
+    n)
+      say "use ${ART_REPOSITORY}"
+      ensure mkdir "${expdir}"
+
+      break
+      ;;
+    esac
+  done
+
+  if [ -f "${ART_ANALYSIS_DIR}/.conf/${default_name}.sh" ]; then
+    rm -f "${ART_ANALYSIS_DIR}/.conf/${default_name}.sh"
+  fi
+
+  cat <<EOF >>"${ART_ANALYSIS_DIR}/.conf/${default_name}.sh"
+# artemis configuration for ${default_name} experiment
+export ART_ANALYSIS_DIR=${ART_ANALYSIS_DIR}
+export ART_USER_REPOS=${user_repos}
+export ART_DATA_DIR=${rawdata_dir}
+export OUTPUT_PATH=${outdata_dir}
+export ROOT_INCLUDE_PATH=\${ROOT_INCLUDE_PATH}:src
+EOF
+
+  printf "\n\33[1mart_analysis setting for %s is finished!\33[0m\n" "$default_name"
+}
+
+check_initialize() {
+  while true; do
+    printf "create new artemis work directory? (y/n): "
+    read -r _answer
+    case ${_answer} in
+    y)
+      break
+      ;;
+    n)
+      echo "cancelled."
+      exit 0
+      ;;
+    esac
+  done
+}
+
+git_setting() {
+  local _fullname
+  local _email
+
+  if [ ! -e "${HOME}/.gitconfig" ] && [ ! -e "${HOME}/.config/git/config" ]; then
+    say "making Git global config..."
+    readline "input fullname: "
+    _fullname="$RETVAL"
+    ensure git config --global user.name "$_fullname"
+
+    readline "input email address: "
+    _email="$RETVAL"
+    ensure git config --global user.email "$_email"
+  fi
+}
+
+readline() {
+  while true; do
+    read -rp "$1" read_value
+    read -rp "Is it OK? (y/n): " _answer
+    case ${_answer} in
+    y)
+      break
+      ;;
+    esac
+  done
+  RETVAL="$read_value"
+}
+
+say() {
+  printf "\33[1martnew\33[0m: %s\n" "$1"
+}
+
+err() {
+  say "$1" >&2
+  exit 1
+}
+
+need_cmd() {
+  if ! check_cmd "$1"; then
+    err "need '$1' (command not found)"
+  fi
+}
+
+check_cmd() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+# Run a command that should never fail. If the command fails execution
+# will immediately terminate with an error showing the failing
+# command.
+ensure() {
+  if ! "$@"; then err "command failed: $*"; fi
+}
+
+main "$@" || exit 1

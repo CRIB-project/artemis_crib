@@ -1,0 +1,50 @@
+Type: art::TPPACParameter
+Contents:
+#---------------------------------
+# #7 PPAC
+  f3bppac:
+    ns2mm:
+    - 1.240
+    - 1.242
+    delayoffset:
+    - 0.92
+    - 1.58
+    linecalib:
+    - 1.31271
+    - -0.185388
+    exchange: 0
+    reflectx: 1
+    geometry:
+    - 0.0
+    - 0.5
+    - 322.0
+    TXSumLimit:
+    - -800.0
+    - 2000.0
+    TYSumLimit:
+    - -800.0
+    - 2000.0
+#---------------------------------
+# #2 PPAC
+  f3appac:
+    ns2mm:
+    - 1.256
+    - 1.256
+    delayoffset:
+    - 0.29
+    - 0.18
+    linecalib:
+    - -1.451
+    - 0.285
+    exchange: 0
+    reflectx: 1
+    geometry:
+    - 0.5
+    - -2.2
+    - 0.0
+    TXSumLimit:
+    - -800.0
+    - 2000.0
+    TYSumLimit:
+    - -800.0
+    - 2000.0

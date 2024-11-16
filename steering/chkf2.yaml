@@ -1,0 +1,40 @@
+Anchor:
+  - &input ridf/@NAME@@NUM@.ridf
+  - &output output/@NAME@/@NUM@/chkf2@NAME@@NUM@.root
+  - &histout output/@NAME@/@NUM@/chkf2@NAME@@NUM@.hist.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+      SHMID: 0
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+  - include: tref.yaml
+  - include: rf/rf.yaml
+  - include: ppac/dlppac_f2.yaml
+  - include: ssd/f2ssd.yaml
+
+  ### F2 Hist
+  - name: projection_f2
+    type: art::TTreeProjectionProcessor
+    parameter:
+      FileName: hist/f2/f2.yaml
+      Type: art::TTreeProjection
+      OutputFilename: *histout
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

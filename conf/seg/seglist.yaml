@@ -1,0 +1,46 @@
+###################################
+#<Example>
+#
+#BLD_VXX:
+# segid: [[dev], [fp], [det]]
+# type: V7XX
+# modules:
+#   - id: [geo1]
+#   - id: [geo2]
+###################################
+
+E7_V1190:
+  segid: [12, 0, 7]
+  type: V1190A
+  modules:
+    - id: 0
+    - id: 1
+
+J1_V785:
+  segid: [12, 1, 6]
+  type: V7XX
+  modules:
+    - id: 0
+    - id: 1
+    - id: 2
+
+J1_MADC:
+  segid: [12, 1, 6]
+  type: MADC32
+  modules:
+    - id: 3
+    - id: 4
+    - id: 5
+
+J1_V1190:
+  segid: [12, 2, 7]
+  type: V1190A
+  modules:
+    - id: 0
+
+Scaler:
+  segid: [12, 2, 63]
+  type: SIS3820
+  modules:
+    - id: 0
+

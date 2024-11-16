@@ -1,0 +1,71 @@
+achor: 
+  - &tel1E_charge ["tel1E_raw.fCharge",1024,0.,8191.]
+  - &tel2E_charge ["tel2E_raw.fCharge",1024,0.,8191.]
+  - &tel3E_charge ["tel3E_raw.fCharge",1024,0.,8191.]
+  - &tel4E_charge ["tel4E_raw.fCharge",1024,0.,8191.]
+  - &tel5E_charge ["tel5E_raw.fCharge",1024,0.,8191.]
+  - &tel6E_charge ["tel6E_raw.fCharge",1024,0.,8191.]
+  - &tel_E_timing ["tel_E_raw.fTiming",2000,0.,20000.]
+#  - &tel_E1_Energy ["tel1E_cal_0.fCharge",1000,0,50]
+#  - &tel_E2_Energy ["tel1E_cal_1.fCharge",1000,0,50]
+#  - &tel_E3_Energy ["tel1E_cal_2.fCharge",1000,0,50]
+
+alias:
+  E1b: tel1E_raw.fID == 0;
+  E1c: tel1E_raw.fID == 1;
+  E1d: tel1E_raw.fID == 2;
+  E2b: tel2E_raw.fID == 0;
+  E2c: tel2E_raw.fID == 1;
+  E2d: tel2E_raw.fID == 2;
+  E3b: tel3E_raw.fID == 0;
+  E3c: tel3E_raw.fID == 1;
+  E4b: tel4E_raw.fID == 0;
+  E4c: tel4E_raw.fID == 1;
+
+group:
+  - name: telE_raw
+    title: telE_raw
+    contents:
+      - name: E1b_Eraw
+        title: E1b_Eraw
+        x: *tel1E_charge 
+        cut: E1b
+      - name: E1c_Eraw
+        title: E1c_Eraw
+        x: *tel1E_charge 
+        cut: E1c
+      - name: E1d_Eraw
+        title: E1d_Eraw
+        x: *tel1E_charge 
+        cut: E1d
+      - name: E2b_Eraw
+        title: E2b_Eraw
+        x: *tel2E_charge 
+        cut: E2b
+      - name: E2c_Eraw
+        title: E2c_Eraw
+        x: *tel2E_charge 
+        cut: E2c
+      - name: E2d_Eraw
+        title: E2d_Eraw
+        x: *tel2E_charge 
+        cut: E2d
+      - name: E3b_Eraw
+        title: E3b_Eraw
+        x: *tel3E_charge 
+        cut: E3b
+      - name: E3c_Eraw
+        title: E3c_Eraw
+        x: *tel3E_charge 
+        cut: E3c
+      - name: E4b_Eraw
+        title: E4b_Eraw
+        x: *tel4E_charge 
+        cut: E4b
+      - name: E5b_Eraw
+        title: E5b_Eraw
+        x: *tel5E_charge 
+      - name: E6b_Eraw
+        title: E6b_Eraw
+        x: *tel6E_charge 
+

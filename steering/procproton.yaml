@@ -1,0 +1,46 @@
+Anchor:
+ - &input output/coin/@GATE@/@NAME@_@GATE@_all.root
+ - &output output/coin/@GATE@/proton/@NAME@/@TEL@_proton.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree
+
+  - name: proc_copy_processor
+    type: art::crib::TBranchCopyProcessor
+    parameter:
+      InputCollection:     @TEL@
+      OutputCollection:    tel
+
+  - name: proc_copy_processor
+    type: art::crib::TBranchCopyProcessor
+    parameter:
+      InputCollection:     f3appac
+      OutputCollection:    ppaca
+
+  - name: proc_copy_processor
+    type: art::crib::TBranchCopyProcessor
+    parameter:
+      InputCollection:     f3bppac
+      OutputCollection:    ppacb
+
+  - name: proc_copy_processor
+    type: art::crib::TBranchCopyProcessor
+    parameter:
+      InputCollection:     f3ppac
+      OutputCollection:    track
+
+  - include: gate/coin/proton/@TEL@.yaml
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

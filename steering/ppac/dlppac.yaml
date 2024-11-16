@@ -1,0 +1,32 @@
+Processor:
+  - name: proc_dl_ppac_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_dl_ppac_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ppac/ch2ns.prm
+      OutputTransparency: 1
+# ---------------------------------------
+  - name: proc_dl_ppac_param
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_dl_ppac
+      Type: art::TPPACParameter
+      FileName: prm/ppac/dlppac.yaml
+      FileFormat: yaml
+      OutputTransparency: 1
+# ---------------------------------------
+  - name: proc_dl_ppac
+    type: art::TPPACProcessor
+    parameter:
+      CatID: 4
+      PPACParameter: prm_dl_ppac
+      TimingConverterArray: prm_dl_ppac_ch2ns
+      HasEachChConverter: 1
+      DoSeparatePPACs: 1
+      OutputCollection: dlppac
+      OutputTransparency: 0
+      ListOfPPACNames:
+        - f3bppac
+        - f3appac
+

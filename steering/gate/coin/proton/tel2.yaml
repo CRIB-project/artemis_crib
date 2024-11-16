@@ -1,0 +1,49 @@
+Processor:
+  - name: proc_gateinit
+    type: art::TGateArrayInitializer
+    parameter:
+      OutputTransparency: 1
+
+  - name: proc_gate
+    type: art::TTreeFormulaGateProcessor
+    parameter:
+      Definitions: # for tel2
+        - "tel; tel@.GetEntriesFast()>0"
+        - "tel_pene; tel.fdEY>0.01"
+        - "tel_ene; abs(sqrt(tel.fdEY * tel.fEtotal) - 5.45) < 0.55 && tel.GetEvec(0) > 0.1 && abs(tel.GetETimingvec(0) + 170.0) < 50.0"
+        #- "tel_timing; abs((tel.fEtotal + 0.15*tel.GetETimingvec(0)) + 6.5) < 6.5 && abs(tel.GetETimingvec(0) + 170.0) < 30.0"
+      OutputTransparency: 1
+      Verbose: 1
+
+  - name: tel_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: tel
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: tel_pene_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: tel_pene
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: tel_ene_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: tel_ene
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+#  - name: tel_timing_gate
+#    type: art::TGateStopProcessor
+#    parameter:
+#      GateName: tel_timing
+#      OutputTransparency: 1
+#      StopIf: 0
+#      Verbose: 1
+

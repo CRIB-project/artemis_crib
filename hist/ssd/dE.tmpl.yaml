@@ -1,0 +1,43 @@
+anchor: 
+  - &e_raw ["@dssd@_raw.fCharge",2000,0.,4000.]
+  - &t_raw ["@dssd@_raw.fTiming",2000,0.,4000.]
+  - &id ["@dssd@_raw.fID",16,-0.5,15.5]
+alias:
+  ch1: @dssd@_raw.fID == 0;
+  ch2: @dssd@_raw.fID == 1;
+  ch3: @dssd@_raw.fID == 2;
+  ch4: @dssd@_raw.fID == 3;
+  ch5: @dssd@_raw.fID == 4;
+  ch6: @dssd@_raw.fID == 5;
+  ch7: @dssd@_raw.fID == 6;
+  ch8: @dssd@_raw.fID == 7;
+  ch9: @dssd@_raw.fID == 8;
+  ch10: @dssd@_raw.fID == 9;
+  ch11: @dssd@_raw.fID == 10;
+  ch12: @dssd@_raw.fID == 11;
+  ch13: @dssd@_raw.fID == 12;
+  ch14: @dssd@_raw.fID == 13;
+  ch15: @dssd@_raw.fID == 14;
+  ch16: @dssd@_raw.fID == 15;
+group:
+  - name: @dssd@_raw
+    title: @dssd@_raw
+    contents:
+
+      - name: ch1 energy
+        title: @dssd@_raw ch1 E
+        x: *e_raw
+        cut: ch1
+      - name: ch1 timing
+        title: @dssd@_raw ch1 T
+        x: *t_raw
+        cut: ch1
+
+      - name: ID_energy
+        title: @dssd@_raw energy vs ID
+        x: *id
+        y: *e_raw
+      - name: ID_timing
+        title: @dssd@_raw timing vs ID
+        x: *id
+        y: *t_raw

@@ -1,0 +1,16 @@
+group:
+  - name: test
+    title: test
+    contents:
+      - name: hRndm
+        title: random value
+        x: ["random.fValue",100,0.,@MAX@]
+
+include:
+  - name: hist/example/example.inc.yaml
+    replace:
+      MAX: @MAX@
+      SUFFIX: 2
+      BRANCH: random
+      
+

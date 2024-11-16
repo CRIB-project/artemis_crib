@@ -1,0 +1,30 @@
+Anchor:
+  - &input ridf/@NAME@@NUM@.ridf
+  - &output output/@NAME@/@NUM@/chkppac@NAME@@NUM@.root
+  - &histout output/@NAME@/@NUM@/chkppac@NAME@@NUM@.hist.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      #MaxEventNum: 200000
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+  - include: tref.yaml
+  - include: ppac/dlppac.yaml
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

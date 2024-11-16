@@ -1,0 +1,187 @@
+Processor:
+# ch2MeV parameters
+  - name: proc_@NAME@_dEX_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEX_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/@NAME@/ch2MeV_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_dEY_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEY_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/@NAME@/ch2MeV_dEY.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_E_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_E_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/@NAME@/ch2MeV_E.dat
+      OutputTransparency: 1
+
+# ch2ns parameters
+  - name: proc_@NAME@_dEX_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEX_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/@NAME@/ch2ns_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_dEY_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEY_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/@NAME@/ch2ns_dEY.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_E_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_E_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/@NAME@/ch2ns_E.dat
+      OutputTransparency: 1
+
+
+# MUX position parameters
+  - name: proc_@NAME@_dEX_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEX_position
+      Type: art::crib::TMUXPositionConverter
+      FileName: prm/@NAME@/pos_dEX/current
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_dEY_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEY_position
+      Type: art::crib::TMUXPositionConverter
+      FileName: prm/@NAME@/pos_dEY/current
+      OutputTransparency: 1
+
+
+# data mapping
+  - name: proc_@NAME@_dEX_raw
+    type: art::crib::TMUXDataMappingProcessor
+    parameter:
+      CatID:         @CATID_dEX@
+      OutputCollection: @NAME@dEX_raw
+
+  - name: proc_@NAME@_dEY_raw
+    type: art::crib::TMUXDataMappingProcessor
+    parameter:
+      CatID:         @CATID_dEY@
+      OutputCollection: @NAME@dEY_raw
+
+  - name: proc_@NAME@_E_raw
+    #type: art::TTimingChargeMappingProcessor
+    type: art::crib::TTimingChargeAllMappingProcessor
+    parameter:
+      CatID:         @CATID_E@
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: @NAME@E_raw
+
+
+# calibration branch
+  - name: proc_@NAME@_dEX
+    type: art::crib::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      @NAME@dEX_raw
+      OutputCollection:     @NAME@dEX_cal
+      ChargeConverterArray: prm_@NAME@_dEX_ch2MeV
+      TimingConverterArray: prm_@NAME@_dEX_ch2ns
+      PositionConverterArray: prm_@NAME@_dEX_position
+      HasReflection: 0
+
+  - name: proc_@NAME@_dEY
+    type: art::crib::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      @NAME@dEY_raw
+      OutputCollection:     @NAME@dEY_cal
+      ChargeConverterArray: prm_@NAME@_dEY_ch2MeV
+      TimingConverterArray: prm_@NAME@_dEY_ch2ns
+      PositionConverterArray: prm_@NAME@_dEY_position
+      HasReflection: 0
+
+  - name: proc_@NAME@_E
+    type: art::TTimingChargeCalibrationProcessor
+    parameter:
+      InputCollection:      @NAME@E_raw
+      OutputCollection:     @NAME@E_cal
+      ChargeConverterArray: prm_@NAME@_E_ch2MeV
+      TimingConverterArray: prm_@NAME@_E_ch2ns
+
+## For individual channels
+#  - name: proc_@NAME@_dEX_cal_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: @NAME@_dEX_cal
+#      OutputCollections:
+#        - @NAME@dEX_cal_0
+#        - @NAME@dEX_cal_1
+#        - @NAME@dEX_cal_2
+#        - @NAME@dEX_cal_3
+#        - @NAME@dEX_cal_4
+#        - @NAME@dEX_cal_5
+#        - @NAME@dEX_cal_6
+#        - @NAME@dEX_cal_7
+#        - @NAME@dEX_cal_8
+#        - @NAME@dEX_cal_9
+#        - @NAME@dEX_cal_10
+#        - @NAME@dEX_cal_11
+#        - @NAME@dEX_cal_12
+#        - @NAME@dEX_cal_13
+#        - @NAME@dEX_cal_14
+#        - @NAME@dEX_cal_15
+#
+#  - name: proc_@NAME@_dEY_cal_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: @NAME@_dEY_cal
+#      OutputCollections:
+#        - @NAME@dEY_cal_0
+#        - @NAME@dEY_cal_1
+#        - @NAME@dEY_cal_2
+#        - @NAME@dEY_cal_3
+#        - @NAME@dEY_cal_4
+#        - @NAME@dEY_cal_5
+#        - @NAME@dEY_cal_6
+#        - @NAME@dEY_cal_7
+#        - @NAME@dEY_cal_8
+#        - @NAME@dEY_cal_9
+#        - @NAME@dEY_cal_10
+#        - @NAME@dEY_cal_11
+#        - @NAME@dEY_cal_12
+#        - @NAME@dEY_cal_13
+#        - @NAME@dEY_cal_14
+#        - @NAME@dEY_cal_15
+#
+#  - name: proc_@NAME@_E_cal_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: @NAME@_E_cal
+#      OutputCollections:
+#        - @NAME@E_cal_0
+#        - @NAME@E_cal_1
+#        - @NAME@E_cal_2
+
+# process telescope
+  - name: proc_@NAME@
+    type: art::crib::TTelescopeProcessor
+    parameter:
+      InputCollection1:      @NAME@dEX_cal
+      InputCollection2:      @NAME@dEY_cal
+      InputCollection3:      @NAME@E_cal
+      OutputCollection:      @NAME@
+      IsDSSSD: true

@@ -1,0 +1,22 @@
+group:
+  - name: f1ppac
+    title: f1_ppac
+    contents:
+      - name: f1ppac_anode
+        title: f1ppac Anode
+        x: ["f1ppac.fTAnode", 50, 50, 90]
+      - name: f1ppac_x
+        title: f1ppac X
+        x: ["f1ppac.fX",50,-50,50]
+      - name: f1ppac_y
+        title: f1ppac Y
+        x: ["f1ppac.fY",50,-50,50]
+      - name: f1ppac_x_y
+        title: f1ppac GetX Vs GetY
+        x: ["f1ppac.GetX()",50,-50.,50.]
+        y: ["f1ppac.GetY()",50,-50.,50.]
+      - name: f1ppac_x_timing
+        title: f1ppac GetX Vs Timing
+        x: ["f1ppac.GetX()",50,-50.,50.]
+        y: ["f1ppac.fTAnode",50,50.,90.]
+

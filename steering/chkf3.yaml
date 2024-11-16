@@ -1,0 +1,115 @@
+Anchor:
+ - &input ridf/@NAME@@NUM@.ridf
+ - &output output/@NAME@/@NUM@/chkf3@NAME@@NUM@.root
+ - &histout output/@NAME@/@NUM@/chkf3@NAME@@NUM@.hist.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+      SHMID: 0
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+  - name: detector_initialize
+    type: art::crib::TUserGeoInitializer
+    parameter:
+      FileName: prm/geo/current
+      Visible: false
+      OutputTransparency: 1
+
+  - include: tref.yaml
+  - include: rf/rf.yaml
+  - include: coin/coin.yaml
+  - include: ppac/dlppac.yaml
+  #- include: mwdc/mwdc_crib.yaml
+
+  - include: ssd/f3ssd.yaml
+  #- include: scaler/scaler.yaml
+  #- include: ts/ts.yaml
+
+
+# F3 beam info hist
+  - name: projection_f3
+    type: art::TTreeProjectionProcessor
+    parameter:
+      FileName: hist/f3/f3.yaml
+      #FileName: hist/f3/f3_mwdc.yaml
+      Type:     art::TTreeProjection
+      OutputFilename: *histout
+
+# MWDC Hist
+#  - name: projection_mwdca
+#    type: art::TTreeProjectionProcessor
+#    parameter:
+#      FileName: hist/mwdc/chkmwdc.tmpl.yaml
+#      Type:     art::TTreeProjection
+#      Replace: |
+#        plane: mwdca
+#
+#  - name: projection_mwdcb
+#    type: art::TTreeProjectionProcessor
+#    parameter:
+#      FileName: hist/mwdc/chkmwdc.tmpl.yaml
+#      Type:     art::TTreeProjection
+#      Replace: |
+#        plane: mwdcb
+
+# telescope Hist
+  - name: projection_tel1
+    type: art::TTreeProjectionProcessor
+    parameter:
+      FileName: hist/tel/tel1.yaml
+      Type:     art::TTreeProjection
+
+  - name: projection_tel2
+    type: art::TTreeProjectionProcessor
+    parameter:
+      FileName: hist/tel/tel2.yaml
+      Type:     art::TTreeProjection
+
+  - name: projection_tel3
+    type: art::TTreeProjectionProcessor
+    parameter:
+      FileName: hist/tel/tel3.yaml
+      Type:     art::TTreeProjection
+
+  - name: projection_tel4
+    type: art::TTreeProjectionProcessor
+    parameter:
+      FileName: hist/tel/tel4.yaml
+      Type:     art::TTreeProjection
+
+  - name: projection_tel5
+    type: art::TTreeProjectionProcessor
+    parameter:
+      FileName: hist/tel/tel5.yaml
+      Type:     art::TTreeProjection
+
+  - name: projection_tel6
+    type: art::TTreeProjectionProcessor
+    parameter:
+      FileName: hist/tel/tel6.yaml
+      Type:     art::TTreeProjection
+
+# MUX raw Hist
+#  - name: projection_mux
+#    type: art::TTreeProjectionProcessor
+#    parameter:
+#      FileName: hist/tel/mux.yaml
+#      Type:     art::TTreeProjection
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

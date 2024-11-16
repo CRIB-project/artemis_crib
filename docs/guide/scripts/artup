@@ -1,0 +1,77 @@
+#!/bin/bash
+
+set -u
+
+URL_BASE="https://okawak.github.io/artemis_crib"
+ART_ANALYSIS_DIR="${HOME}/art_analysis"
+
+main() {
+  need_cmd wget
+  need_cmd rm
+  need_cmd mv
+  need_cmd diff
+
+  ensure mkdir -p "${ART_ANALYSIS_DIR}/.tmp"
+
+  ensure wget -P "${ART_ANALYSIS_DIR}/.tmp" -q "${URL_BASE}/bin/art_setting"
+  ensure wget -P "${ART_ANALYSIS_DIR}/.tmp" -q "${URL_BASE}/bin/artnew"
+  ensure wget -P "${ART_ANALYSIS_DIR}/.tmp" -q "${URL_BASE}/bin/artlogin.sh"
+
+  check_diff "art_setting" "bin"
+  check_diff "artnew" "bin"
+  check_diff "artlogin.sh" ".conf"
+
+  ensure rm -rf "${ART_ANALYSIS_DIR}/.tmp"
+}
+
+check_diff() {
+  _file=${ART_ANALYSIS_DIR}/.tmp/$1.txt
+  diff "${ART_ANALYSIS_DIR}/.tmp/$1" "${ART_ANALYSIS_DIR}/$2/$1" >"${_file}"
+  if [ -s "${_file}" ]; then
+    while true; do
+      read -rp "find newer version of \"$1\", update it? (y/n): " _answer
+      case ${_answer} in
+      y)
+        say "$1: get a newer version..."
+        ensure mv -f "${ART_ANALYSIS_DIR}/.tmp/$1" "${ART_ANALYSIS_DIR}/$2/$1"
+        ensure chmod u+x "${ART_ANALYSIS_DIR}/$2/$1"
+        break
+        ;;
+      n)
+        say "cancelled"
+        break
+        ;;
+      esac
+    done
+  else
+    say "$1: Already up-to-date"
+  fi
+}
+
+say() {
+  printf "\33[1mart_check\33[0m: %s\n" "$1"
+}
+
+err() {
+  say "$1" >&2
+  exit 1
+}
+
+need_cmd() {
+  if ! check_cmd "$1"; then
+    err "need '$1' (command not found)"
+  fi
+}
+
+check_cmd() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+# Run a command that should never fail. If the command fails execution
+# will immediately terminate with an error showing the failing
+# command.
+ensure() {
+  if ! "$@"; then err "command failed: $*"; fi
+}
+
+main "$@" || exit 1

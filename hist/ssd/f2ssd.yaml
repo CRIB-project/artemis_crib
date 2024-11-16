@@ -1,0 +1,14 @@
+anchor: 
+#  - &tf3s0 ["sr0_a_cal.fTiming - dia3pad[0].fTiming-1066",200,-30.,90.]
+alias:
+#  ticut: TMath::Abs(s2z-24)<0.74;
+group:
+  - name: f2ssd
+    title: ssd
+    contents:
+      - name: si_raw
+        title: si_raw 
+        x: ["f2ssd_raw.fCharge", 200, 0, 4000]
+      - name: si_cal
+        title: si_cal
+        x: ["f2ssd_cal.fCharge", 200, 0, 4000]

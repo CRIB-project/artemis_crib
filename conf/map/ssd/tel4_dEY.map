@@ -1,0 +1,8 @@
+# map for dssd using MUX
+# [category] [id] [[device] [focus] [detector] [module] [ch]] ....
+#
+# telescope 4 dEa Y
+# Map: MUX [ene1, ene2, pos1, pos2, timing]
+#
+#--------------------------------------------------------------------
+41,  0, 12  1  6   4   20, 12  1  6   4   21, 12  1  6   4   22, 12  1  6   4   23, 12  2  7  0   71 

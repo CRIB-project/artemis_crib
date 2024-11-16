@@ -1,0 +1,119 @@
+Processor:
+  - name: proc_mwdca_cath_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name:     prm_mwdca_cath_ch2ns
+      Type:     art::TAffineConverter
+      FileName: prm/mwdc/mwdca/ch2ns_cath.dat
+      OutputTransparency: 1
+
+  - name: proc_catha_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:              8
+      TimingTypeID:       0
+      OutputCollection:   catha_raw
+      OutputTransparency: 0
+
+  - name: proc_catha_cal
+    type: art::TTimingChargeCalibrationProcessor
+    parameter:
+      InputCollection:      catha_raw
+      OutputCollection:     catha_cal
+      TimingConverterArray: prm_mwdca_cath_ch2ns
+      OutputTransparency:   0
+
+  - name: proc_mwdcb_cath_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name:     prm_mwdcb_cath_ch2ns
+      Type:     art::TAffineConverter
+      FileName: prm/mwdc/mwdcb/ch2ns_cath.dat
+      OutputTransparency: 1
+
+  - name: proc_cathb_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:              9
+      TimingTypeID:       0
+      OutputCollection:   cathb_raw
+      OutputTransparency: 0
+
+  - name: proc_cathb_cal
+    type: art::TTimingChargeCalibrationProcessor
+    parameter:
+      InputCollection:      cathb_raw
+      OutputCollection:     cathb_cal
+      TimingConverterArray: prm_mwdcb_cath_ch2ns
+      OutputTransparency:   0
+
+  - name: proc_mwdcb_trigger_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name:     prm_mwdcb_trigger_ch2ns
+      Type:     art::TAffineConverter
+      FileName: prm/mwdc/mwdcb/ch2ns_cath.dat
+      OutputTransparency: 1
+
+  - name: proc_trig_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:              200
+      TimingTypeID:       0
+      OutputCollection:   trig_raw
+      OutputTransparency: 0
+
+  - name: proc_trig_cal
+    type: art::TTimingChargeCalibrationProcessor
+    parameter:
+      InputCollection:      trig_raw
+      OutputCollection:     trig_cal
+      TimingConverterArray: prm_mwdcb_trigger_ch2ns
+      OutputTransparency:   0
+
+
+###### MWDCa
+  - include:
+      name: time2dt.inc.yaml
+      replace:
+        CATID: 6
+        NAME: mwdca
+        TREDET: catha_cal
+        TREFID: 0
+
+  - include:
+      name:  xxyy.inc.yaml
+      replace:
+        NAME: mwdca
+
+  - include:
+      name:  xxyy_calib.inc.yaml
+      replace:
+        NAME: mwdca
+        TGATE: [-94.,-10.]
+        QGATE: [0.,1000]
+
+##### MWDCb
+  - include:
+      name: time2dt.inc.yaml
+      replace:
+        CATID: 7
+        NAME: mwdcb
+        TREDET: cathb_cal
+        TREFID: 0
+
+  - include:
+      name:  xxyy.inc.yaml
+      replace:
+        NAME: mwdcb
+
+  - include:
+      name:  xxyy_calib.inc.yaml
+      replace:
+        NAME: mwdcb
+        TGATE: [-90.,-30.]
+        QGATE: [0.,1000]
+
+
+#########
+  - include: mwdctrack.yaml

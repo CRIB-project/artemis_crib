@@ -1,0 +1,35 @@
+input_ions:
+  # [Z, A, Q, color], color: 0: red, 1: blue, 2: black
+  - [7, 15, 6, 0] # 15N7
+  - [6, 15, 6, 1] # 15C6
+  - [6, 15, 5, 1] # 15C6
+  - [7, 14, 6, 2] # 14N7
+  - [6, 14, 6, 2] # 14C6
+  - [6, 14, 5, 2] # 14C6
+  - [6, 13, 6, 2] # 13C6
+  - [6, 13, 5, 2] # 13C6
+  - [2, 4, 2, 2] # 4He2
+
+# BLD parameters
+f1_parameters:
+  brho: 0.898159 # Tm
+  degrader_material: mylar
+  degrader_thickness: 0.0 # um
+  rf_period: 57.0 # ns
+
+f2_parameters:
+  PPAC_thickness: 10.0 # um, mylar, total
+  SSD_thickness: 1500.0 # um
+  rf_offset: -6.5 # ns
+  rf_range: [0.0, 120.0] # ns
+  energy_range: [0.0, 140.0] # MeV
+
+f3_parameters:
+  a_thickness: 15.0 # um, mylar, PPACa/MWDCa total
+  b_thickness: 15.0 # um, mylar, PPACb/MWDCb total
+  distance: 290.5 # mm, between two tracking detectors
+  trigger: 0 # PPACa/MWDCa: 0, PPACb/MWDCb: 1
+  rf_offset: -12.0 # ns
+  tof_offset: -2.7 # ns
+  rf_range: [0.0, 120.0] # ns
+  tof_range: [0.0, 8.0] # ns

@@ -1,0 +1,39 @@
+anchor: 
+  - &E1 ["@mux@_raw.fE1",300,0.,6000.]
+  - &E2 ["@mux@_raw.fE2",300,0.,6000.]
+  - &P1 ["@mux@_raw.fP1",2000,0.,4500.]
+  - &P2 ["@mux@_raw.fP2",2000,0.,4500.]
+  - &P1R ["@mux@_raw.fP1",200,1000.,4500.]
+  - &P2R ["@mux@_raw.fP2",200,1000.,4500.]
+  - &Timing ["@mux@_raw.fTiming",1000,0.,2000.]
+alias:
+#  E1cut: tel_E_raw.fID == 0;
+group:
+  - name: @mux@_raw
+    title: @mux@_raw
+    contents:
+
+      - name: E1
+        title: @mux@_raw E1
+        x: *E1
+      - name: E2
+        title: @mux@_raw E2
+        x: *E2
+      - name: P1
+        title: @mux@_raw P1
+        x: *P1
+      - name: P2
+        title: @mux@_raw P2
+        x: *P2 
+      - name: Timing
+        title: @mux@_raw Timing
+        x: *Timing
+      - name: E1_P1
+        title: @mux@_raw E1 vs P1
+        x: *P1R
+        y: *E1
+      - name: E2_P2
+        title: @mux@_raw E2 vs P2
+        x: *P2R
+        y: *E2
+

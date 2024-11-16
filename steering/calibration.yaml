@@ -1,0 +1,30 @@
+Anchor:
+  - &input ridf/@NAME@@NUM@.ridf
+  - &output output/@NAME@/@NUM@/calibration@NAME@@NUM@.root
+# - &histout output/@NAME@/@NUM@/calibration@NAME@@NUM@.hist.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      #MaxEventNum: 10000
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+  #  - include: ppac/dlppac.yaml
+  - include: ssd/f3ssd_raw.yaml
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

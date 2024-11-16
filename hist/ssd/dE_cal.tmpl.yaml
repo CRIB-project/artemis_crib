@@ -1,0 +1,43 @@
+anchor: 
+  - &e_cal ["@dssd@_cal.fCharge",2000,0.,4000.]
+  - &t_cal ["@dssd@_cal.fTiming",2000,0.,4000.]
+  - &id ["@dssd@_cal.fID",16,-0.5,15.5]
+alias:
+  ch1: @dssd@_cal.fID == 0;
+  ch2: @dssd@_cal.fID == 1;
+  ch3: @dssd@_cal.fID == 2;
+  ch4: @dssd@_cal.fID == 3;
+  ch5: @dssd@_cal.fID == 4;
+  ch6: @dssd@_cal.fID == 5;
+  ch7: @dssd@_cal.fID == 6;
+  ch8: @dssd@_cal.fID == 7;
+  ch9: @dssd@_cal.fID == 8;
+  ch10: @dssd@_cal.fID == 9;
+  ch11: @dssd@_cal.fID == 10;
+  ch12: @dssd@_cal.fID == 11;
+  ch13: @dssd@_cal.fID == 12;
+  ch14: @dssd@_cal.fID == 13;
+  ch15: @dssd@_cal.fID == 14;
+  ch16: @dssd@_cal.fID == 15;
+group:
+  - name: @dssd@_cal
+    title: @dssd@_cal
+    contents:
+
+      - name: ch1 energy
+        title: @dssd@_cal ch1 E
+        x: *e_cal
+        cut: ch1
+      - name: ch1 timing
+        title: @dssd@_cal ch1 T
+        x: *t_cal
+        cut: ch1
+
+      - name: ID_energy
+        title: @dssd@_cal energy vs ID
+        x: *id
+        x: *e_cal
+      - name: ID_timing
+        title: @dssd@_cal timing vs ID
+        x: *id
+        x: *t_cal
