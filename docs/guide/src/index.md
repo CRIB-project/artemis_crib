@@ -1,3 +1,3 @@
 # HOME
 
-[for developers](./reference/index.html)
+[for developers](./reference/html/index.html)
