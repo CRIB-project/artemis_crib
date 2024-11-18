@@ -9,6 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 build_mdbook() {
   echo "Building mdBook..."
   cd "$SCRIPT_DIR"/guide
+  rm -rf book
   mdbook build
   cd "$SCRIPT_DIR"
 }
@@ -16,6 +17,7 @@ build_mdbook() {
 build_doxygen() {
   echo "Generating Doxygen docs..."
   cd "$SCRIPT_DIR"/reference
+  rm -rf html
   doxygen Doxyfile
   cd "$SCRIPT_DIR"
 }
@@ -47,7 +49,7 @@ main() {
 }
 
 say() {
-  printf "\33[1build docs\33[0m: %s\n" "$1"
+  printf "\33[1mbuild docs\33[0m: %s\n" "$1"
 }
 
 err() {

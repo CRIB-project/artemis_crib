@@ -42,7 +42,7 @@ DOXYFILE_ENCODING = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME = "artemis_crib"
+PROJECT_NAME = ARTEMIS-CRIB
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -163,7 +163,7 @@ ABBREVIATE_BRIEF = "The $name class" \
 # description.
 # The default value is: NO.
 
-ALWAYS_DETAILED_SEC = NO
+ALWAYS_DETAILED_SEC = YES
 
 # If the INLINE_INHERITED_MEMB tag is set to YES, Doxygen will show all
 # inherited members of a class in the documentation of that class as if those
@@ -215,7 +215,7 @@ SHORT_NAMES = NO
 # description.)
 # The default value is: NO.
 
-JAVADOC_AUTOBRIEF = NO
+JAVADOC_AUTOBRIEF = YES
 
 # If the JAVADOC_BANNER tag is set to YES then Doxygen will interpret a line
 # such as
@@ -233,7 +233,7 @@ JAVADOC_BANNER = NO
 # requiring an explicit \brief command for a brief description.)
 # The default value is: NO.
 
-QT_AUTOBRIEF = NO
+QT_AUTOBRIEF = YES
 
 # The MULTILINE_CPP_IS_BRIEF tag can be set to YES to make Doxygen treat a
 # multi-line C++ special comment block (i.e. a block of //! or /// comments) as
@@ -272,7 +272,7 @@ SEPARATE_MEMBER_PAGES = NO
 # uses this value to replace tabs by spaces in code fragments.
 # Minimum value: 1, maximum value: 16, default value: 4.
 
-TAB_SIZE = 4
+TAB_SIZE = 3
 
 # This tag can be used to specify a number of aliases that act as commands in
 # the documentation. An alias has the form:
@@ -348,7 +348,11 @@ OPTIMIZE_OUTPUT_SLICE = NO
 #
 # Note see also the list of default file extension mappings.
 
-EXTENSION_MAPPING =
+EXTENSION_MAPPING = h=C++ \
+  icc=C++ \
+  pyzdoc=C++ \
+  cu=C++ \
+  cuh=C++
 
 # If the MARKDOWN_SUPPORT tag is enabled then Doxygen pre-processes all comments
 # according to the Markdown format, which allows for more readable
@@ -367,7 +371,7 @@ MARKDOWN_SUPPORT = YES
 # Minimum value: 0, maximum value: 99, default value: 6.
 # This tag requires that the tag MARKDOWN_SUPPORT is set to YES.
 
-TOC_INCLUDE_HEADINGS = 6
+TOC_INCLUDE_HEADINGS = 3
 
 # The MARKDOWN_ID_STYLE tag can be used to specify the algorithm used to
 # generate identifiers for the Markdown headings. Note: Every identifier is
@@ -396,7 +400,7 @@ AUTOLINK_SUPPORT = YES
 # collaboration diagrams that involve STL classes more complete and accurate.
 # The default value is: NO.
 
-BUILTIN_STL_SUPPORT = NO
+BUILTIN_STL_SUPPORT = YES
 
 # If you use Microsoft's C++/CLI language, you should set this option to YES to
 # enable parsing support.
@@ -489,7 +493,7 @@ TYPEDEF_HIDES_STRUCT = NO
 # the optimal cache size from a speed point of view.
 # Minimum value: 0, maximum value: 9, default value: 0.
 
-LOOKUP_CACHE_SIZE = 0
+LOOKUP_CACHE_SIZE = 4
 
 # The NUM_PROC_THREADS specifies the number of threads Doxygen is allowed to use
 # during processing. When set to 0 Doxygen will based this on the number of
@@ -510,7 +514,7 @@ NUM_PROC_THREADS = 1
 # Possible values are: YES, NO, DATETIME and DATE.
 # The default value is: NO.
 
-TIMESTAMP = NO
+TIMESTAMP = YES
 
 #---------------------------------------------------------------------------
 # Build related configuration options
@@ -524,13 +528,13 @@ TIMESTAMP = NO
 # normally produced when WARNINGS is set to YES.
 # The default value is: NO.
 
-EXTRACT_ALL = NO
+EXTRACT_ALL = YES
 
 # If the EXTRACT_PRIVATE tag is set to YES, all private members of a class will
 # be included in the documentation.
 # The default value is: NO.
 
-EXTRACT_PRIVATE = NO
+EXTRACT_PRIVATE = YES
 
 # If the EXTRACT_PRIV_VIRTUAL tag is set to YES, documented private virtual
 # methods of a class will be included in the documentation.
@@ -548,7 +552,7 @@ EXTRACT_PACKAGE = NO
 # included in the documentation.
 # The default value is: NO.
 
-EXTRACT_STATIC = NO
+EXTRACT_STATIC = YES
 
 # If the EXTRACT_LOCAL_CLASSES tag is set to YES, classes (and structs) defined
 # locally in source files will be included in the documentation. If set to NO,
@@ -611,7 +615,7 @@ HIDE_FRIEND_COMPOUNDS = NO
 # blocks will be appended to the function's detailed documentation block.
 # The default value is: NO.
 
-HIDE_IN_BODY_DOCS = NO
+HIDE_IN_BODY_DOCS = YES
 
 # The INTERNAL_DOCS tag determines if documentation that is typed after a
 # \internal command is included. If the tag is set to NO then the documentation
@@ -635,7 +639,7 @@ INTERNAL_DOCS = NO
 # Possible values are: SYSTEM, NO and YES.
 # The default value is: SYSTEM.
 
-CASE_SENSE_NAMES = SYSTEM
+CASE_SENSE_NAMES = YES
 
 # If the HIDE_SCOPE_NAMES tag is set to NO then Doxygen will show members with
 # their full class and namespace scopes in the documentation. If set to YES, the
@@ -649,7 +653,7 @@ HIDE_SCOPE_NAMES = NO
 # YES the compound reference will be hidden.
 # The default value is: NO.
 
-HIDE_COMPOUND_REFERENCE= NO
+HIDE_COMPOUND_REFERENCE = NO
 
 # If the SHOW_HEADERFILE tag is set to YES then the documentation for a class
 # will show which file needs to be included to use the class.
@@ -695,7 +699,7 @@ SORT_MEMBER_DOCS = YES
 # this will also influence the order of the classes in the class list.
 # The default value is: NO.
 
-SORT_BRIEF_DOCS = NO
+SORT_BRIEF_DOCS = YES
 
 # If the SORT_MEMBERS_CTORS_1ST tag is set to YES then Doxygen will sort the
 # (brief and detailed) documentation of class members so that constructors and
@@ -707,7 +711,7 @@ SORT_BRIEF_DOCS = NO
 # detailed member documentation.
 # The default value is: NO.
 
-SORT_MEMBERS_CTORS_1ST = NO
+SORT_MEMBERS_CTORS_1ST = YES
 
 # If the SORT_GROUP_NAMES tag is set to YES then Doxygen will sort the hierarchy
 # of group names into alphabetical order. If set to NO the group names will
@@ -740,7 +744,7 @@ STRICT_PROTO_MATCHING = NO
 # list. This list is created by putting \todo commands in the documentation.
 # The default value is: YES.
 
-GENERATE_TODOLIST = YES
+GENERATE_TODOLIST = NO
 
 # The GENERATE_TESTLIST tag can be used to enable (YES) or disable (NO) the test
 # list. This list is created by putting \test commands in the documentation.
@@ -752,14 +756,14 @@ GENERATE_TESTLIST = YES
 # list. This list is created by putting \bug commands in the documentation.
 # The default value is: YES.
 
-GENERATE_BUGLIST = YES
+GENERATE_BUGLIST = NO
 
 # The GENERATE_DEPRECATEDLIST tag can be used to enable (YES) or disable (NO)
 # the deprecated list. This list is created by putting \deprecated commands in
 # the documentation.
 # The default value is: YES.
 
-GENERATE_DEPRECATEDLIST= YES
+GENERATE_DEPRECATEDLIST = YES
 
 # The ENABLED_SECTIONS tag can be used to enable conditional documentation
 # sections, marked by \if <section_label> ... \endif and \cond <section_label>
@@ -1212,14 +1216,14 @@ SOURCE_BROWSER = YES
 # documentation.
 # The default value is: NO.
 
-INLINE_SOURCES = YES
+INLINE_SOURCES = NO
 
 # Setting the STRIP_CODE_COMMENTS tag to YES will instruct Doxygen to hide any
 # special comment blocks from generated source code fragments. Normal C, C++ and
 # Fortran comments will always remain visible.
 # The default value is: YES.
 
-STRIP_CODE_COMMENTS = YES
+STRIP_CODE_COMMENTS = NO
 
 # If the REFERENCED_BY_RELATION tag is set to YES then for each documented
 # entity all documented functions referencing it will be listed.
@@ -1343,7 +1347,7 @@ HTML_FILE_EXTENSION = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER =
+HTML_HEADER = header.html
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank Doxygen will generate a standard
@@ -1406,7 +1410,7 @@ HTML_EXTRA_FILES =
 # The default value is: AUTO_LIGHT.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_COLORSTYLE = AUTO_LIGHT
+HTML_COLORSTYLE = TOGGLE
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to
@@ -1631,7 +1635,7 @@ SITEMAP_URL =
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-GENERATE_QHP = NO
+GENERATE_QHP = YES
 
 # If the QHG_LOCATION tag is specified, the QCH_FILE tag can be used to specify
 # the file name of the resulting .qch file. The path specified is relative to
@@ -1717,7 +1721,7 @@ ECLIPSE_DOC_ID = org.doxygen.Project
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-DISABLE_INDEX = NO
+DISABLE_INDEX = YES
 
 # The GENERATE_TREEVIEW tag is used to specify whether a tree-like index
 # structure should be generated to display hierarchical information. If the tag
@@ -1734,7 +1738,7 @@ DISABLE_INDEX = NO
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-GENERATE_TREEVIEW = NO
+GENERATE_TREEVIEW = YES
 
 # When both GENERATE_TREEVIEW and DISABLE_INDEX are set to YES, then the
 # FULL_SIDEBAR option determines if the side bar is limited to only the treeview
@@ -1831,7 +1835,7 @@ USE_MATHJAX = NO
 # The default value is: MathJax_2.
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
-MATHJAX_VERSION = MathJax_2
+MATHJAX_VERSION = MathJax_3
 
 # When MathJax is enabled you can set the default output format to be used for
 # the MathJax output. For more details about the output format see MathJax
@@ -1980,7 +1984,7 @@ EXTRA_SEARCH_MAPPINGS =
 # If the GENERATE_LATEX tag is set to YES, Doxygen will generate LaTeX output.
 # The default value is: YES.
 
-GENERATE_LATEX = YES
+GENERATE_LATEX = NO
 
 # The LATEX_OUTPUT tag is used to specify where the LaTeX docs will be put. If a
 # relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
@@ -2000,7 +2004,7 @@ LATEX_OUTPUT = latex
 # the output language.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_CMD_NAME =
+LATEX_CMD_NAME = latex
 
 # The MAKEINDEX_CMD_NAME tag can be used to specify the command name to generate
 # index for LaTeX.
@@ -2409,7 +2413,7 @@ ENABLE_PREPROCESSING = YES
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-MACRO_EXPANSION = NO
+MACRO_EXPANSION = YES
 
 # If the EXPAND_ONLY_PREDEF and MACRO_EXPANSION tags are both set to YES then
 # the macro expansion is limited to the macros specified with the PREDEFINED and
@@ -2469,7 +2473,7 @@ EXPAND_AS_DEFINED =
 # The default value is: YES.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-SKIP_FUNCTION_MACROS = YES
+SKIP_FUNCTION_MACROS = NO
 
 #---------------------------------------------------------------------------
 # Configuration options related to external references
@@ -2525,7 +2529,7 @@ EXTERNAL_PAGES = YES
 # and usage relations if the target is undocumented or is not a class.
 # The default value is: YES.
 
-HIDE_UNDOC_RELATIONS = YES
+HIDE_UNDOC_RELATIONS = NO
 
 # If you set the HAVE_DOT tag to YES then Doxygen will assume the dot tool is
 # available from the path. This tool is part of Graphviz (see:
@@ -2534,7 +2538,7 @@ HIDE_UNDOC_RELATIONS = YES
 # set to NO
 # The default value is: NO.
 
-HAVE_DOT = NO
+HAVE_DOT = YES
 
 # The DOT_NUM_THREADS specifies the number of dot invocations Doxygen is allowed
 # to run in parallel. When set to 0 Doxygen will base this on the number of
@@ -2620,7 +2624,7 @@ COLLABORATION_GRAPH = YES
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-GROUP_GRAPHS = YES
+GROUP_GRAPHS = NO
 
 # If the UML_LOOK tag is set to YES, Doxygen will generate inheritance and
 # collaboration diagrams in a style similar to the OMG's Unified Modeling
@@ -2759,7 +2763,7 @@ DIR_GRAPH_MAX_DEPTH = 1
 # The default value is: png.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_IMAGE_FORMAT = png
+DOT_IMAGE_FORMAT = svg
 
 # If DOT_IMAGE_FORMAT is set to svg, then this option can be set to YES to
 # enable generation of interactive SVG images that allow zooming and panning.
@@ -2771,7 +2775,7 @@ DOT_IMAGE_FORMAT = png
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-INTERACTIVE_SVG = NO
+INTERACTIVE_SVG = YES
 
 # The DOT_PATH tag can be used to specify the path where the dot tool can be
 # found. If left blank, it is assumed the dot tool can be found in the path.
@@ -2827,7 +2831,7 @@ PLANTUML_INCLUDE_PATH =
 # Minimum value: 0, maximum value: 10000, default value: 50.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_GRAPH_MAX_NODES = 50
+DOT_GRAPH_MAX_NODES = 200
 
 # The MAX_DOT_GRAPH_DEPTH tag can be used to set the maximum depth of the graphs
 # generated by dot. A depth value of 3 means that only nodes reachable from the
@@ -2848,7 +2852,7 @@ MAX_DOT_GRAPH_DEPTH = 0
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_MULTI_TARGETS = NO
+DOT_MULTI_TARGETS = YES
 
 # If the GENERATE_LEGEND tag is set to YES Doxygen will generate a legend page
 # explaining the meaning of the various boxes and arrows in the dot generated
