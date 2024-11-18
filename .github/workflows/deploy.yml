@@ -39,7 +39,7 @@ jobs:
       - name: Set STRIP_FROM_PATH dynamically
         working-directory: ./docs/reference
         run: |
-          echo "STRIP_FROM_PATH = $GITHUB_WORKSPACE" >> Doxyfile"
+          echo "STRIP_FROM_PATH = $GITHUB_WORKSPACE" >> Doxyfile
           tail -n 1 Doxyfile
       - name: Generate Doxygen documentation
         working-directory: ./docs/reference
