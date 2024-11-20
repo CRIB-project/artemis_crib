@@ -4,3 +4,8 @@ language = "en"
 multilingual = false
 src = "src"
 title = "Manual for CRIB artemis"
+
+[output.html]
+mathjax-support = true
+git-repository-url = "https://github.com/CRIB-project/artemis_crib"
+git-repository-icon = "fa-github"
