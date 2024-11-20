@@ -10,7 +10,6 @@
 test
 artemislogon.C
 thisartemis-crib.sh
-*.png
 output
 ridf
 rootfile
