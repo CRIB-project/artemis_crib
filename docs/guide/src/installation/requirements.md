@@ -41,7 +41,7 @@ Instructions for setting up the Python environment are available in the [Python 
 
 ## CRIB analysis machine specifications
 
-The functionality of "artemis_crib" has been confirmed in the following environment:
+The functionality of **artemis_crib** has been confirmed in the following environment:
 
 - Ubuntu 22.04.4 (LTS)
 - gcc 11.4.0
