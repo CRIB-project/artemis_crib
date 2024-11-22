@@ -4,33 +4,49 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # To push a branch
+      pages: write # To push to a GitHub Pages site
+      id-token: write # To update the deployment status
 
     steps:
       # checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      # install Rust
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        with:
+          fetch-depth: 0
 
       # install and build mdBook
-      - name: Install mdBook
-        run: cargo install mdbook
-      - name: Build mdBook
+      - name: Install latest mdbook
+        run: |
+          tag=$(curl 'https://api.github.com/repos/rust-lang/mdbook/releases/latest' | jq -r '.tag_name')
+          url="https://github.com/rust-lang/mdbook/releases/download/${tag}/mdbook-${tag}-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir mdbook
+          curl -sSL $url | tar -xz --directory=./mdbook
+          echo `pwd`/mdbook >> $GITHUB_PATH
+      - name: Test mdBook
         working-directory: ./docs/guide
-        run: mdbook build
+        run: |
+          mdbook test
+      - name: Build Book
+        working-directory: ./docs/guide
+        run: |
+          mdbook build
 
       # install and build Doxygen
       - name: Install Doxygen 1.12.0
         run: |
+          mkdir doxygen
           curl -LO https://www.doxygen.nl/files/doxygen-1.12.0.linux.bin.tar.gz
-          tar -xzf doxygen-1.12.0.linux.bin.tar.gz
-          sudo mv doxygen-1.12.0/bin/doxygen /usr/local/bin/doxygen
+          tar -xzf doxygen-1.12.0.linux.bin.tar.gz --directory=./doxygen
+          echo `pwd`/doxygen >> $GITHUB_PATH
       - name: Check Doxygen version
         run: doxygen --version
 
@@ -58,13 +74,13 @@ jobs:
         run: |
           cp -r docs/scripts public/
 
-      # deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      # deploy using GitHub Actions
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          publish_branch: gh-pages
-          keep_files: true
-          user_name: "GitHub Actions"
-          user_email: "actions@github.com"
+          path: public/
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
