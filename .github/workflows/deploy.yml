@@ -28,9 +28,9 @@ jobs:
         run: |
           tag=$(curl 'https://api.github.com/repos/rust-lang/mdbook/releases/latest' | jq -r '.tag_name')
           url="https://github.com/rust-lang/mdbook/releases/download/${tag}/mdbook-${tag}-x86_64-unknown-linux-gnu.tar.gz"
-          mkdir mdbook
-          curl -sSL $url | tar -xz --directory=./mdbook
-          echo `pwd`/mdbook >> $GITHUB_PATH
+          mkdir bin
+          curl -sSL $url | tar -xz --directory=./bin
+          echo `pwd`/bin >> $GITHUB_PATH
       - name: Test mdBook
         working-directory: ./docs/guide
         run: |
@@ -43,10 +43,9 @@ jobs:
       # install and build Doxygen
       - name: Install Doxygen 1.12.0
         run: |
-          mkdir doxygen
           curl -LO https://www.doxygen.nl/files/doxygen-1.12.0.linux.bin.tar.gz
-          tar -xzf doxygen-1.12.0.linux.bin.tar.gz --directory=./doxygen
-          echo `pwd`/doxygen >> $GITHUB_PATH
+          tar -xzf doxygen-1.12.0.linux.bin.tar.gz
+          mv doxygen-1.12.0/bin/doxygen `pwd`/bin
       - name: Check Doxygen version
         run: doxygen --version
 
