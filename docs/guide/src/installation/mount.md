@@ -30,7 +30,7 @@ sudo apt install nfs-kernel-server
 
 2. Add an entry for the directory to share:
 
-   ```bash
+   ```plaintext
    /path/to/shared/data <client_ip>(ro,sync,subtree_check)
    ```
 
@@ -91,7 +91,7 @@ sudo vi /etc/fstab
 
 Add:
 
-```
+```plaintext
 <file_server_ip>:/path/to/shared/data /mnt/data nfs defaults 0 0
 ```
 
@@ -126,7 +126,7 @@ sudo vi /etc/fstab
 
 Add:
 
-```bash
+```plaintext
 /dev/sdb1 /mnt/external ext4 defaults 0 0
 ```
 
@@ -190,7 +190,7 @@ df -h
 
   Add to `/etc/fstab`:
 
-  ```
+  ```plaintext
   UUID=your-uuid-here /mnt/external ext4 defaults 0 0
   ```
 
@@ -198,14 +198,14 @@ df -h
 
 ### File Server (`/etc/exports`)
 
-```
+```plaintext
 /data/shared 192.168.1.101(rw,sync,no_subtree_check)
 /data/backup 192.168.1.102(ro,async,hide)
 ```
 
 ### Analysis Server (`/etc/fstab`)
 
-```
+```plaintext
 192.168.1.100:/data/shared /mnt/data nfs defaults 0 0
 UUID=abc123-4567-89def /mnt/external ext4 defaults 0 0
 ```
