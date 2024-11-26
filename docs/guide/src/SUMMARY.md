@@ -4,12 +4,12 @@
 
 - [Installation](./installation/chapter.md)
   - [Requirements](./installation/requirements.md)
+  - [Python Setting (option)](./installation/python.md)
   - [ROOT](./installation/ROOT.md)
   - [Artemis](./installation/artemis.md)
   - [Energy Loss Calculator](./installation/energy_loss_calculator.md)
   - [Mount Setting (option)](./installation/mount.md)
   - [Directory Setting](./installation/directory.md)
-  - [Python Setting (option)](./installation/python.md)
 - [General Settings](./setting/chapter.md)
   - [Make New Experiments](./setting/new_experiments.md)
   - [Make New Users](./setting/new_users.md)
