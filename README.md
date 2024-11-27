@@ -1,5 +1,7 @@
 # artemis-crib
 
+[![Build and Deploy Docs](https://github.com/CRIB-project/artemis_crib/actions/workflows/deploy.yml/badge.svg)](https://github.com/CRIB-project/artemis_crib/actions/workflows/deploy.yml)
+
 **NOTE: This is being transferred from [okawak's repository](https://github.com/okawak/artemis_crib).**
 **Still this repository is in development, so please refer the personal repository so far.**
 
@@ -29,12 +31,14 @@ $ curl --proto '=https' --tlsv1.2 -sSf https://okawak.github.io/artemis_crib/bin
 $ vi ${HOME}/.bashrc
 $ vi ${ZDOTDIR:-${HOME}}/.zshrc
 ```
+
 ```bash
 export EXP_NAME="expname" # your experiment (for artlogin command)
 export EXP_NAME_OLD="expname" # this is option (for artlogin2 command)
 export PATH="${HOME}/art_analysis/bin:${PATH}"
 source ${HOME}/art_analysis/bin/art_setting -q
 ```
+
 ```shell
 $ source ${HOME}/.bashrc
 $ source ${ZDOTDIR:-${HOME}}/.zshrc
@@ -43,4 +47,5 @@ $ artnew
 ```
 
 For the detail, please check the github pages.
+
 <p><a href="https://okawak.github.io/artemis_crib/" target="_blank">CRIB artemis manual</a></p>

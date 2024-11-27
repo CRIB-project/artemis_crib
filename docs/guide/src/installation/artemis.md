@@ -7,13 +7,13 @@ While **artemis_crib** is specifically customized for experiments performed at C
 
 1. Navigate to the directory where you want to install **artemis**:
 
-   ```bash
+   ```shell
    cd /path/to/installation
    ```
 
 2. Clone the artemis repository:
 
-   ```bash
+   ```shell
    git clone https://github.com/artemis-dev/artemis.git
    cd artemis
    ```
@@ -21,14 +21,14 @@ While **artemis_crib** is specifically customized for experiments performed at C
 3. Switch to the develop branch:
    The `develop` branch is compatible with ROOT version 6 and is recommended for installation.
 
-   ```bash
+   ```shell
    git switch develop
    ```
 
 4. Create a build directory and configure the build:
    You can customize the build with the following options:
 
-   ```bash
+   ```shell
    mkdir build
    cd build
    cmake -DCMAKE_INSTALL_PREFIX=<installdir> ..
@@ -47,13 +47,13 @@ While **artemis_crib** is specifically customized for experiments performed at C
 
    **Example: Customized Configuration Command**
 
-   ```bash
+   ```shell
    cmake -DCMAKE_INSTALL_PREFIX=/path/to/installation -DBUILD_GET=ON -DWITH_GET_DECODER=/path/to/decoder -DBUILD_WITH_REDIS=ON -DBUILD_WITH_ZMQ=ON ..
    ```
 
 5. Compile and install artemis:
 
-   ```bash
+   ```shell
    cmake --build . --target install -- -j4
    ```
 
@@ -62,7 +62,7 @@ While **artemis_crib** is specifically customized for experiments performed at C
 6. Set up the artemis environment:
    After installation, a script named `thisartemis.sh` will be generated in the installation directory. Run the following command to set up the environment variables:
 
-   ```bash
+   ```shell
    source <installdir>/bin/thisartemis.sh
    ```
 
@@ -70,7 +70,7 @@ While **artemis_crib** is specifically customized for experiments performed at C
 
 To avoid running the `source` command manually every time, add it to your shell configuration file (e.g., `.zshrc` or `.bashrc`):
 
-```bash
+```shell
 echo 'source <installdir>/bin/thisartemis.sh' >> ~/.zshrc
 source ~/.zshrc
 ```

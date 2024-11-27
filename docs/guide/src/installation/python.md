@@ -27,23 +27,22 @@ To address this, we recommend using tools that handle dependencies efficiently a
 ## Using `uv` for a Global Python Environment
 
 This section explains how to use **uv** to set up a global Python environment, required for tools like **pyROOT**.
-`uv` typically creates project-specific virtual environments, but here we focus on configuring a global virtual environment.
+**uv** typically creates project-specific virtual environments, but here we focus on configuring a global virtual environment.
 For other methods, refer to the respective tool's documentation.
 
 ### Step 1: Install `uv`
 
 Install `uv` using the following command:
 
-```bash
+```shell
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 Follow the instructions to complete the installation and configure your environment (e.g., adding `uv` to `PATH`).
-This may include adding `uv` to your `PATH` or sourcing a script to activate the tool.
 
 Verify the installation:
 
-```bash
+```shell
 uv --version
 ```
 
@@ -51,14 +50,14 @@ uv --version
 
 Install a specific Python version:
 
-```bash
+```shell
 uv python install 3.12
 ```
 
 - Replace `3.12` with the desired Python version.
 - To view available versions:
 
-  ```bash
+  ```shell
   uv python list
   ```
 
@@ -74,7 +73,7 @@ For now, use `uv venv` to create a global virtual environment.
 
 To create a global virtual environment:
 
-```bash
+```shell
 cd $HOME
 uv venv
 ```
@@ -85,13 +84,13 @@ This creates a `.venv` directory in `$HOME`.
 
 Edit your shell configuration file to activate the virtual environment at startup:
 
-```bash
+```shell
 vi $HOME/.zshrc
 ```
 
 Add:
 
-```shell
+```bash
 # Activate the global uv virtual environment
 if [[ -d "$HOME/.venv" ]]; then
     source "$HOME/.venv/bin/activate"
@@ -100,13 +99,13 @@ fi
 
 Apply the changes:
 
-```bash
+```shell
 source $HOME/.zshrc
 ```
 
 Verify the Python executable:
 
-```bash
+```shell
 which python
 ```
 
@@ -116,7 +115,7 @@ Ensure the output is `.venv/bin/python`.
 
 Install commonly used Python packages into the virtual environment:
 
-```bash
+```shell
 uv pip install numpy pandas
 ```
 

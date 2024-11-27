@@ -12,19 +12,19 @@ This approach ensures compatibility and access to all required features.
 
 1. Navigate to the directory where you want to install ROOT:
 
-   ```bash
+   ```shell
    cd /path/to/installation
    ```
 
 2. Clone the ROOT repository:
 
-   ```bash
+   ```shell
    git clone https://github.com/root-project/root.git root_src
    ```
 
 3. Checkout the desired version (replace `<branch name>` and `<tag name>` with the specific version):
 
-   ```bash
+   ```shell
    cd root_src
    git switch -c <branch name> <tag name>
    cd ..
@@ -32,7 +32,7 @@ This approach ensures compatibility and access to all required features.
 
 4. Create build and installation directories, and configure the build:
 
-   ```bash
+   ```shell
    mkdir <builddir> <installdir>
    cd <builddir>
    cmake -DCMAKE_INSTALL_PREFIX=<installdir> -Dmathmore=ON ../root_src
@@ -42,7 +42,7 @@ This approach ensures compatibility and access to all required features.
 
 5. Compile and install ROOT:
 
-   ```bash
+   ```shell
    cmake --build . --target install -- -j4
    ```
 
@@ -50,7 +50,7 @@ This approach ensures compatibility and access to all required features.
 
 6. Set up the ROOT environment:
 
-   ```bash
+   ```shell
    source <installdir>/bin/thisroot.sh
    ```
 
@@ -61,7 +61,7 @@ This approach ensures compatibility and access to all required features.
 
 To avoid running the `source` command manually each time, add it to your shell configuration file (e.g., .zshrc or .bashrc):
 
-```bash
+```shell
 echo 'source <installdir>/bin/thisroot.sh' >> ~/.zshrc
 source ~/.zshrc
 ```

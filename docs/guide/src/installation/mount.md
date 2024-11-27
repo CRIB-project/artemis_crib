@@ -15,7 +15,7 @@ Additionally, external storage devices can be mounted for offline analysis to st
 
 ### Step 1: Install NFS Server Utilities
 
-```bash
+```shell
 sudo apt update
 sudo apt install nfs-kernel-server
 ```
@@ -24,7 +24,7 @@ sudo apt install nfs-kernel-server
 
 1. Edit the `/etc/exports` file:
 
-   ```bash
+   ```shell
    sudo vi /etc/exports
    ```
 
@@ -58,7 +58,7 @@ sudo apt install nfs-kernel-server
 
 ### Step 3: Apply Changes and Start NFS Server
 
-```bash
+```shell
 sudo exportfs -a
 sudo systemctl enable nfs-server
 sudo systemctl start nfs-server
@@ -72,20 +72,20 @@ sudo systemctl start nfs-server
 
 #### Step 1: Install NFS Utilities:
 
-```bash
+```shell
 sudo apt update
 sudo apt install nfs-common
 ```
 
 #### Step 2: Create a Mount Point:
 
-```bash
+```shell
 sudo mkdir -p /mnt/data
 ```
 
 #### Step 3: Configure Persistent Mounting:
 
-```bash
+```shell
 sudo vi /etc/fstab
 ```
 
@@ -97,7 +97,7 @@ Add:
 
 #### Step 4: Apply and Verify:
 
-```bash
+```shell
 sudo mount -a
 df -h
 ```
@@ -106,7 +106,7 @@ df -h
 
 #### Step 1: Identify the Device:
 
-```bash
+```shell
 lsblk
 ```
 
@@ -114,13 +114,13 @@ lsblk
 
 #### Step 2: Create a Mount Point:
 
-```bash
+```shell
 sudo mkdir -p /mnt/external
 ```
 
 #### Step 3: Configure Persistent Mounting:
 
-```bash
+```shell
 sudo vi /etc/fstab
 ```
 
@@ -135,7 +135,7 @@ Add:
 
 #### Step 4: Apply and Verify:
 
-```bash
+```shell
 sudo mount -a
 df -h
 ```
@@ -148,13 +148,13 @@ df -h
 
   - Ensure the NFS service is running on the file server:
 
-  ```bash
+  ```shell
   sudo systemctl status nfs-server
   ```
 
   - Verify the export list:
 
-  ```bash
+  ```shell
   showmount -e
   ```
 
@@ -162,7 +162,7 @@ df -h
 
   - Check the NFS mount status:
 
-  ```bash
+  ```shell
   sudo mount -v /mnt/data
   ```
 
@@ -172,19 +172,19 @@ df -h
 
   - Unmount safety:
 
-  ```bash
+  ```shell
   sudo umount /mnt/external
   ```
 
   - Formatting uninitialized Storage:
 
-  ```bash
+  ```shell
   sudo mkfs.ext4 /dev/sdb1
   ```
 
   - Use UUIDs for reliable mounting to avoid issues with device naming (e.g., `/dev/sdb1`):
 
-  ```bash
+  ```shell
   sudo blkid /dev/sdb1
   ```
 

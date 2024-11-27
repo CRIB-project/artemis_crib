@@ -13,7 +13,7 @@ Since most of the code is based on ROOT, please refer to the official [ROOT depe
 
 The following is an example command to install the packages typically used on an **Ubuntu-based** distribution:
 
-```bash
+```shell
 sudo apt install binutils cmake dpkg-dev g++ gcc libssl-dev git libx11-dev \
     libxext-dev libxft-dev libxpm-dev libtbb-dev libvdt-dev libgif-dev libyaml-cpp-dev \
     htop tmux vim emacs wget curl build-essential
