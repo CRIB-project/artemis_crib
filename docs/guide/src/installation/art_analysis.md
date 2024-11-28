@@ -1,4 +1,4 @@
-# Art_analysis setting
+# Art_analysis
 
 When using **artemis**, it is customary to create a directory named `art_analysis` in your `$HOME` directory to organize and perform all analysis tasks.
 This section explains how to set up the `art_analysis` directory structure and configure the required shell scripts.
