@@ -76,7 +76,7 @@ find_package(TSrim REQUIRED)
 target_link_libraries(${TARGET_NAME} TSrim::Srim)
 ```
 
-### Additional Resources
+## Additional Resources
 
 - [TSrim GitHub Repository](https://github.com/CRIB-project/TSrim)
 - [SRIM on ROOT Slide (Google Slide)](https://docs.google.com/presentation/d/1v2fcSzfREJnktkHS7z6tXroHQbBpR1BSlsRj4ryszQc/edit#slide=id.p)

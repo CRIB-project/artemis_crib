@@ -9,7 +9,7 @@
   - [Artemis](./installation/artemis.md)
   - [Energy Loss Calculator](./installation/energy_loss_calculator.md)
   - [Mount Setting (option)](./installation/mount.md)
-  - [Directory Setting](./installation/directory.md)
+  - [Art_analysis setting](./installation/art_analysis.md)
 - [General Settings](./setting/chapter.md)
   - [Make New Experiments](./setting/new_experiments.md)
   - [Make New Users](./setting/new_users.md)
