@@ -1,82 +1,122 @@
 #!/bin/sh
-# reference: https://sh.rustup.rs
 
-set -u
+# Exit immediately if a command exits with a non-zero status,
+# and treat unset variables as an error.
+set -eu
 
-VERSION="0.1.1"
-DATE="2024-01-13"
-URL_BASE="https://okawak.github.io/artemis_crib"
+# Enable 'pipefail' option if the shell supports it.
+if (set -o | grep -q pipefail); then
+  set -o pipefail
+fi
+
+# Script version information
+VERSION="0.2.0"
+DATE="2024-11-30"
+
+# Base URL for downloading scripts
+URL_BASE="https://crib-project.github.io/artemis_crib"
+
+# Directory where the analysis tools will be installed
 ART_ANALYSIS_DIR="${HOME}/art_analysis"
 
 main() {
-  need_cmd wget
-  need_cmd chmod
-  need_cmd mkdir
+  # Check for required commands: wget or curl, chmod, mkdir
+  if ! need_cmd "wget" && ! need_cmd "curl"; then
+    err "Neither 'wget' nor 'curl' is available."
+  fi
+  need_cmd "chmod"
+  need_cmd "mkdir"
 
-  if [ ! -d "${ART_ANALYSIS_DIR}" ]; then
-    ensure mkdir -p "${ART_ANALYSIS_DIR}"
-    say "NEW ${ART_ANALYSIS_DIR}"
-  else
+  # Check if the analysis directory already exists
+  if [ -d "${ART_ANALYSIS_DIR}" ]; then
     err "Setup is already completed."
+  else
+    # Create the art_analysis directory
+    ensure mkdir -p "${ART_ANALYSIS_DIR}"
+    say "Created directory: ${ART_ANALYSIS_DIR}"
   fi
 
+  # Create subdirectories for binaries and configuration files
   ensure mkdir -p "${ART_ANALYSIS_DIR}/bin"
   ensure mkdir -p "${ART_ANALYSIS_DIR}/.conf"
 
-  ensure wget -P "${ART_ANALYSIS_DIR}/bin" -nv "${URL_BASE}/bin/art_setting"
-  ensure chmod u+x "${ART_ANALYSIS_DIR}/bin/art_setting"
+  # Download scripts and set executable permissions
+  download_and_chmod "scripts/art_setting" "bin/art_setting"
+  download_and_chmod "scripts/artnew" "bin/artnew"
+  download_and_chmod "scripts/artup" "bin/artup"
+  download_and_chmod "scripts/artlogin.sh" ".conf/artlogin.sh"
 
-  ensure wget -P "${ART_ANALYSIS_DIR}/bin" -nv "${URL_BASE}/bin/artnew"
-  ensure chmod u+x "${ART_ANALYSIS_DIR}/bin/artnew"
-
-  ensure wget -P "${ART_ANALYSIS_DIR}/bin" -nv "${URL_BASE}/bin/art_check"
-  ensure chmod u+x "${ART_ANALYSIS_DIR}/bin/art_check"
-
-  ensure wget -P "${ART_ANALYSIS_DIR}/.conf" -nv "${URL_BASE}/bin/artlogin.sh"
-  ensure chmod u+x "${ART_ANALYSIS_DIR}/.conf/artlogin.sh"
-
+  # Display usage information
   usage
 }
 
 usage() {
-  printf "\n"
   cat <<EOF
+
 art_init: version ${VERSION} (${DATE})
 The setup script for CRIB's art_analysis
 
 USAGE:
-    add these sentence to the .zshrc or .bashrc
-    > export EXP_NAME="expname" # your experiment
-    > export EXP_NAME_OLD="expname" # this is option
-    > export PATH="\${HOME}/art_analysis/bin:\${PATH}"
-    > source \${HOME}/art_analysis/bin/art_setting -q
+    Add the following lines to your .zshrc or .bashrc:
+
+    export EXP_NAME="expname"     # your experiment name
+    export EXP_NAME_OLD="expname" # this is optional
+    export PATH="\${HOME}/art_analysis/bin:\${PATH}"
+    source \${HOME}/art_analysis/bin/art_setting -q
+
 EOF
 }
 
+# Function to print messages in bold
 say() {
-  printf "\33[1mart_init\33[0m: %s\n" "$1"
+  printf "\033[1mart_init\033[0m: %s\n" "$1"
 }
 
+# Function to print error messages and exit
 err() {
   say "$1" >&2
   exit 1
 }
 
+# Function to check if a command exists
 need_cmd() {
-  if ! check_cmd "$1"; then
-    err "need '$1' (command not found)"
+  if ! command -v "$1" >/dev/null 2>&1; then
+    say "Command not found: $1"
+    return 1
   fi
 }
 
-check_cmd() {
-  command -v "$1" >/dev/null 2>&1
-}
-
-# Run a command that should never fail. If the command fails execution
-# will immediately terminate with an error showing the failing
-# command.
+# Function to ensure a command runs successfully
 ensure() {
-  if ! "$@"; then err "command failed: $*"; fi
+  if ! "$@"; then
+    err "command failed: $*"
+  fi
 }
 
-main "$@" || exit 1
+# Function to download a file and set executable permissions
+download_and_chmod() {
+  local relative_url="$1"  # URL path relative to URL_BASE
+  local relative_path="$2" # Destination path relative to ART_ANALYSIS_DIR
+  local url="${URL_BASE}/${relative_url}"
+  local dest="${ART_ANALYSIS_DIR}/${relative_path}"
+
+  # Check if the file already exists
+  if [ -f "${dest}" ]; then
+    say "File already exists: ${dest}"
+  else
+    # Use wget or curl to download the file
+    if command -v wget >/dev/null 2>&1; then
+      ensure wget -q -O "${dest}" "${url}"
+    elif command -v curl >/dev/null 2>&1; then
+      ensure curl -fsSL -o "${dest}" "${url}"
+    else
+      err "Neither wget nor curl is available."
+    fi
+    # Set executable permissions on the downloaded file
+    ensure chmod u+x "${dest}"
+    say "Downloaded and set executable: ${dest}"
+  fi
+}
+
+# Execute the main function
+main "$@"

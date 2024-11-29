@@ -1,1 +1,1 @@
-# Setting
+# General Settings

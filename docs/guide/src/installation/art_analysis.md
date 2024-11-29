@@ -8,7 +8,7 @@ This section explains how to set up the `art_analysis` directory structure and c
 Run the following command to create the directory structure and download the necessary shell scripts:
 
 ```bash
-curl -LsSf https://crib-project.github.io/artemis_crib/scripts/init.sh | sh
+curl -fsSL --proto '=https' --tlsv1.2 https://crib-project.github.io/artemis_crib/scripts/init.sh | sh
 ```
 
 This script will:
