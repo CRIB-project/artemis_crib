@@ -1,77 +1,131 @@
-#!/bin/bash
+#!/bin/sh
 
-set -u
+# Exit immediately if a command exits with a non-zero status,
+# and treat unset variables as an error.
+set -eu
 
-URL_BASE="https://okawak.github.io/artemis_crib"
+# Enable 'pipefail' option if the shell supports it.
+if (set -o | grep -q pipefail); then
+  set -o pipefail
+fi
+
+# Base URL for downloading scripts
+URL_BASE="https://crib-project.github.io/artemis_crib"
+
+# Directory where the analysis tools are installed
 ART_ANALYSIS_DIR="${HOME}/art_analysis"
 
 main() {
-  need_cmd wget
-  need_cmd rm
-  need_cmd mv
-  need_cmd diff
+  # Check for required commands: wget or curl, rm, mv, diff
+  if ! need_cmd "wget" && ! need_cmd "curl"; then
+    err "Neither 'wget' nor 'curl' is available."
+  fi
+  need_cmd "rm"
+  need_cmd "mv"
+  need_cmd "diff"
+  need_cmd "mktemp"
 
-  ensure mkdir -p "${ART_ANALYSIS_DIR}/.tmp"
+  # Create a temporary directory for downloads
+  TMP_DIR="$(mktemp -d)"
+  ensure mkdir -p "${TMP_DIR}"
 
-  ensure wget -P "${ART_ANALYSIS_DIR}/.tmp" -q "${URL_BASE}/bin/art_setting"
-  ensure wget -P "${ART_ANALYSIS_DIR}/.tmp" -q "${URL_BASE}/bin/artnew"
-  ensure wget -P "${ART_ANALYSIS_DIR}/.tmp" -q "${URL_BASE}/bin/artlogin.sh"
+  # Download scripts to the temporary directory
+  download_file "scripts/art_setting" "${TMP_DIR}/art_setting"
+  download_file "scripts/artnew" "${TMP_DIR}/artnew"
+  download_file "scripts/artlogin.sh" "${TMP_DIR}/artlogin.sh"
 
+  # Check differences and update if necessary
   check_diff "art_setting" "bin"
   check_diff "artnew" "bin"
   check_diff "artlogin.sh" ".conf"
 
-  ensure rm -rf "${ART_ANALYSIS_DIR}/.tmp"
+  # Remove the temporary directory
+  ensure rm -rf "${TMP_DIR}"
 }
 
+# Function to check differences between the downloaded file and the existing file
 check_diff() {
-  _file=${ART_ANALYSIS_DIR}/.tmp/$1.txt
-  diff "${ART_ANALYSIS_DIR}/.tmp/$1" "${ART_ANALYSIS_DIR}/$2/$1" >"${_file}"
-  if [ -s "${_file}" ]; then
+  cf_filename="$1"
+  cf_dest_dir="$2"
+  cf_tmp_file="${TMP_DIR}/${cf_filename}"
+  cf_dest_file="${ART_ANALYSIS_DIR}/${cf_dest_dir}/${cf_filename}"
+
+  # If the destination file does not exist, move the new file
+  if [ ! -f "${cf_dest_file}" ]; then
+    say "${cf_filename}: Not found locally. Installing new file."
+    ensure mv -f "${cf_tmp_file}" "${cf_dest_file}"
+    ensure chmod u+x "${cf_dest_file}"
+    return
+  fi
+
+  # Compare the downloaded file with the existing file
+  if ! diff "${cf_tmp_file}" "${cf_dest_file}" >/dev/null 2>&1; then
     while true; do
-      read -rp "find newer version of \"$1\", update it? (y/n): " _answer
-      case ${_answer} in
-      y)
-        say "$1: get a newer version..."
-        ensure mv -f "${ART_ANALYSIS_DIR}/.tmp/$1" "${ART_ANALYSIS_DIR}/$2/$1"
-        ensure chmod u+x "${ART_ANALYSIS_DIR}/$2/$1"
+      # Prompt the user for updating the file
+      printf "Found a newer version of '%s'. Update it? (y/n): " "${cf_filename}"
+      read -r answer
+      case "${answer}" in
+      y | Y)
+        say "${cf_filename}: Updating to newer version..."
+        ensure mv -f "${cf_tmp_file}" "${cf_dest_file}"
+        ensure chmod u+x "${cf_dest_file}"
         break
         ;;
-      n)
-        say "cancelled"
+      n | N)
+        say "Update cancelled for ${cf_filename}."
         break
+        ;;
+      *)
+        say "Please answer 'y' or 'n'."
         ;;
       esac
     done
   else
-    say "$1: Already up-to-date"
+    say "${cf_filename}: Already up-to-date."
   fi
 }
 
+# Function to print messages in bold
 say() {
-  printf "\33[1mart_check\33[0m: %s\n" "$1"
+  printf "\033[1martup\033[0m: %s\n" "$1"
 }
 
+# Function to print error messages and exit
 err() {
   say "$1" >&2
   exit 1
 }
 
+# Function to check if a command exists
 need_cmd() {
-  if ! check_cmd "$1"; then
-    err "need '$1' (command not found)"
+  if ! command -v "$1" >/dev/null 2>&1; then
+    say "Command not found: $1"
+    return 1
   fi
 }
 
-check_cmd() {
-  command -v "$1" >/dev/null 2>&1
-}
-
-# Run a command that should never fail. If the command fails execution
-# will immediately terminate with an error showing the failing
-# command.
+# Function to ensure a command runs successfully
 ensure() {
-  if ! "$@"; then err "command failed: $*"; fi
+  if ! "$@"; then
+    err "Command failed: $*"
+  fi
 }
 
-main "$@" || exit 1
+# Function to download a file using wget or curl
+download_file() {
+  df_relative_url="$1" # URL path relative to URL_BASE
+  df_dest="$2"         # Destination file path
+  df_url="${URL_BASE}/${df_relative_url}"
+
+  # Use wget or curl to download the file
+  if command -v wget >/dev/null 2>&1; then
+    ensure wget -q -O "${df_dest}" "${df_url}"
+  elif command -v curl >/dev/null 2>&1; then
+    ensure curl -fsSL -o "${df_dest}" "${df_url}"
+  else
+    err "Neither 'wget' nor 'curl' is available."
+  fi
+}
+
+# Execute the main function
+main "$@"

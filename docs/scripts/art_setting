@@ -1,93 +1,101 @@
-#!/bin/bash
+#!/bin/sh
 
-a() {
-  if [ ! -e artemislogon.C ]; then
-    printf "\33[1ma\33[0m: not found artemislogin.C\n"
-    return 1
-  fi
+# This script defines functions for interacting with the Artemis environment.
+# It is intended to be sourced in your .bashrc or .zshrc file.
 
-  if [ -z "$SSH_CONNECTION" ]; then
-    artemis -l "$@"
-  elif [ -f .vncdisplay ]; then
-    DISPLAY=:$(cat .vncdisplay) artemis -l "$@"
-  else
-    artemis -l "$@"
-  fi
-}
-
-artlogin() {
-  export ART_EXP_NAME="${EXP_NAME}"
-
-  # shellcheck disable=SC1090
-  if [ -e "${HOME}/art_analysis/.conf/${ART_EXP_NAME}.sh" ]; then
-    source "${HOME}/art_analysis/.conf/${ART_EXP_NAME}.sh"
-  else
-    printf "\33[1martlogin\33[0m: make %s environment by using \"artnew\" command.\n" "${ART_EXP_NAME}"
-    return 1
-  fi
-
-  # shellcheck disable=SC1091
-  source "${HOME}/art_analysis/.conf/artlogin.sh" "$@"
-}
-
-artlogin2() {
-  export ART_EXP_NAME="${EXP_NAME_OLD}"
-
-  # shellcheck disable=SC1090
-  if [ -e "${HOME}/art_analysis/.conf/${ART_EXP_NAME}.sh" ]; then
-    source "${HOME}/art_analysis/.conf/${ART_EXP_NAME}.sh"
-  else
-    printf "\33[1martlogin\33[0m: make %s environment by using \"artnew\" command.\n" "${ART_EXP_NAME}"
-    return 1
-  fi
-
-  # shellcheck disable=SC1091
-  source "${HOME}/art_analysis/.conf/artlogin.sh" "$@"
-}
-
+# Function to display usage information
 art_usage() {
   cat <<EOF
 USAGE:
     1. artlogin
 
-        enter the artemis environment
+        Enter the Artemis environment
         > artlogin
-        this is for default (shared) user
+        This is for the default (shared) user
         > artlogin username
-        make a new user or enter personal environment
+        Create a new user or enter personal environment
 
-        after this command, "acd" alias is available
+        After this command, the 'acd' alias is available
         > acd
-        acd = cd "your artemis work directory"
+        'acd' changes directory to your Artemis work directory
 
     2. a
 
-        start the artemis
-        NOTE: need to execute after artlogin command
+        Start Artemis
+        NOTE: Need to execute after 'artlogin' command
         > artlogin
         > a
 
-        this can be used when you want to use macro files
+        This can be used when you want to use macro files
         > a 'macro/somefile.C("hoge")'
 
     3. art_usage (this)
 
-        show the USAGE
+        Show the USAGE
 EOF
 }
 
-while getopts ":q" OPT; do
-  case $OPT in
-  q)
-    return 0
-    ;;
-  :)
-    break
-    ;;
-  \?)
-    break
-    ;;
-  esac
-done
+# Define functions to interact with Artemis
 
-art_usage
+# Function to start Artemis with proper display settings
+a() {
+  # Check if 'artemislogon.C' exists in the current directory
+  if [ ! -e "artemislogon.C" ]; then
+    printf "\033[1ma\033[0m: 'artemislogon.C' not found\n"
+    return 1
+  fi
+
+  # Determine if the user is connected via SSH and adjust DISPLAY accordingly
+  if [ -z "${SSH_CONNECTION:-}" ]; then
+    # Not connected via SSH
+    artemis -l "$@"
+  elif [ -f ".vncdisplay" ]; then
+    # Connected via SSH and .vncdisplay exists
+    DISPLAY=":$(cat .vncdisplay)" artemis -l "$@"
+  else
+    # Connected via SSH without .vncdisplay
+    artemis -l "$@"
+  fi
+}
+
+# Function to set up the Artemis environment for the default experiment
+artlogin() {
+  export ART_EXP_NAME="${EXP_NAME}"
+
+  # Check if the experiment configuration file exists
+  if [ -e "${HOME}/art_analysis/.conf/${ART_EXP_NAME}.sh" ]; then
+    # Load the experiment configuration
+    . "${HOME}/art_analysis/.conf/${ART_EXP_NAME}.sh"
+  else
+    printf "\033[1martlogin\033[0m: Environment for '%s' not found. Create it using 'artnew' command.\n" "${ART_EXP_NAME}"
+    return 1
+  fi
+
+  # Set the username in an environment variable
+  ARTLOGIN_USERNAME="${1:-}"
+  export ARTLOGIN_USERNAME
+
+  # Source the general artlogin script
+  . "${HOME}/art_analysis/.conf/artlogin.sh"
+}
+
+# Function to set up the Artemis environment for the old experiment
+artlogin2() {
+  export ART_EXP_NAME="${EXP_NAME_OLD}"
+
+  # Check if the experiment configuration file exists
+  if [ -e "${HOME}/art_analysis/.conf/${ART_EXP_NAME}.sh" ]; then
+    # Load the experiment configuration
+    . "${HOME}/art_analysis/.conf/${ART_EXP_NAME}.sh"
+  else
+    printf "\033[1martlogin\033[0m: Environment for '%s' not found. Create it using 'artnew' command.\n" "${ART_EXP_NAME}"
+    return 1
+  fi
+
+  # Set the username in an environment variable
+  ARTLOGIN_USERNAME="${1:-}"
+  export ARTLOGIN_USERNAME
+
+  # Source the general artlogin script
+  . "${HOME}/art_analysis/.conf/artlogin.sh"
+}

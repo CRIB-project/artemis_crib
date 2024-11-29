@@ -1,12 +1,20 @@
-#!/bin/bash
+#!/bin/sh
 
-set -u
+# Exit immediately if a command exits with a non-zero status,
+# and treat unset variables as an error.
+set -eu
 
-# default variables
+# Enable 'pipefail' option if the shell supports it.
+if (set -o | grep -q pipefail); then
+  set -o pipefail
+fi
+
+# Default variables
 ART_ANALYSIS_DIR="${HOME}/art_analysis"
-ART_REPOSITORY="https://github.com/okawak/artemis_crib.git"
+ART_REPOSITORY="git@github.com:CRIB-project/artemis_crib.git"
 
 main() {
+  # Check for required commands
   need_cmd git
   need_cmd echo
   need_cmd mkdir
@@ -17,218 +25,237 @@ main() {
 
   # read experiment name
   readline "Input experimental name: "
-  local default_name="$RETVAL"
-  printf "Input value: %s\n\n" "${default_name}"
+  main_default_name="$RETVAL"
+  printf "Input value: %s\n\n" "${main_default_name}"
 
-  expdir="${ART_ANALYSIS_DIR}/${default_name}"
+  expdir="${ART_ANALYSIS_DIR}/${main_default_name}"
   if [ -d "${expdir}" ]; then
-    err "${expdir} already exist."
+    err "${expdir} already exists."
   elif [ -e "${expdir}" ]; then
-    err "strange file ${expdir} already exist."
+    err "A file named ${expdir} already exists."
   fi
 
-  # default repository setting
+  # Default repository setting
   say "If no input is provided, the default value is used."
   readline "Input base repository path or URL (default: ${ART_REPOSITORY}): "
-  local _art_repo="$RETVAL"
-  if [ -n "${_art_repo}" ]; then
-    ART_REPOSITORY=${_art_repo}
+  main_art_repo="$RETVAL"
+  if [ -n "${main_art_repo}" ]; then
+    ART_REPOSITORY=${main_art_repo}
   fi
   printf "Input value: %s\n\n" "$ART_REPOSITORY"
 
-  # raw data directory
-  rawdata_dir="/data/${default_name}/ridf"
+  # Raw data directory
+  rawdata_dir="/mnt/data/${main_default_name}"
   readline "Input rawdata directory path (default: ${rawdata_dir}): "
-  local _data_dir="$RETVAL"
-  if [ -n "${_data_dir}" ]; then
-    rawdata_dir=${_data_dir}
+  main_data_dir="$RETVAL"
+  if [ -n "${main_data_dir}" ]; then
+    rawdata_dir="${main_data_dir}"
   fi
   printf "Input value: %s\n\n" "$rawdata_dir"
 
-  # output rootfile directory
-  outdata_dir="/data/${default_name}/user"
+  # Output rootfile directory
+  outdata_dir="/Data/artemis_output/${main_default_name}"
   readline "Input output data directory path (default: ${outdata_dir}): "
-  local _root_dir="$RETVAL"
-  if [ -n "${_root_dir}" ]; then
-    outdata_dir=${_root_dir}
+  main_root_dir="$RETVAL"
+  if [ -n "${main_root_dir}" ]; then
+    outdata_dir="${main_root_dir}"
   fi
   printf "Input value: %s\n\n" "$outdata_dir"
 
-  # user git configuration
-  user_repos=${ART_REPOSITORY}
+  # User git configuration
+  # Option selection
+  say "Select an option for repository setup:"
+  say "1. Create a new repository locally."
+  say "2. Clone default branch and create a new branch '${main_default_name}'."
+  say "3. Use the repository as is. (for developers)"
   while true; do
-    read -rp "Based on the repository, do you make your own repository? (y/n): " _input
-    case ${_input} in
-    y)
-      while true; do
-        read -rp "is it local repository (y/n): " _answer
-        case ${_answer} in
-        y)
-          say "making LOCAL repository of ${default_name}"
-
-          art_local_repos_dir="${HOME}/repos/exp"
-          readline "Input the local repository path (default: \$HOME/repos/exp): "
-          local _retval="$RETVAL"
-          if [ -n "${_retval}" ]; then
-            art_local_repos_dir=${_retval}
-          fi
-          printf "Input value: %s\n\n" "$art_local_repos_dir"
-
-          if [ ! -d "${art_local_repos_dir}" ]; then
-            ensure mkdir -p "${art_local_repos_dir}"
-          fi
-
-          seed=${expdir}/.tmp
-
-          ensure mkdir "${expdir}"
-          ensure git clone -b main "${ART_REPOSITORY}" "${seed}" --depth 1
-
-          cd "${seed}" || exit 1
-          ensure rm -rf .git/
-          ensure git init
-          ensure git init --bare "${default_name}.git"
-
-          gitdir=${art_local_repos_dir}/${default_name}.git
-          if [ -d "${gitdir}" ]; then
-            ensure rm -rf "${gitdir}"
-          fi
-          ensure mv -f "${seed}/${default_name}.git" "${gitdir}"
-          ensure git add .
-          ensure git commit -m "Initial commit" 1>/dev/null
-          ensure git push -u "${gitdir}" master
-
-          cd - || exit 1
-          ensure rm -rf "${seed}"
-          user_repos=${gitdir}
-
-          break
-          ;;
-        n)
-          say "making from REMOTE repository for ${default_name}"
-          say "please prepare empty repository at github or gitlab"
-          readline "Input the remote repository SSH/URL (ex git@github.com:okawak/si26a.git): "
-          local art_remote_repos_url="$RETVAL"
-          printf "Input value: %s\n\n" "$art_remote_repos_url"
-
-          seed=$expdir/.tmp
-
-          ensure mkdir "${expdir}"
-          ensure git clone -b main "${ART_REPOSITORY}" "${seed}" --depth 1
-
-          cd "${seed}" || exit 1
-          ensure rm -rf .git/
-          ensure git init
-          ensure git add .
-          ensure git commit -m "Initial commit" 1>/dev/null
-          ensure git branch -M main
-          ensure git remote add origin "${art_remote_repos_url}"
-          ensure git push -u origin main
-
-          cd - || exit 1
-          ensure rm -rf "${seed}"
-          user_repos=${art_remote_repos_url}
-
-          break
-          ;;
-        esac
-      done
-
+    printf "Enter your choice (1/2/3): "
+    read -r main_choice
+    case "${main_choice}" in
+    1)
+      # Option 1: Create a new repository locally
+      setup_new_local_repository
       break
       ;;
-    n)
-      say "use ${ART_REPOSITORY}"
-      ensure mkdir "${expdir}"
-
+    2)
+      # Option 2: Clone and create a new branch
+      setup_new_branch_repository
       break
+      ;;
+    3)
+      # Option 3: Use the repository as is
+      say "Using ${ART_REPOSITORY} as is."
+      ensure mkdir -p "${expdir}"
+      user_repos=${ART_REPOSITORY}
+      user_branch="main"
+      break
+      ;;
+    *)
+      echo "Please enter 1, 2, or 3."
       ;;
     esac
   done
 
-  if [ -f "${ART_ANALYSIS_DIR}/.conf/${default_name}.sh" ]; then
-    rm -f "${ART_ANALYSIS_DIR}/.conf/${default_name}.sh"
+  # Create configuration file
+  if [ -f "${ART_ANALYSIS_DIR}/.conf/${main_default_name}.sh" ]; then
+    rm -f "${ART_ANALYSIS_DIR}/.conf/${main_default_name}.sh"
   fi
 
-  cat <<EOF >>"${ART_ANALYSIS_DIR}/.conf/${default_name}.sh"
-# artemis configuration for ${default_name} experiment
+  cat <<EOF >>"${ART_ANALYSIS_DIR}/.conf/${main_default_name}.sh"
+# Artemis configuration for ${main_default_name} experiment
 export ART_ANALYSIS_DIR=${ART_ANALYSIS_DIR}
 export ART_USER_REPOS=${user_repos}
+export ART_USER_REPOS_BRANCH=${user_branch}
 export ART_DATA_DIR=${rawdata_dir}
 export OUTPUT_PATH=${outdata_dir}
 export ROOT_INCLUDE_PATH=\${ROOT_INCLUDE_PATH}:src
 EOF
 
-  printf "\n\33[1mart_analysis setting for %s is finished!\33[0m\n" "$default_name"
+  printf "\n\033[1mart_analysis setting for %s is finished!\033[0m\n" "${main_default_name}"
 }
 
+# Function to set up a new local repository
+setup_new_local_repository() {
+  say "Creating a new repository in local machine for ${main_default_name}"
+
+  art_local_repos_dir="${HOME}/repos/exp"
+  readline "Input the local repository path (default: ${art_local_repos_dir}): "
+  local_repo_dir="$RETVAL"
+  if [ -n "${local_repo_dir}" ]; then
+    art_local_repos_dir="${local_repo_dir}"
+  fi
+  printf "Input value: %s\n\n" "$art_local_repos_dir"
+
+  if [ ! -d "${art_local_repos_dir}" ]; then
+    ensure mkdir -p "${art_local_repos_dir}"
+  fi
+
+  # Clone the base repository from default branch and reinitialize git
+  ensure mkdir -p "${expdir}"
+  ensure git clone "${ART_REPOSITORY}" "${expdir}/.tmp" --depth 1
+
+  cd "${expdir}/.tmp" || exit 1
+  ensure rm -rf .git/
+  ensure git init
+  ensure git add .
+  ensure git commit -m "Initial commit" >/dev/null
+  ensure git branch -M main
+
+  # Set up a new bare repository
+  gitdir="${art_local_repos_dir}/${main_default_name}.git"
+  if [ -d "${gitdir}" ]; then
+    say "${gitdir} is exist, removing it..."
+    ensure rm -rf "${gitdir}"
+  fi
+  ensure git init --bare "${gitdir}"
+
+  # Add remote and push
+  ensure git remote add origin "${gitdir}"
+  ensure git push -u origin main
+
+  cd - || exit 1
+  ensure rm -rf "${expdir}/.tmp"
+  user_repos="${gitdir}"
+  user_branch="main"
+}
+
+# Function to set up a new branch in the repository
+setup_new_branch_repository() {
+  say "Cloning the repository and creating a new branch '${main_default_name}'"
+
+  ensure mkdir -p "${expdir}"
+  ensure git clone "${ART_REPOSITORY}" "${expdir}/.tmp"
+
+  cd "${expdir}/.tmp" || exit 1
+  # Create a new branch with the experiment name
+  ensure git switch -c "${main_default_name}"
+  # Set up tracking for the new branch
+  ensure git push -u origin "${main_default_name}"
+
+  cd - || exit 1
+  ensure rm -rf "${expdir}/.tmp"
+  user_repos="${ART_REPOSITORY}"
+  user_branch="${main_default_name}"
+}
+
+# Function to check initialization
 check_initialize() {
   while true; do
-    printf "create new artemis work directory? (y/n): "
-    read -r _answer
-    case ${_answer} in
-    y)
+    printf "Create new Artemis work directory? (y/n): "
+    read -r ci_answer
+    case "${ci_answer}" in
+    y | Y)
       break
       ;;
-    n)
-      echo "cancelled."
+    n | N)
+      echo "Cancelled."
       exit 0
+      ;;
+    *)
+      echo "Please answer 'y' or 'n'."
       ;;
     esac
   done
 }
 
+# Function to set up Git configuration
 git_setting() {
-  local _fullname
-  local _email
+  gs_fullname=""
+  gs_email=""
 
   if [ ! -e "${HOME}/.gitconfig" ] && [ ! -e "${HOME}/.config/git/config" ]; then
-    say "making Git global config..."
-    readline "input fullname: "
-    _fullname="$RETVAL"
-    ensure git config --global user.name "$_fullname"
+    say "Setting up Git global config..."
+    readline "Input fullname: "
+    gs_fullname="$RETVAL"
+    ensure git config --global user.name "${gs_fullname}"
 
-    readline "input email address: "
-    _email="$RETVAL"
-    ensure git config --global user.email "$_email"
+    readline "Input email address: "
+    gs_email="$RETVAL"
+    ensure git config --global user.email "${gs_email}"
   fi
 }
 
+# Function to read user input with confirmation
 readline() {
   while true; do
-    read -rp "$1" read_value
-    read -rp "Is it OK? (y/n): " _answer
-    case ${_answer} in
-    y)
+    printf "%s" "$1"
+    read -r rl_value
+    printf "Is it OK? (y/n): "
+    read -r rl_answer
+    case "${rl_answer}" in
+    y | Y)
       break
       ;;
+    *) ;;
     esac
   done
-  RETVAL="$read_value"
+  RETVAL="${rl_value}"
 }
 
+# Function to print messages in bold
 say() {
-  printf "\33[1martnew\33[0m: %s\n" "$1"
+  printf "\033[1martnew\033[0m: %s\n" "$1"
 }
 
+# Function to print error messages and exit
 err() {
   say "$1" >&2
   exit 1
 }
 
+# Function to check if a command exists
 need_cmd() {
-  if ! check_cmd "$1"; then
-    err "need '$1' (command not found)"
+  if ! command -v "$1" >/dev/null 2>&1; then
+    err "Need '$1' (command not found)"
   fi
 }
 
-check_cmd() {
-  command -v "$1" >/dev/null 2>&1
-}
-
-# Run a command that should never fail. If the command fails execution
-# will immediately terminate with an error showing the failing
-# command.
+# Function to ensure a command runs successfully
 ensure() {
-  if ! "$@"; then err "command failed: $*"; fi
+  if ! "$@"; then
+    err "Command failed: $*"
+  fi
 }
 
+# Execute the main function
 main "$@" || exit 1

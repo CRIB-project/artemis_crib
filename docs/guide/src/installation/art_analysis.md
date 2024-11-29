@@ -27,14 +27,14 @@ After running the script, the `art_analysis` directory will be organized as foll
 art_analysis/
 ├── bin/
 │   ├── art_setting
-│   ├── artlogin.sh
 │   ├── artnew
 │   ├── artup
 ├── .conf/  (empty directory)
+│   ├── artlogin.sh
 ```
 
 - `bin/`: Contains shell scripts used for various analysis tasks.
-- `.conf/`: Reserved for configuration files (currently empty).
+- `.conf/`: Reserved for configuration files.
 
 ## Configuring the PATH and Loading `art_setting`
 
@@ -80,9 +80,9 @@ source ~/.zshrc  # or source ~/.bashrc
 The following scripts are included in `art_analysis/bin`:
 
 - `art_setting`: Sets up functions for the analysis environment.
-- `artlogin.sh`: Configures individual analysis environments and automatically loads environment variables.
 - `artnew`: Creates directories and files for new analysis sessions.
 - `artup`: Updates the shell scripts and settings.
+- `artlogin.sh`: Configures individual analysis environments and automatically loads environment variables.
 
 ## Example Shell Configuration (e.g., .zshrc)
 
@@ -112,7 +112,7 @@ if [[ -d "$HOME/art_analysis" ]]; then
     export PATH="$HOME/art_analysis/bin:$PATH"
 
     # Load artemis functions
-    source "$HOME/art_analysis/bin/art_setting" -q
+    source "$HOME/art_analysis/bin/art_setting"
 fi
 ```
 

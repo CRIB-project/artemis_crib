@@ -95,26 +95,26 @@ ensure() {
 
 # Function to download a file and set executable permissions
 download_and_chmod() {
-  local relative_url="$1"  # URL path relative to URL_BASE
-  local relative_path="$2" # Destination path relative to ART_ANALYSIS_DIR
-  local url="${URL_BASE}/${relative_url}"
-  local dest="${ART_ANALYSIS_DIR}/${relative_path}"
+  dc_relative_url="$1"  # URL path relative to URL_BASE
+  dc_relative_path="$2" # Destination path relative to ART_ANALYSIS_DIR
+  dc_url="${URL_BASE}/${dc_relative_url}"
+  dc_dest="${ART_ANALYSIS_DIR}/${dc_relative_path}"
 
   # Check if the file already exists
-  if [ -f "${dest}" ]; then
-    say "File already exists: ${dest}"
+  if [ -f "${dc_dest}" ]; then
+    say "File already exists: ${dc_dest}"
   else
     # Use wget or curl to download the file
     if command -v wget >/dev/null 2>&1; then
-      ensure wget -q -O "${dest}" "${url}"
+      ensure wget -q -O "${dc_dest}" "${dc_url}"
     elif command -v curl >/dev/null 2>&1; then
-      ensure curl -fsSL -o "${dest}" "${url}"
+      ensure curl -fsSL -o "${dc_dest}" "${dc_url}"
     else
       err "Neither wget nor curl is available."
     fi
     # Set executable permissions on the downloaded file
-    ensure chmod u+x "${dest}"
-    say "Downloaded and set executable: ${dest}"
+    ensure chmod u+x "${dc_dest}"
+    say "Downloaded and set executable: ${dc_dest}"
   fi
 }
 
