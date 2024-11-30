@@ -62,7 +62,7 @@ USAGE:
     export EXP_NAME="expname"     # your experiment name
     export EXP_NAME_OLD="expname" # this is optional
     export PATH="\${HOME}/art_analysis/bin:\${PATH}"
-    source \${HOME}/art_analysis/bin/art_setting -q
+    source \${HOME}/art_analysis/bin/art_setting
 
 EOF
 }

@@ -29,7 +29,7 @@ art_analysis/
 │   ├── art_setting
 │   ├── artnew
 │   ├── artup
-├── .conf/  (empty directory)
+├── .conf/
 │   ├── artlogin.sh
 ```
 

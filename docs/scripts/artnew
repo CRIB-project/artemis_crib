@@ -112,6 +112,9 @@ export ROOT_INCLUDE_PATH=\${ROOT_INCLUDE_PATH}:src
 EOF
 
   printf "\n\033[1mart_analysis setting for %s is finished!\033[0m\n" "${main_default_name}"
+  printf "Add the following lines to your .zshrc or .bashrc:\n"
+  printf "  export EXP_NAME='%s'\n\n" "${main_default_name}"
+  printf "Now you can start the artemis using \033[1martlogin\033[0m command!"
 }
 
 # Function to set up a new local repository
