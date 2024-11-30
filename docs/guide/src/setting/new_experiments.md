@@ -72,7 +72,7 @@ For personal environments without SSH key registration, use HTTPS.
 
 Provide the path where your experiment’s binary data (e.g., `.ridf` files) is stored:
 
-```
+```plaintext
 Input rawdata directory path:
 ```
 
@@ -83,7 +83,7 @@ If needed, you can adjust this link manually after setup.
 
 Next, specify the directory for storing output data:
 
-```
+```plaintext
 Input output data directory path:
 ```
 
