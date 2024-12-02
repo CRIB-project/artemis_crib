@@ -13,7 +13,6 @@
 - [General Settings](./setting/chapter.md)
   - [Make New Experiments](./setting/new_experiments.md)
   - [Make New Users](./setting/new_users.md)
-  - [Build Source Code](./setting/build.md)
   - [Artemis Commands](./setting/commands.md)
   - [Map and Seg Configuration](./setting/map.md)
   - [Steering Files](./setting/steering.md)

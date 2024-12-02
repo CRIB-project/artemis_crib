@@ -5,15 +5,15 @@ At CRIB, we use a shared user for experiments and organize them within the `art_
 The typical directory structure looks like this[^note]:
 
 ```plaintext
-~/art_analysis
-├── exp_name1
-│   ├── exp_name1 # default (shared) user
+~/art_analysis/
+├── exp_name1/
+│   ├── exp_name1/ # default (shared) user
 │   ...
-│   └── okawak # individual user
-├── exp_name2
-│   ├── exp_name2 # default (shared) user
+│   └── okawak/ # individual user
+├── exp_name2/
+│   ├── exp_name2/ # default (shared) user
 │   ...
-│   └── okawak # individual user
+│   └── okawak/ # individual user
 ├── bin/
 ├── .conf/
 │   ├── exp_name1.sh
