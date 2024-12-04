@@ -1,7 +1,7 @@
 # Make New Users
 
 This section explains how to create working directories for individual users.
-With the overall structure now prepared, you are ready to start using `crib_artemis`!
+With the overall structure now prepared, you are ready to start using `artemis_crib`!
 
 ## Steps
 
