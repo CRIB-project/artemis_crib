@@ -25,6 +25,7 @@ build_doxygen() {
 main() {
   # check necessary tools are installed
   need_cmd mdbook
+  need_cmd mdbook-last-changed
   need_cmd doxygen
   need_cmd uv
 
