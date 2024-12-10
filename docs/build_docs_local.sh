@@ -26,6 +26,7 @@ main() {
   # check necessary tools are installed
   need_cmd mdbook
   need_cmd mdbook-last-changed
+  need_cmd mdbook-mermaid
   need_cmd doxygen
   need_cmd uv
 

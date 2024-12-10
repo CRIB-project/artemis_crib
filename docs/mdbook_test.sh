@@ -9,10 +9,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 main() {
   # check necessary tools are installed
   need_cmd mdbook
+  need_cmd mdbook-mermaid
 
   # test markdown files using mdbook test
   echo "Testing mdbook..."
   cd "$SCRIPT_DIR/guide"
+  mdbook-mermaid install .
   mdbook test
   cd -
 }
