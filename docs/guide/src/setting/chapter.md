@@ -1,4 +1,4 @@
-# General Settings
+# General Usages
 
 This chapter outlines the essential steps for setting up and managing data analysis using `artemis`.
 Each section focuses on key components of the workflow:

@@ -1,4 +1,4 @@
-# Python Setting (option)
+# Python Environments (option)
 
 By installing Python, you can use **pyROOT** and **TSrim** directly from Python.
 However, Python is **not required** to use **artemis_crib**, so you may skip this section if you do not plan to use Python.
