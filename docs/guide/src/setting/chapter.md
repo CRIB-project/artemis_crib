@@ -11,7 +11,7 @@ Each section focuses on key components of the workflow:
 
    Set up individual working directories for each user to facilitate collaborative analysis.
 
-3. [**Artemis Commands**](./commands.md)
+3. [**Run a Example Code**](./commands.md)
 
    Understand the basic `artemis` commands for logging in, running event loops, and visualizing data using example code.
 

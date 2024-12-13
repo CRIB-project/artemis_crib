@@ -14,7 +14,7 @@
 - [General Usages](./setting/chapter.md)
   - [Make New Experiments](./setting/new_experiments.md)
   - [Make New Users](./setting/new_users.md)
-  - [Artemis Commands](./setting/commands.md)
+  - [Run a Example Code](./setting/commands.md)
   - [VNC Server (option)](./setting/vnc_server.md)
   - [Steering Files](./setting/steering.md)
   - [Histogram Definition](./setting/histogram.md)

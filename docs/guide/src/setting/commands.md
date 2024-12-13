@@ -1,4 +1,4 @@
-# Artemis Commands
+# Run a Example Code
 
 This section provides a hands-on demonstration of how to use `artemis_crib` with an example code.
 
