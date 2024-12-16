@@ -1,12 +1,12 @@
 # Read RIDF Files
 
 This section explains how to read RIDF files using `artemis`.
-Currently, the binary files in RIDF format are processed using two classes: `art::TRIDFEventStore` and `art::TMappingProcessor`.
+Currently, binary RIDF files are processed using two classes: `art::TRIDFEventStore` and `art::TMappingProcessor`.
 
 ## Using `art::TRIDFEventStore` to Read Data
 
-To load data from an RIDF file as input, use `art::TRIDFEventStore`.
-Below is an example of a steering file:
+To load data from a RIDF file, use `art::TRIDFEventStore`.
+Here is an example of a steering file:
 
 ```yaml
 Anchor:
@@ -35,26 +35,28 @@ Processor:
         - *output
 ```
 
-The `timer` processor is used to display the analysis time and is conventionally included in all processors.
-Focus on the `ridf` block below it.
+The `timer` processor shows analysis time and is commonly included.
+The key section to note is the `ridf` block.
 
 **Key Parameters**
 
-| Parameter              | Defalut Value | Description                                                                                                                                                                   |
-| ---------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **OutputTransparency** | 0             | 0 ensures that outputs from this processor persist (saved in the ROOT file). 1 allows usage within the artemis process but does not persist. (inherit from `art::TProcessor`) |
-| **Verbose**            | 1             | 0 enables quiet mode; 1 outputs detailed logs. (inherit from `art::TProcessor`)                                                                                               |
-| **MaxEventNum**        | 0             | 0 means no limit. If a value is specified, it limits the number of loops to the specified number.                                                                             |
-| **SHMID**              | 0             | The Shared Memory ID used when DAQ starts in online mode (babirl `nssta` mode) to temporarily store data.                                                                     |
-| **InputFiles**         | Empty array   | Specifies paths to input RIDF files as an array. Not used in online mode. When multiple files are listed, they are processed consecutively to create one ROOT file.           |
+| Parameter              | Defalut Value | Description                                                                                                            |
+| ---------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **OutputTransparency** | 0             | 0 saves output to a ROOT file, 1 keeps it for internal use only. (Inherited from `art::TProcessor`.)                   |
+| **Verbose**            | 1             | 0 for quiet mode, 1 for detailed logs. (Inherited from `art::TProcessor`.)                                             |
+| **MaxEventNum**        | 0             | 0 for no limit; otherwise specifies the number of entries to process.                                                  |
+| **SHMID**              | 0             | Shared Memory ID for DAQ in online mode ([babirl](https://ribf.riken.jp/RIBFDAQ/index.php?DAQ/Download) `nssta` mode). |
+| **InputFiles**         | Empty array   | List of input RIDF file paths. Files are processed sequentially into a single ROOT file.                               |
 
-パラメータを何も指定しない場合に、デフォルト値が用いられます。
-また、`art::TProcessor`から継承されているパラメータは全てのプロセッサに共通するパラメータであることに注意してください。
+Unspecified parameters use default values.
+Parameters inherited from `art::TProcessor` are common to all processors.
 
-### `art::TRIDFEventStore`の処理
+### Processing with `art::TRIDFEventStore`
 
-通常このプロセッサで処理された後のオブジェクトそのままでは扱いにくいので、`OutputTransparency`を 1 に設定し、ROOT ファイルに書き込まないことが多いです。
-しかし、具体的な処理を見るために、0 にするとどういったものが出力されるかをみてみます。
+The objects processed by this processor are difficult to handle directly.
+It is common to set `OutputTransparency` to 1, meaning the objects will not be saved to a ROOT file.
+
+To understand what is produced, you can set `OutputTransparency` to 0 to examine the output.
 
 ```shell
 artlogin <username>
@@ -69,15 +71,103 @@ artemis [] fcd 0
 artemis [] br
 ```
 
-基本的な`artemis`のコマンドについては[Artemis Commands の説](../setting/commands.md)を参照してください。
+For detailed commands, refer to [the Artemis Commands section](../setting/commands.md).
 
-出力はこうなります。
+Example output:
 
 ```plaintext
 segdata              art::TSegmentedData
 eventheader          art::TEventHeader
 ```
 
-`eventheader`はデフォルトで出力されるようになっており、`OutputTransparency`を 0 にするによって出力されるようになったのは`segdata`です。
-実はこの中に必要なデータの中身が入っています。
-詳細は、のちの章で紹介します。
+The `eventheader` is always output, while `segdata` is produced when `OutputTransparency` is set to 0.
+Key data is contained in `segdata`.
+Further details are covered in [subsequent sections](../new_processor/chapter.md).
+
+## Using art::TMappingProcessor for Data Mapping
+
+Raw RIDF files do not inherently indicate detector associations or processing rules.
+Use mapping files, as explained in [the previous section](./map.md), to map the data.
+
+Example steering file:
+
+```yaml
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      OutputTransparency: 1
+      Verbose: 1
+      MaxEventNum: 100000
+      SHMID: 0
+      InputFiles:
+        - *input
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+      MapConfig: mapper.conf
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output
+```
+
+**Key Parameters**
+
+| Parameter     | Defalut Value | Description                                                                                |
+| ------------- | ------------- | ------------------------------------------------------------------------------------------ |
+| **MapConfig** | mapper.conf   | Path to the mapper configuration file. Defaults to `mapper.conf` in the working directory. |
+
+This parameter allows custom mappings, such as focusing on specific data during standard analyses.
+Use an alternative `mapper.conf` in another directory and specify its path when needed.
+
+### Processing with `art::TMappingProcessor`
+
+The outputs of this processor are also hard to use directly, so `OutputTransparency` is typically set to 1.
+To examine what is produced, set it to 0 and observe the output.
+
+```shell
+artlogin <username>
+a
+```
+
+```shell
+artemis [] add steering/hoge.yaml NAME=xxxx NUM=xxxx
+artemis [] res
+artemis [] sus
+artemis [] fcd 0
+artemis [] br
+```
+
+Example output:
+
+```plaintext
+segdata              art::TSegmentedData
+eventheader          art::TEventHeader
+catdata              art::TCategorizedData
+```
+
+A new branch, `catdata`, is created.
+It categorizes data from `segdata` and serves as the basis for detector-specific analyses.
+
+### Workflow Diagram
+
+```mermaid
+flowchart LR
+    A("**RIDF data files**") --> B("<u>**art::TRIDFEventStore**</u><br>input: RIDF files<br>output: segdata")
+    B --> C("<u>**art::TMappingProcessor**</u><br>input: segdata<br>output: catdata")
+    C --> D("**<u>Mapping Processor</u>**<br>input: catdata<br>output: hoge")
+    D --> E("**<u>Other Processors</u>**<br>input: hoge<br>output: fuga")
+    C --> F("**<u>Mapping Processor</u>**<br>input: catdata<br>output: foo")
+    F --> G("**<u>Other Processors</u>**<br>input: foo<br>output: bar")
+```
+
+Both `segdata` and `catdata` are typically set to `OutputTransparency: 1` and processed internally.
+Understanding these objects is essential for mastering subsequent analyses.
