@@ -10,9 +10,6 @@ In `artemis`, input data is stored in an object called the `EventStore`.
 To process RIDF files, the class `TRIDFEventStore` is used.
 Configuration files map the raw data in `TRIDFEventStore` to the corresponding DAQ modules and detectors, enabling accurate interpretation.
 
-> **Note:** Detailed technical explanations of the data processing flow will be covered in the [For Developers](../developers/chapter.md) section.
-> This section focuses on the usage of configuration files.
-
 ## Segment Files
 
 Segment files are used to read raw ADC or TDC data.
