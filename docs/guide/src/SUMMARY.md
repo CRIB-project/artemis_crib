@@ -46,7 +46,7 @@
   - [Shifter Tasks](./online_analysis/shifter_tasks.md)
   - [Scaler Monitor](./online_analysis/scaler_monitor.md)
   - [TimeStamp Treatment](./online_analysis/timestamp.md)
-- [Making New Processors](./new_processor/chapter.md)
+- [Creating New Processors](./new_processor/chapter.md)
   - [EventStore](./new_processor/event_store.md)
   - [General Processors](./new_processor/general_processors.md)
   - [Process Seg Data](./new_processor/seg_data.md)
