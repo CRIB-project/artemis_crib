@@ -6,7 +6,7 @@
 
 ## ヘッダーファイル
 
-ここでは、`art::crib::THogeProcessor`という名前で、何も処理をしない空のプロセッサを作る場合を考えます。
+ここでは、`art::crib::THogeProcessor`という名前で、単純なプロセッサを作る場合を考えます。
 `T`という接頭詞は、ROOT の慣習です。
 
 1. **インクルードガード**
@@ -32,7 +32,7 @@
 
 3. **クラスの前方宣言**
 
-   他のファイルで定義されているクラスを、現在作ろうとしているクラスの中で使用しようとしている場合、前方宣言を使います。
+   他のファイルで定義されているクラスを、現在作ろうとしているクラスの中で使用する場合、前方宣言を使います。
    インクルードではなく、前方宣言を使うと効率的な依存関係を定義することができます。
    この場合、使用するクラスはポインタを使用します。
 
@@ -64,7 +64,7 @@
 
 5. **クラスメソッドの実装**
 
-   通常の C++のクラスとしてコンストラクタとデストラクタ、artemis のプロセッサとして、`art::TProcessor`からオーバーライドできるメソッドの代表的なものとして`Init`と`Process`を実装してください。
+   通常の C++のクラスとしてコンストラクタとデストラクタ、artemis のプロセッサとして、`art::TProcessor`からオーバーライドできるメソッドの代表的なものとして`Init`と`Process`などを実装します。
    ヘッダファイルでは定義のみ行い、具体的な実装はソースファイルで行います。
    また、これらはパブリックメソッドとしてください。
 
@@ -99,6 +99,8 @@
        TSegmentedData **fSegmentedData;
        TCategorizedData **fCategorizedData;
 
+       Int_t fCounter; // any variable
+
        THogeProcessor(const THogeProcessor &) = delete;
        THogeProcessor &operator=(const THogeProcessor &) = delete;
    };
@@ -119,6 +121,8 @@
        TClonesArray **fInData; //!
        TSegmentedData **fSegmentedData; //!
        TCategorizedData **fCategorizedData; //!
+
+       Int_t fCounter; // any variable
 
        THogeProcessor(const THogeProcessor &) = delete;
        THogeProcessor &operator=(const THogeProcessor &) = delete;
@@ -170,6 +174,8 @@ class THogeProcessor : public TProcessor {
     TSegmentedData **fSegmentedData; //!
     TCategorizedData **fCategorizedData; //!
 
+    Int_t fCounter; // any variable
+
     THogeProcessor(const THogeProcessor &) = delete;
     THogeProcessor &operator=(const THogeProcessor &) = delete;
 
@@ -180,7 +186,45 @@ class THogeProcessor : public TProcessor {
 #endif // end of #ifndef _CRIB_THOGEPROCESSOR_H_
 ```
 
+`fInData`、`fSegmentedData`、`fCategorizedData`は定義方法を述べただけで、この後の処理では用いません。
+
 ## ソースファイル
+
+```cpp
+#include "THogeProcessor.h"
+
+namespace art::crib {
+
+// コンストラクタ実装
+THogeProcessor::THogeProcessor()
+    : fCounter(0)
+{
+    // コンストラクタ本体
+}
+
+// デストラクタ実装
+THogeProcessor::~THogeProcessor()
+{
+    // 必要なクリーンアップ処理
+}
+
+// Initメソッド実装
+void THogeProcessor::Init(TEventCollection *col) {
+    // Init処理
+}
+
+// EndOfRunメソッド実装
+void THogeProcessor::EndOfRun() {
+    // 終了処理
+}
+
+// Processメソッド実装
+void THogeProcessor::Process() {
+    // 処理本体
+}
+
+} // namespace art::crib
+```
 
 ## Dictionary への登録
 
