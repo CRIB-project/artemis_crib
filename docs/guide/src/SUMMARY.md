@@ -69,6 +69,7 @@
   - [Calculate Solid Angle](./simulation/solid_angle.md)
   - [Error Estimation](./simulation/error_estimation.md)
 - [For Developers](./developers/chapter.md)
+  - [CMake](./developers/cmake.md)
   - [artemislogon.C](./developers/artemis_logon.md)
   - [GitHub Management](./developers/git_management.md)
   - [For CRIB members](./developers/CRIB_members.md)
