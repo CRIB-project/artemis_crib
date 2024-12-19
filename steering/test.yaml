@@ -1,0 +1,33 @@
+Anchor:
+ - &input ridf/@NAME@@NUM@.ridf
+ - &output output/@NAME@/@NUM@/test@NAME@@NUM@.root
+ - &histout output/@NAME@/@NUM@/test@NAME@@NUM@.hist.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+      SHMID: 0
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+  - name: channel
+    type: art::crib::TChannelSelector
+    parameter:
+      Debug: true
+      SegID: [12, 0, 6, 5, 0]
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

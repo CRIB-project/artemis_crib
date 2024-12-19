@@ -9,6 +9,7 @@ set(CRIBSOURCES
     TModuleData.cc
     TSegmentOutputProcessor.cc
     TScalerMonitorProcessor.cc
+    TChannelSelector.cc
     # mux
     mux/TMUXCalibrationProcessor.cc
     mux/TMUXData.cc
