@@ -15,7 +15,9 @@
 #include <TH2.h>
 #include <TLine.h>
 #include <TPad.h>
+#include <chrono>
 #include <iostream>
+#include <thread>
 
 using art::crib::TCatCmdTCutG;
 
@@ -107,7 +109,7 @@ Long_t TCatCmdTCutG::Cmd(vector<TString>) {
     cutg->SetLineColor(kRed);
     cutg->SetLineWidth(2);
     cutg->Draw("l same");
-    usleep(10000);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     gPad->Update();
 
     TString input;
