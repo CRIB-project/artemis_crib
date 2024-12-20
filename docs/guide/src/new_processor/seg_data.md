@@ -1,6 +1,6 @@
 # Process Seg Data
 
-また、`art::TRIDFEventStore`で出力される`segdata`([Read RIDF files の節](../preparation/ridf.md)を参照してください。)から値を読み取って、それを Tree に格納するというシンプルなプロセッサを作りながら、同時に`segdata`について詳細に理解します。
+`art::TRIDFEventStore`で出力される`segdata`([Read RIDF files の節](../preparation/ridf.md)を参照してください。)から値を読み取って、それを TTree に格納するというシンプルなプロセッサを作りながら、同時に`segdata`について詳細に理解します。
 
 ## 状況設定
 

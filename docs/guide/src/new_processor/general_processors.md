@@ -129,6 +129,13 @@ Increment the version number when making changes to maintain compatibility.
 ```cpp
 class THogeProcessor : public TProcessor {
   private:
+    TClonesArray **fInData;              //!
+    TSegmentedData **fSegmentedData;     //!
+    TCategorizedData **fCategorizedData; //!
+
+    Int_t fCounter;
+    Int_t fIntParameter;
+
     ClassDefOverride(THogeProcessor, 0);
 };
 ```
@@ -161,8 +168,8 @@ class THogeProcessor : public TProcessor {
     void EndOfRun() override;
 
   private:
-    TClonesArray **fInData; //!
-    TSegmentedData **fSegmentedData; //!
+    TClonesArray **fInData;              //!
+    TSegmentedData **fSegmentedData;     //!
     TCategorizedData **fCategorizedData; //!
 
     Int_t fCounter;
@@ -217,10 +224,9 @@ The constructor is called when an instance of the class is created.
 It initializes member variables and registers parameters using methods like `RegisterProcessorParameter()`.
 
 ```cpp
-THogeProcessor::THogeProcessor() : fInData(nullptr), fSegmentedData(nullptr), fCategorizedData(nullptr), fCounter(0)
-{
-  RegisterProcessorParameter("IntParameter", "an example parameter read from steering file",
-                              fIntParameter, 0);
+THogeProcessor::THogeProcessor() : fInData(nullptr), fSegmentedData(nullptr), fCategorizedData(nullptr), fCounter(0) {
+    RegisterProcessorParameter("IntParameter", "an example parameter read from steering file",
+                               fIntParameter, 0);
 }
 ```
 
@@ -251,7 +257,7 @@ Called before the event loop begins, when you command `add steering/hoge.yaml`.
 
 ```cpp
 void THogeProcessor::Init(TEventCollection *) {
-  Info("Init", "Parameter: %d", fIntParameter);
+    Info("Init", "Parameter: %d", fIntParameter);
 }
 ```
 
@@ -263,8 +269,8 @@ Handles event-by-event processing.
 
 ```cpp
 void THogeProcessor::Process() {
-   fCounter++;
-   Info("Process", "Event Number: %d", fCounter);
+    fCounter++;
+    Info("Process", "Event Number: %d", fCounter);
 }
 ```
 
@@ -285,22 +291,21 @@ void THogeProcessor::EndOfRun() {
 ClassImp(art::crib::THogeProcessor);
 
 namespace art::crib {
-THogeProcessor::THogeProcessor() : fInData(nullptr), fSegmentedData(nullptr), fCategorizedData(nullptr), fCounter(0)
-{
-  RegisterProcessorParameter("IntParameter", "an example parameter read from steering file",
-                              fIntParameter, 0);
+THogeProcessor::THogeProcessor() : fInData(nullptr), fSegmentedData(nullptr), fCategorizedData(nullptr), fCounter(0) {
+    RegisterProcessorParameter("IntParameter", "an example parameter read from steering file",
+                               fIntParameter, 0);
 }
 
 THogeProcessor::~THogeProcessor() {
 }
 
 void THogeProcessor::Init(TEventCollection *) {
-  Info("Init", "Parameter: %d", fIntParameter);
+    Info("Init", "Parameter: %d", fIntParameter);
 }
 
 void THogeProcessor::Process() {
-   fCounter++;
-   Info("Process", "Event Number: %d", fCounter);
+    fCounter++;
+    Info("Process", "Event Number: %d", fCounter);
 }
 
 void THogeProcessor::EndOfRun() {
