@@ -3,7 +3,7 @@
  * @brief   extract one channel data
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-18 15:39:13
- * @note    last modified: 2024-12-19 23:16:12
+ * @note    last modified: 2024-12-20 16:15:20
  * @details
  */
 
@@ -16,7 +16,6 @@ class TClonesArray;
 
 namespace art {
 class TSegmentedData;
-class TCategorizedData;
 } // namespace art
 
 namespace art::crib {
@@ -29,13 +28,13 @@ class TChannelSelector : public TProcessor {
     void Process() override;
 
   private:
-    Bool_t fDebug;
     TString fSegmentedDataName;
-    IntVec_t fSegID;
+    TString fOutputColName;
 
-    TClonesArray **fInData;              //!
-    TSegmentedData *fSegmentedData;      //!
-    TCategorizedData **fCategorizedData; //!
+    IntVec_t fSegID; //!
+
+    TSegmentedData *fSegmentedData; //!
+    TClonesArray *fOutData;         //!
 
     TChannelSelector(const TChannelSelector &) = delete;
     TChannelSelector &operator=(const TChannelSelector &) = delete;

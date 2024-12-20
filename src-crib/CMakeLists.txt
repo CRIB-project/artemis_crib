@@ -53,6 +53,7 @@ set(CRIBHEADERS
     TModuleData.h
     TSegmentOutputProcessor.h
     TScalerMonitorProcessor.h
+    TChannelSelector.h
     # mux
     mux/TMUXCalibrationProcessor.h
     mux/TMUXData.h
