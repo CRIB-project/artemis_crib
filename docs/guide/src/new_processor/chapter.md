@@ -29,7 +29,7 @@ This chapter provides a step-by-step demonstration of creating a new processor a
 
   An overview of key concepts shared by all processors.
 
-- [**Process Seg Data**](./seg_data.md)
+- [**Processing Segmented Data**](./seg_data.md)
 
   Explains `segdata` produced by `art::TRIDFEventStore` and demonstrates how to use it to build a new processor.
 

@@ -397,3 +397,10 @@ Example Output:
 *        5 *        0 *           *
 *        6 *        0 *           *
 ```
+
+---
+
+See the complete implementation:
+
+- [TChannelSelector.h](https://github.com/CRIB-project/artemis_crib/blob/main/src-crib/TChannelSelector.h)
+- [TChannelSelector.cc](https://github.com/CRIB-project/artemis_crib/blob/main/src-crib/TChannelSelector.cc)
