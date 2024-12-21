@@ -9,6 +9,7 @@ set(CRIBSOURCES
     TModuleData.cc
     TSegmentOutputProcessor.cc
     TScalerMonitorProcessor.cc
+    TChannelSelector.cc
     # mux
     mux/TMUXCalibrationProcessor.cc
     mux/TMUXData.cc
@@ -52,6 +53,7 @@ set(CRIBHEADERS
     TModuleData.h
     TSegmentOutputProcessor.h
     TScalerMonitorProcessor.h
+    TChannelSelector.h
     # mux
     mux/TMUXCalibrationProcessor.h
     mux/TMUXData.h

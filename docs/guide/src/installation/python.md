@@ -11,13 +11,13 @@ To address this, we recommend using tools that handle dependencies efficiently a
 
 ### Popular Tools for Python Environment Management
 
-| Tool                                            | Description                                                                                                                       |
-| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| [**pyenv**](https://github.com/pyenv/pyenv)     | Manages multiple Python versions and switches between them on the same machine.                                                   |
-| [**poetry**](https://python-poetry.org/)        | A dependency manager and build system for Python projects.                                                                        |
-| [**pipenv**](https://pipenv.pypa.io/en/latest/) | Combines `pip` and `virtualenv` for managing dependencies and virtual environments.                                               |
-| [**mise**](https://mise.jdx.dev/)[^note]        | Manages tools (e.g., Python, Node.js, Java, Go), environment variables, and tasks across projects. Ideal for multi-tool projects. |
-| [**uv**](https://docs.astral.sh/uv/)            | A fast Python project manager (10-100x faster than `pip`), unifying tools like `pip`, `poetry`, and `pyenv`.                      |
+| Tool                                            | Description                                                                                                  |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| [**pyenv**](https://github.com/pyenv/pyenv)     | Manages multiple Python versions and switches between them on the same machine.                              |
+| [**poetry**](https://python-poetry.org/)        | A dependency manager and build system for Python projects.                                                   |
+| [**pipenv**](https://pipenv.pypa.io/en/latest/) | Combines `pip` and `virtualenv` for managing dependencies and virtual environments.                          |
+| [**mise**](https://mise.jdx.dev/)[^note]        | Runtime manager (e.g., Python, Node.js, Java, Go). Ideal for multi-tool projects.                            |
+| [**uv**](https://docs.astral.sh/uv/)            | A fast Python project manager (10-100x faster than `pip`), unifying tools like `pip`, `poetry`, and `pyenv`. |
 
 [^note]:
     The author (okawak) uses a combination of `mise` and `uv` to manage Python environments.
