@@ -3,7 +3,7 @@
  * @brief   extract one channel data
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-18 15:41:32
- * @note    last modified: 2024-12-20 16:15:39
+ * @note    last modified: 2024-12-21 14:48:26
  * @details
  */
 
@@ -28,38 +28,37 @@ TChannelSelector::TChannelSelector() : fSegmentedData(nullptr), fOutData(nullptr
 }
 
 TChannelSelector::~TChannelSelector() {
-    fSegmentedData = nullptr;
-    delete fOutData;
-    fOutData = nullptr;
+    // release fOutData in TEventCollection
 }
 
 void TChannelSelector::Init(TEventCollection *col) {
-    // segdata process
+    // Segmented data initialization
     auto seg_ref = col->GetObjectRef(fSegmentedDataName);
     if (!seg_ref) {
-        SetStateError(Form("No such input collection '%s'\n", fSegmentedDataName.Data()));
+        SetStateError(Form("No input collection '%s'", fSegmentedDataName.Data()));
         return;
     }
 
-    auto *seg_obj = static_cast<TObject *>(*seg_ref);
+    auto seg_obj = static_cast<TObject *>(*seg_ref);
     if (!seg_obj->InheritsFrom("art::TSegmentedData")) {
-        SetStateError(Form("'%s' is not of type art::TSegmentedData\n", fSegmentedDataName.Data()));
+        SetStateError(Form("Invalid input collection '%s': not TSegmentedData",
+                           fSegmentedDataName.Data()));
         return;
     }
-
     fSegmentedData = static_cast<TSegmentedData *>(seg_obj);
 
-    // segid process
+    // SegID validation
     if (fSegID.size() != 5) {
-        SetStateError("parameter: SegID size is not 5, input [dev, fp, mod, geo, ch]\n");
+        SetStateError("SegID must contain exactly 5 elements: [dev, fp, mod, geo, ch]");
         return;
     }
-    Info("Init", "Process [dev=%d, fp=%d, mod=%d, geo=%d, ch=%d]", fSegID[0], fSegID[1], fSegID[2], fSegID[3], fSegID[4]);
 
     fOutData = new TClonesArray("art::TSimpleData");
     fOutData->SetName(fOutputColName);
     col->Add(fOutputColName, fOutData, fOutputIsTransparent);
-    Info("Init", "%s -> %s", fSegmentedDataName.Data(), fOutputColName.Data());
+    Info("Init", "%s -> %s, [dev=%d, fp=%d, mod=%d, geo=%d, ch=%d]",
+         fSegmentedDataName.Data(), fOutputColName.Data(),
+         fSegID[0], fSegID[1], fSegID[2], fSegID[3], fSegID[4]);
 }
 
 void TChannelSelector::Process() {
@@ -67,17 +66,16 @@ void TChannelSelector::Process() {
 
     auto *seg_array = fSegmentedData->FindSegment(fSegID[0], fSegID[1], fSegID[2]);
     if (!seg_array) {
-        Warning("Process", "No segment having segid = [dev=%d, fp=%d, mod=%d]", fSegID[0], fSegID[1], fSegID[2]);
+        Warning("Process", "No segment having segid = [dev=%d, fp=%d, mod=%d]",
+                fSegID[0], fSegID[1], fSegID[2]);
         return;
     }
 
-    auto nData = seg_array->GetEntriesFast();
-    auto counter = 0;
-    for (auto iData = 0; iData < nData; iData++) {
-        auto *data = (TRawDataObject *)seg_array->UncheckedAt(iData);
-        auto geo = data->GetGeo();
-        auto ch = data->GetCh();
-        if (geo == fSegID[3] && ch == fSegID[4]) {
+    const auto nData = seg_array->GetEntriesFast();
+    int counter = 0;
+    for (int iData = 0; iData < nData; ++iData) {
+        auto *data = dynamic_cast<TRawDataObject *>(seg_array->At(iData));
+        if (data && data->GetGeo() == fSegID[3] && data->GetCh() == fSegID[4]) {
             auto *outData = static_cast<art::TSimpleData *>(fOutData->ConstructedAt(counter));
             counter++;
             outData->SetValue(data->GetValue());

@@ -1,23 +1,26 @@
-# Process Seg Data
+# Processing Segmented Data
 
-`art::TRIDFEventStore`で出力される`segdata`([Read RIDF files の節](../preparation/ridf.md)を参照してください。)から値を読み取って、それを TTree に格納するというシンプルなプロセッサを作りながら、同時に`segdata`について詳細に理解します。
+This section explains how to create a processor, `TChannelSelector`, to extract specific channel data from `segdata` and store it in a TTree.
+Along the way, we will explore the structure and contents of `segdata`.
 
-## 状況設定
+For more details on how `segdata` is generated, see [Read RIDF files](../preparation/ridf.md).
 
-新しく、`segdata`から特定のチャンネルのデータを抜き出すようなプロセッサを作ってみましょう。
+## Processor Overview
 
-- `TChannelSelector`という名前のプロセッサにする
-- CRIB 独自で開発したコードなので、`art::crib`という名前空間を用いる
-- `segdata`をインプットとする
-- 出力するブランチ名は、steering ファイルで指定し、`art::TSimpleData`を要素にもつ、`TClonesArray`の型で出力する。
+We aim to create a processor with the following specifications:
 
-> 現状 double や int などシンプルな型を出力するのに、[art::TOutputTreeProcessor](https://github.com/artemis-dev/artemis/blob/develop/sources/loop/TOutputTreeProcessor.cc) は対応していないようです。
-> (`if 0`で始まる部分でそれを実装しようとした様子は見られますが、実際には実装できていないようです。)
-> 従って、このプロセッサを使う場合、何らかのオブジェクトの形でブランチを作成する必要があります。
-> 今回は、`fValue`のみを持つシンプルな`art::TSimpleData`型と、それを配列にするために、`TClonesArray`を用いることにします。
+- **Name**: `TChannelSelector`
+- **Namespace**: `art::crib` (specific to CRIB development)
+- **Input**: `segdata`
+- **Output**: A branch, containing a `TClonesArray` of `art::TSimpleData` objects.
 
-これを用いる steering ファイルの大まかな構造は以下の通りです。
-parameter は都度追加していきます。
+> **Note**:
+> The current implementation of [art::TOutputTreeProcessor](https://github.com/artemis-dev/artemis/blob/develop/sources/loop/TOutputTreeProcessor.cc) does not support writing primitive data types (e.g., `int` or `double`) to branches.
+> Instead, we use `art::TSimpleData` (a class with a single member `fValue`) and wrap it in a `TClonesArray`.
+
+### Example Steering File
+
+Below is an example structure for the steering file:
 
 ```yaml
 Anchor:
@@ -38,7 +41,7 @@ Processor:
   - name: channel
     type: art::crib::TChannelSelector
     parameter:
-      OutputTransparency: 0
+      parameter: hoge # add later
 
   - name: outputtree
     type: art::TOutputTreeProcessor
@@ -47,12 +50,12 @@ Processor:
         - *output
 ```
 
-## ファイルの準備
+## Initial Setup
 
-まずは、[前節](./general_processors.md)に従って、`art::crib::TChannelSelector`の名前で、ヘッダファイルとソースファイルの枠組みを用意します。
-このとき、`artcrib_linkdef.h`と`CMakeLists.txt`に作成するクラスを登録するのを忘れないでください。
+1. Create header and source files for `TChannelSelector` following [General Processors](./general_processors.md).
+   Ensure that the class is registered in `artcrib_linkdef.h` and `CMakeLists.txt`.
 
-中身は空のままで、一旦ビルドができるかどうかを試します。
+2. Build and install the project to confirm the skeleton files work correctly:
 
 ```shell
 artlogin <username>
@@ -62,36 +65,31 @@ make
 make install
 ```
 
-改めて、artemis をスタートできるかどうかを確かめ、エラーがでなければ準備はオッケーです。
+3. Verify that artemis starts without errors:
 
 ```shell
 acd
 a
-# -> エラーが出ない
+# -> No errors
 ```
 
-## `segdata`の中身を確認する
+## Understanding `segdata`
 
-### `segdata`を受け取る
+### Accessing `segdata`
 
-`art::TRIDFEventStore`から出力される`segdata`を受け取り、どのような構造を持っているかを確かめましょう。
-
-まずは必要な変数をヘッダファイルで宣言します。
+To access `segdata`, add the following member variables to the header file:
 
 ```cpp
 class TChannelSelector : public TProcessor {
   private:
-    TString fSegmentedDataName;
-
-    TSegmentedData *fSegmentedData; //!
+    TString fSegmentedDataName; // Name of the input object
+    TSegmentedData *fSegmentedData; //! Pointer to the segdata object
 
     ClassDefOverride(TChannelSelector, 0);
 };
 ```
 
-`segdata`は`art::TSegmentedData`の型なので、受け取るためのポインタ変数を準備しておきます。
-
-ソースファイルで`segdata`を受け取るためには以下のようにします。
+Next, register the input collection name in the constructor using `RegisterInputCollection`:
 
 ```cpp
 TChannelSelector::TChannelSelector() : fSegmentedData(nullptr) {
@@ -100,17 +98,19 @@ TChannelSelector::TChannelSelector() : fSegmentedData(nullptr) {
 }
 ```
 
-まず、コンストラクタで`RegisterInputCollection()`を使って、`segdata`という名前をメンバ変数`fSegmentedDataName`に格納します。
-実用上、`segdata`という名前は変えずに用いますが、steering ファイルで`SegmentedDataName`というパラメータを用意すると自由に変えることができます。
-この場合は、`art::TRIDFEventStore`でもアウトプットするオブジェクトの名前を`segdata`から変える必要があるので、簡単のため、`segdata`のまま使用することをお勧めします。
+Explanation of Arguments:
 
-名前が準備できたので、`Init()`メソッド(`add`コマンドを使用したとき)で、実際のオブジェクトのアドレスを受け取ります。
+- **Name**: Used in the steering file to specify the parameter.
+- **Description**: A brief explanation of the variable.
+- **Variable**: Stores the parameter's value
+- **Default value**: Used if the parameter is not set in steering file.
+
+Finally, retrieve the actual object in the `Init` method:
 
 ```cpp
 #include <TSegmentedData.h>
 
 void TChannelSelector::Init(TEventCollection *col) {
-    // segdata process
     auto seg_ref = col->GetObjectRef(fSegmentedDataName);
     if (!seg_ref) {
         SetStateError(Form("No such input collection '%s'\n", fSegmentedDataName.Data()));
@@ -127,61 +127,68 @@ void TChannelSelector::Init(TEventCollection *col) {
 }
 ```
 
-安全に処理を行うために、処理を多段階にしており、以下のような形で受け取っています。
+**Step-by-Step Explanation**:
 
-- `TEventCollection`から`fSegmentedDataName`の名前のオブジェクトを受け取る
-  - `col`は、処理全体で共通で用いられる`TEventCollection`のオブジェクトで、`GetObjectRef`で指定した名前のオブジェクトを受け取ることができる
-  - 返り値の型は`void **`
-- 受けとった参照が存在するかどうかを確認
-- 受けとった参照から、`TObject *`にキャスト
-- 今回想定しているのは`art::TSegmentedData *`型なので、その構造を持っているかどうかを確認する
-- 最終的に、そのオブジェクトを`TSegmentedData *`にキャストし、それをメンバ変数の`fSegmentedData`に格納する
+1. **Retrieve Object Reference**: Use `GetObjectRef` (return `void **`) to retrieve the object associated with the name in `fSegmentedDataName`.
+   If the object is not found, log an error and exits.
 
-これで、受け取る準備ができました。Segment Data はイベント毎のデータなので、イベント毎に処理を行う`Process()`メソッド内で中身を確認します。
+2. **Validate Object Type**: Check that the object inherits from `art::TSegmentedData` using `InheritsFrom`.
+   This ensures compatibility during casting.
 
-## `segdata`の内部構造
+3. **Store Object**: Cast the object to `TSegmentedData` and store it in `fSegmentedData` for later use.
 
-`segdata`から実際にデータにアクセスするまでの手順を見ていきます。
+### Exploring `segdata` Structure
 
-`TSegmentedData`は`TObjArray`を継承したオブジェクトです。
-配列の要素は、一つの`[dev, fp, mod]`の組に対して一要素となっています。
-例えば、以下のようなコードで各要素の情報を出力させてみます。
-イベント毎に出力されてしまうので、大量にメッセージが表示されるので、`sus`コマンドで適宜イベントループを止めてください。
+`art::TSegmentedData` inherits from `TObjArray`, with each entry corresponding to a `[dev, fp, mod]` tuple.
+The following code outputs the structure of `segdata` for each event:
 
 ```cpp
 void TChannelSelector::Process() {
     auto nSeg = fSegmentedData->GetEntriesFast();
-    for (auto iSeg = 0; iSeg < nSeg; iSeg++) {
+    for (int iSeg = 0; iSeg < nSeg; iSeg++) {
         auto *seg = fSegmentedData->UncheckedAt(iSeg);
 
-        auto id = seg->GetUniqueID();
+        int id = seg->GetUniqueID();
         // id is generated by `id = (dev << 20) + (fp << 14) + (mod << 8)`
-        auto dev = (id >> 20) & 0xFFF;
-        auto fp = (id >> 14) & 0x3F;
-        auto mod = (id >> 8) & 0x3F;
+        int dev = (id >> 20) & 0xFFF;
+        int fp = (id >> 14) & 0x3F;
+        int mod = (id >> 8) & 0x3F;
 
         std::cout << "iSeg=" << iSeg << ", [dev=" << dev << ", fp=" << fp << ", mod=" << mod << "]\n";
     }
 }
 ```
 
-`[dev, fp, mod]`の三つの数字から、一つの**segid**を作成しているので、それを元の数字の組に戻す操作をしています。
-適当な ridf ファイルを読み込ませると次のような出力になります。
+Example output:
 
 ```plaintext
 iSeg=0, [dev=12, fp=1, mod=6]
 iSeg=1, [dev=12, fp=1, mod=60]
 iSeg=2, [dev=12, fp=2, mod=7]
-iSeg=3, [dev=12, fp=2, mod=63]
-iSeg=4, [dev=12, fp=2, mod=60]
-iSeg=5, [dev=12, fp=0, mod=7]
-iSeg=6, [dev=12, fp=0, mod=60]
+...
 ```
 
-ここから、`segid`は 7 個の要素を持っていることが分かりました。
-全てを表示させるのは冗長なので、一つの例として、`[dev=12, fp=0, mod=7]`のデータを取り出すことにします。
-これは V1190 でとったデータです。
-先ほどの`Process()`で書いた内容を削除し、次のように書き換えます。
+### Decoded Data Overview
+
+The following table summarizes the decoded data classes used for different modules:
+
+| Module            | Class                     | Description                                                                                                                                                          |
+| ----------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| V7XX (V775, V785) | `art::TRawTiming`         | Inherits from `art::TRawDataObject` -> `art::TRawDataSimple` -> `art::TRawTiming`. Although the name indicates timing data, ADC data are also handled by this class. |
+| MXDC32 (MADC32)   | `art::TRawTiming`         | Same as above.                                                                                                                                                       |
+| V1190             | `art::TRawTimingWithEdge` | Inherits from `art::TRawTiming` -> `art::TRawTimingWithEdge`. This class is designed to handle both leading edge and trailing edge timing data.                      |
+
+These modules are commonly used in CRIB experiments.
+Note that other type the modules such as scaler are not covered in this page.
+
+**Key Features**:
+
+- **Unified Access**: All decoded objects inherit from `art::TRawDataObject`, allowing consistent access methods.
+- **Virtual Functions**: Access data (e.g., `geo`, `ch`, `val`) using the same methods across different modules.
+
+### Extracting Specific Segments
+
+To extract data for a specific segment (`[dev, fp, mod]`), use `FindSegment`:
 
 ```cpp
 #include <TRawDataObject.h>
@@ -194,37 +201,26 @@ void TChannelSelector::Process() {
     }
 
     auto nData = seg_array->GetEntriesFast();
-    for (auto iData = 0; iData < nData; iData++) {
+    for (int iData = 0; iData < nData; iData++) {
         auto *data = (TRawDataObject *)seg_array->UncheckedAt(iData);
-        auto geo = data->GetGeo();
-        auto ch = data->GetCh();
-        auto val = data->GetValue();
+        int geo = data->GetGeo();
+        int ch = data->GetCh();
+        int val = data->GetValue();
         std::cout << "iData=" << iData << ", [geo=" << geo << ", ch=" << ch << ", val=" << val << "]\n";
     }
 }
 ```
 
-以下のような処理を行っています。
+**Process Explanation**
 
-- `FindSegment(dev, fp, mod)`メソッドで、その特定の**segid**の要素だけを受け取ることができます
-- 返り値は`TObjArray *`で、その**segid**が持つデータが全て、配列の形として格納されています。
-- 各要素について、`TRawDataObject *`の形にキャストしてデータを受け取っています。
+1. **Retrieve Segment Array**:
+   The `FindSegment` method (return `TObjArray *`) contains all entries for the specified segment ID (`[dev, fp, mod]`).
+   If the segment does not exist, a warning is logged, and the method exits.
+2. **Iterate Through Entries**:
+   Each entry in the segment array represents a data point for the specified segment.
+   Use `UncheckedAt` or `At` to access individual entries and extract properties like `geo`, `ch`, and `val` using methods of `art::TRawDataObject`.
 
-ここで、デコードされたデータは次のようなクラスの中に格納されています。
-CRIB で現在用いられている、V7XX (V785, V775)、MXDC32 (MADC32)、V1190 についてまとめると以下のようになります。
-スケーラについてはここでは述べません。
-
-| Module            | Class                     | Description                                                                                                                                  |
-| ----------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| V7XX (V775, V785) | `art::TRawTiming`         | `art::TRawDataObject` -> `art::TRawDataSimple` -> `art::TRawTiming` と継承されている。ADC で取ったデータも名前は Timing となっている         |
-| MXDC32 (MADC32)   | `art::TRawTiming`         | 上と同様。                                                                                                                                   |
-| V1190             | `art::TRawTimingWithEdge` | `art::TRawTiming` -> `art::TRawTimingWithEdge`と継承されている。leading edge と trailing egde の両方のタイミングをとる場合にも対応している。 |
-
-- 全てのデコードされたオブジェクトは、`art::TRawDataObject`を継承した構造になっているので、このデータ型にキャストしてデータを取り出します。
-  - 最終的なクラスは違っても、仮想関数になっているので、どのデータでも同じ処理で値を取り出すことができます。
-- `[geo, ch]`の値と、そのデータを`val`という変数で取り出し、それをコンソールに表示させています。
-
-具体的な出力例は以下のようになります。
+Example output:
 
 ```plaintext
 iData=0, [geo=0, ch=2, val=9082]
@@ -234,33 +230,14 @@ iData=3, [geo=0, ch=0, val=26274]
 iData=4, [geo=1, ch=2, val=9210]
 iData=5, [geo=1, ch=2, val=9674]
 iData=6, [geo=1, ch=0, val=25449]
-iData=7, [geo=1, ch=0, val=26393]
-iData=8, [geo=1, ch=70, val=30483]
-iData=9, [geo=1, ch=74, val=8458]
-iData=10, [geo=1, ch=85, val=8651]
-iData=11, [geo=1, ch=74, val=9163]
-iData=12, [geo=1, ch=85, val=9172]
-iData=13, [geo=1, ch=85, val=30502]
-iData=14, [geo=1, ch=86, val=30401]
-iData=15, [geo=1, ch=106, val=8611]
-iData=16, [geo=1, ch=117, val=8466]
-iData=17, [geo=1, ch=106, val=9298]
-iData=18, [geo=1, ch=117, val=9159]
-iData=19, [geo=1, ch=117, val=30482]
-iData=20, [geo=1, ch=118, val=30525]
+...
 ```
 
-このようにして、`art::TRIDFEventStore`でデコードされたデータにアクセスすることができます。
+## Implementing `TChannelSelector`
 
-## `TChannelSelector`の実装
+### Preparing Parameters
 
-目標であった、`segdata`から特定のチャンネルだけを取り出す処理を実装していきます。
-
-### パラメータの準備
-
-まずは、steering ファイルから、どのチャンネルを取り出すかを指定することができるようにします。
-つまり、steering ファイルから変数を読み込ませられるようにします。
-名前を`SegID`として steering ファイルを次のように準備します。
+To specify the target segment and channels, add a `SegID` parameter (`[dev, fp, mod, geo, ch]`) in the steering file:
 
 ```yaml
 - name: channel
@@ -269,113 +246,98 @@ iData=20, [geo=1, ch=118, val=30525]
     SegID: [12, 0, 7, 0, 2]
 ```
 
-`SegID`として、`[dev, fp, mod, geo, ch]`の形で取り出したいチャンネルを指定できるようにします。
+**Implementation**:
 
-受け取った値を、クラスのメンバ変数として格納できるように、ヘッダファイルに変数を準備します。
+1. **Declare Member Variable**: Add a member variable to the header file to store the `SegID` parameter:
 
-```cpp
-class TChannelSelector : public TProcessor {
-  private:
-    IntVec_t fSegID; //!
-}
-```
+   ```cpp
+   class TChannelSelector : public TProcessor {
+     private:
+       IntVec_t fSegID; //!
+   }
+   ```
 
-次に、ソースファイルのコンストラクタの実装部分で変数を steering ファイルから受け取れるようにします。
+2. **Register Parameter**: Use `RegisterProcessorParameter` in the constructor to read the parameter from the steering file:
 
-```cpp
-TChannelSelector::TChannelSelector() : fSegmentedData(nullptr) {
-    IntVec_t init_i_vec;
-    RegisterProcessorParameter("SegID", "segment ID, [dev, fp, mod, geo, ch]",
-                               fSegID, init_i_vec);
-}
-```
+   ```cpp
+   TChannelSelector::TChannelSelector() : fSegmentedData(nullptr) {
+       IntVec_t init_i_vec;
+       RegisterProcessorParameter("SegID", "segment ID, [dev, fp, mod, geo, ch]",
+                                  fSegID, init_i_vec);
+   }
+   ```
 
-`IntVec_t init_i_vec;`を空の`std::vector`として、デフォルト値に設定しておきます。
-次に、`Init()`メソッドで、正しく読み込まれているかどうかを確認する処理を加えます。
+3. **Validate Parameter**: Validate the `SegID` size in the `Init` method:
 
-```cpp
-void TChannelSelector::Init(TEventCollection *col) {
-    // segid process
-    if (fSegID.size() != 5) {
-        SetStateError("parameter: SegID size is not 5, input [dev, fp, mod, geo, ch]\n");
-        return;
-    }
-    Info("Init", "Process [dev=%d, fp=%d, mod=%d, geo=%d, ch=%d]", fSegID[0], fSegID[1], fSegID[2], fSegID[3], fSegID[4]);
-}
-```
+   ```cpp
+   void TChannelSelector::Init(TEventCollection *col) {
+       if (fSegID.size() != 5) {
+           SetStateError("parameter: SegID size is not 5, input [dev, fp, mod, geo, ch]\n");
+           return;
+       }
+       Info("Init", "Process [dev=%d, fp=%d, mod=%d, geo=%d, ch=%d]", fSegID[0], fSegID[1], fSegID[2], fSegID[3], fSegID[4]);
+   }
+   ```
 
-サイズが 5 でなかった場合は、エラーを出力して終了させる処理を加え、またログとして、どのようなパラメータが入力されたかを出力するようにしています。
+### Preparing Output Branch
 
-### 出力ブランチの準備
+To store extracted data, create a ROOT branch using `TClonesArray`:
 
-次に ROOT ファイルに保存するブランチを準備します。
-前述の通り、現状は`int`型などシンプルなブランチを用いることはできず、`TObject`を継承したオブジェクトのみをブランチにすることができます。
+1. **Declare Member Variables**: Add member variables for the output branch in the header file:
 
-今回は、一つのイベントに複数のデータが入っていても対応できるように`TClonesArray`を用いたいと思います。
-artemis では、ほとんどの処理でこの`TClonesArray`が用いられています。
+   ```cpp
+   class TChannelSelector : public TProcessor {
+     private:
+       TString fOutputColName;
+       TClonesArray *fOutData; //!
+   }
+   ```
 
-まず、ヘッダファイルにブランチの名前を格納する変数と、そのオブジェクトの変数を定義します。
+2. **Register Output Collection**: Register the branch name in the constructor:
 
-```cpp
-class TChannelSelector : public TProcessor {
-  private:
-    TString fOutputColName;
-    TClonesArray *fOutData; //!
-}
-```
+   ```cpp
+   TChannelSelector::TChannelSelector() : fSegmentedData(nullptr), fOutData(nullptr) {
+       RegisterOutputCollection("OutputCollection", "name of the output branch",
+                                fOutputColName, TString("output"));
+   }
+   ```
 
-ソースファイルのコンストラクタの実装で、steering ファイルからブランチの名前を受け取る処理を加えます。
+3. **Steering File**: Add `SegID` parameter in the steering file:
 
-```cpp
-TChannelSelector::TChannelSelector() : fSegmentedData(nullptr), fOutData(nullptr) {
-    RegisterOutputCollection("OutputCollection", "name of the output branch",
-                             fOutputColName, TString("output"));
-}
-```
+   ```yaml
+   - name: channel
+     type: art::crib::TChannelSelector
+     parameter:
+       OutputCollection: channel
+       SegID: [12, 0, 6, 0, 2] # add this parameter
+   ```
 
-この時、`RegisterOutputCollection()`を用います。
-このようにすることで、steering ファイルから、ブランチの名前を指定できるようになります。
+4. **Initialize Output Branch**: Initialize the `TClonesArray` object in the `Init` method:
 
-```yaml
-- name: channel
-  type: art::crib::TChannelSelector
-  parameter:
-    OutputCollection: channel
-    SegID: [12, 0, 6, 0, 2]
-```
+   ```cpp
+   #include <TSimpleData.h>
 
-最後に、`Init()`メソッドで、この新たなブランチを`TEventCollection`のオブジェクトに追加します。
+   void TChannelSelector::Init(TEventCollection *col) {
+       fOutData = new TClonesArray("art::TSimpleData");
+       fOutData->SetName(fOutputColName);
+       col->Add(fOutputColName, fOutData, fOutputIsTransparent);
+       Info("Init", "%s -> %s", fSegmentedDataName.Data(), fOutputColName.Data());
+   }
+   ```
 
-```cpp
-#include <TSimpleData.h>
+### Processing Events
 
-void TChannelSelector::Init(TEventCollection *col) {
-    fOutData = new TClonesArray("art::TSimpleData");
-    fOutData->SetName(fOutputColName);
-    col->Add(fOutputColName, fOutData, fOutputIsTransparent);
-    Info("Init", "%s -> %s", fSegmentedDataName.Data(), fOutputColName.Data());
-}
-```
+Process events to extract and store data matching the specified `SegID`:
 
-- `art::TSimpleData`の要素の`TClonesArray`を使っています。
-- `segdata`から指定した名前のブランチが作成されることをログに出力するようにしています。
+1. **Clear Data**: Ensure the output branch is cleared for each event:
 
-### 処理の実装
+   ```cpp
+   void TChannelSelector::Process() {
+       fOutData->Clear("C");
+   }
+   ```
 
-`Process()`メソッドでチャンネルを選択し、それをブランチにつめる具体的な処理を実装していきます。
-
-まず、イベント毎に値をクリアしたいのではじめに以下を記述します。
-
-```cpp
-void TChannelSelector::Process() {
-    fOutData->Clear("C");
-}
-```
-
-この処理を書かないと、前のデータが残ってしまい、正しいデータをブランチに格納することができません。
-まずクリア処理をすることを忘れないでください。
-
-その他の処理内容は以下の通りです。
+2. **Extract and Store Data**: Use the following logic to extract and store data in `TClonesArray`:
 
 ```cpp
 void TChannelSelector::Process() {
@@ -386,12 +348,12 @@ void TChannelSelector::Process() {
     }
 
     auto nData = seg_array->GetEntriesFast();
-    auto counter = 0;
-    for (auto iData = 0; iData < nData; iData++) {
-        auto *data = (TRawDataObject *)seg_array->UncheckedAt(iData);
-        auto geo = data->GetGeo();
-        auto ch = data->GetCh();
-        if (geo == fSegID[3] && ch == fSegID[4]) {
+    int counter = 0;
+    for (int iData = 0; iData < nData; ++iData) {
+        int *data = (TRawDataObject *)seg_array->UncheckedAt(iData);
+        int geo = data->GetGeo();
+        int ch = data->GetCh();
+        if (data && geo == fSegID[3] && ch == fSegID[4]) {
             auto *outData = static_cast<art::TSimpleData *>(fOutData->ConstructedAt(counter));
             counter++;
             outData->SetValue(data->GetValue());
@@ -400,17 +362,15 @@ void TChannelSelector::Process() {
 }
 ```
 
-**segid**は、steering ファイルから受け取ったものを使っているということ以外は、以前とほぼ同様のコードです。
+**Explanation**:
 
-`for`の中の処理で、指定した`[geo, ch]`と一致した場合に、`fOutData`に値を設定するようにしています。
-`TClonesArray`に要素を追加するときには`ConstructedAt(index)`を用います。
-ここでは`counter`変数を利用して、後に要素を追加していくような処理を行っています。
+- **Clear Output**: `fOutData->Clear("C")` ensures no residual data from the previous event.
+- **Filter Data**: Only entries matching `geo` and ch values from `SegID` are processed.
+- **Store Data**: Use `ConstructedAt(counter)` to create new entries in the TClonesArray.
 
-`art::TSimpleData`の`fValue`に値を設定するには、`SetValue(value)`というメソッドを使います。
-条件を満たすデータのみ、`data->GetValue()`で値を受け取って、それを`art::TSimpleData`の`fValue`にセットしています。
+### Verifying the Implementation
 
-これで完成です。
-作成したプロセッサを使って、`tree`の中を見てみると次のようになっています。
+After completing the implementation, use the following commands to test the processor:
 
 ```shell
 artemis [] add steering/hoge.yaml NAME=xxxx NUM=xxxx
@@ -419,6 +379,8 @@ artemis [] sus
 artemis [] fcd 0
 artemis [] tree->Scan("channel.fValue")
 ```
+
+Example Output:
 
 ```plaintext
 ***********************************
@@ -434,21 +396,4 @@ artemis [] tree->Scan("channel.fValue")
 *        4 *        1 *      9107 *
 *        5 *        0 *           *
 *        6 *        0 *           *
-*        7 *        0 *           *
-*        8 *        0 *           *
-*        9 *        0 *           *
-*       10 *        0 *           *
-*       11 *        0 *      8375 *
-*       11 *        1 *      9035 *
-*       12 *        0 *           *
-*       13 *        0 *      2276 *
-*       13 *        1 *      2735 *
-*       14 *        0 *     24560 *
-*       14 *        1 *     25360 *
-*       15 *        0 *           *
-*       16 *        0 *           *
-*       17 *        0 *           *
-*       18 *        0 *           *
 ```
-
-この例では、V1190 を**Both Edge**モードで取得したデータなので、各データに対して二つの値があることが確認できます。
