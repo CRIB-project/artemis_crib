@@ -18,6 +18,7 @@
 #pragma link C++ class art::crib::TSegmentOutputProcessor;
 #pragma link C++ class art::crib::TScalerMonitorProcessor;
 #pragma link C++ class art::crib::TChannelSelector;
+#pragma link C++ class art::crib::TMapSelector;
 // MUX
 #pragma link C++ class art::crib::TMUXData + ;
 #pragma link C++ class art::crib::TMUXDataMappingProcessor;
