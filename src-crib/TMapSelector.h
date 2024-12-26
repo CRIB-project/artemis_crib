@@ -3,7 +3,7 @@
  * @brief   extract one catid data
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-23 11:56:51
- * @note    last modified: 2024-12-23 11:59:59
+ * @note    last modified: 2024-12-23 16:10:16
  * @details
  */
 
@@ -15,7 +15,7 @@
 class TClonesArray;
 
 namespace art {
-class TSegmentedData;
+class TCategorizedData;
 } // namespace art
 
 namespace art::crib {
@@ -28,13 +28,13 @@ class TMapSelector : public TProcessor {
     void Process() override;
 
   private:
-    TString fSegmentedDataName;
+    TString fCategorizedDataName;
     TString fOutputColName;
 
-    IntVec_t fSegID; //!
+    Int_t fCatID; //!
 
-    TSegmentedData *fSegmentedData; //!
-    TClonesArray *fOutData;         //!
+    TCategorizedData *fCategorizedData; //!
+    TClonesArray *fOutData;             //!
 
     TMapSelector(const TMapSelector &) = delete;
     TMapSelector &operator=(const TMapSelector &) = delete;

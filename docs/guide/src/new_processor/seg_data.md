@@ -7,6 +7,12 @@ For more details on how `segdata` is generated, see [Read RIDF files](../prepara
 
 ## Processor Overview
 
+```mermaid
+flowchart LR
+    A("**RIDF data files**") --> B("<u>**art::TRIDFEventStore**</u><br>input: RIDF files<br>output: segdata")
+    B --> C{"<u>**art::crib::TChannelSelector**</u>"}
+```
+
 We aim to create a processor with the following specifications:
 
 - **Name**: `TChannelSelector`
