@@ -356,7 +356,7 @@ void TChannelSelector::Process() {
     auto nData = seg_array->GetEntriesFast();
     int counter = 0;
     for (int iData = 0; iData < nData; ++iData) {
-        int *data = (TRawDataObject *)seg_array->UncheckedAt(iData);
+        auto *data = (TRawDataObject *)seg_array->UncheckedAt(iData);
         int geo = data->GetGeo();
         int ch = data->GetCh();
         if (data && geo == fSegID[3] && ch == fSegID[4]) {

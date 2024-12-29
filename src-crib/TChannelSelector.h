@@ -3,7 +3,7 @@
  * @brief   extract one channel data
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-18 15:39:13
- * @note    last modified: 2024-12-20 16:15:20
+ * @note    last modified: 2024-12-29 14:38:47
  * @details
  */
 
@@ -39,7 +39,7 @@ class TChannelSelector : public TProcessor {
     TChannelSelector(const TChannelSelector &) = delete;
     TChannelSelector &operator=(const TChannelSelector &) = delete;
 
-    ClassDefOverride(TChannelSelector, 0);
+    ClassDefOverride(TChannelSelector, 1);
 };
 } // namespace art::crib
 

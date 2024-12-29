@@ -3,7 +3,7 @@
  * @brief   extract one catid data
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-23 11:56:51
- * @note    last modified: 2024-12-23 16:10:16
+ * @note    last modified: 2024-12-29 21:15:01
  * @details
  */
 
@@ -31,7 +31,7 @@ class TMapSelector : public TProcessor {
     TString fCategorizedDataName;
     TString fOutputColName;
 
-    Int_t fCatID; //!
+    IntVec_t fCatID; //!
 
     TCategorizedData *fCategorizedData; //!
     TClonesArray *fOutData;             //!
@@ -39,7 +39,7 @@ class TMapSelector : public TProcessor {
     TMapSelector(const TMapSelector &) = delete;
     TMapSelector &operator=(const TMapSelector &) = delete;
 
-    ClassDefOverride(TMapSelector, 0);
+    ClassDefOverride(TMapSelector, 1);
 };
 } // namespace art::crib
 

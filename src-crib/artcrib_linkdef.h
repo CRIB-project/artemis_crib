@@ -1,7 +1,7 @@
 #ifndef LINKDEF_CRIB_H
 #define LINKDEF_CRIB_H
 
-#ifdef __CINT__
+#ifdef __ROOTCLING__
 
 #pragma link off all globals;
 #pragma link off all classes;
@@ -17,6 +17,13 @@
 #pragma link C++ class art::crib::TModuleData + ;
 #pragma link C++ class art::crib::TSegmentOutputProcessor;
 #pragma link C++ class art::crib::TScalerMonitorProcessor;
+#pragma link C++ class art::crib::TSimpleVectorData + ;
+#pragma link C++ class art::crib::TSimpleVectorDataInt + ;
+#pragma link C++ class art::crib::TSimpleVectorDataUInt + ;
+#pragma link C++ class art::crib::TSimpleVectorDataShort + ;
+#pragma link C++ class art::crib::TSimpleVectorDataUShort + ;
+#pragma link C++ class art::crib::TSimpleVectorDataLong + ;
+#pragma link C++ class art::crib::TSimpleVectorDataDouble + ;
 #pragma link C++ class art::crib::TChannelSelector;
 #pragma link C++ class art::crib::TMapSelector;
 // MUX
@@ -59,6 +66,6 @@
 #pragma link C++ class art::crib::TTSData + ;
 #pragma link C++ class art::crib::TTSMappingProcessor;
 #pragma link C++ class art::crib::TModuleDecoderTimestamp;
-#endif // __CINT__
+#endif // __ROOTCLING__
 
 #endif // LINKDEF_CRIB_H
