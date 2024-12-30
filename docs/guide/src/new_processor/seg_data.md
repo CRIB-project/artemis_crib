@@ -7,6 +7,12 @@ For more details on how `segdata` is generated, see [Read RIDF files](../prepara
 
 ## Processor Overview
 
+```mermaid
+flowchart LR
+    A("**RIDF data files**") --> B("<u>**art::TRIDFEventStore**</u><br>input: RIDF files<br>output: segdata")
+    B --> C{"<u>**art::crib::TChannelSelector**</u>"}
+```
+
 We aim to create a processor with the following specifications:
 
 - **Name**: `TChannelSelector`
@@ -350,7 +356,7 @@ void TChannelSelector::Process() {
     auto nData = seg_array->GetEntriesFast();
     int counter = 0;
     for (int iData = 0; iData < nData; ++iData) {
-        int *data = (TRawDataObject *)seg_array->UncheckedAt(iData);
+        auto *data = (TRawDataObject *)seg_array->UncheckedAt(iData);
         int geo = data->GetGeo();
         int ch = data->GetCh();
         if (data && geo == fSegID[3] && ch == fSegID[4]) {

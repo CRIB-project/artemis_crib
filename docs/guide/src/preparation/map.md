@@ -133,9 +133,14 @@ The general format is:
 cid, id, [dev, fp, mod, geo, ch], [dev, fp, mod, geo, ch], ...
 ```
 
-- `cid` (Category ID): Groups data for specific analyses.
-- `id` (Analysis ID): Differentiates datasets within a category.
-- `[dev, fp, mod, geo, ch]`: Represents segment IDs and channels.
+**ID description**
+
+| ID                        | Description                                                                                     |
+| ------------------------- | ----------------------------------------------------------------------------------------------- |
+| `catid` or `cid`          | Category ID: Groups data for specific analysis.                                                 |
+| `detid` or `id`           | Detector ID: Differentiates datasets within a category. It corresponds to the row of map files. |
+| `[dev, fp, mod, geo, ch]` | Represents segment IDs and channels (`segid`).                                                  |
+| `typeid`                  | Index of the segment IDs. The first set of `segid` is correspond to 0.                          |
 
 Example for `dlppac.map`:
 
@@ -153,9 +158,10 @@ Example for `dlppac.map`:
 
 In this example:
 
-- `cid = 4`: Indicates the **PPAC** category.
-- `id = 0, 1`: Identifies the specific data set within this category.
+- `catid = 4`: Indicates the **PPAC** category.
+- `detid = 0, 1`: Identifies the specific data set within this category.
 - Five `[dev, fp, mod, geo, ch]` combinations: Define the five input channels (X1, X2, Y1, Y2, A).
+- `typeid = 0` corresponds X1, `typeid = 1` corresponds X2, and so on.
 
 #### Relation to `mapper.conf`
 

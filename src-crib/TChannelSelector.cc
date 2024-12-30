@@ -3,7 +3,7 @@
  * @brief   extract one channel data
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-18 15:41:32
- * @note    last modified: 2024-12-21 14:48:26
+ * @note    last modified: 2024-12-23 16:49:44
  * @details
  */
 
@@ -63,6 +63,10 @@ void TChannelSelector::Init(TEventCollection *col) {
 
 void TChannelSelector::Process() {
     fOutData->Clear("C");
+    if (!fSegmentedData) {
+        Warning("Process", "No SegmentedData object");
+        return;
+    }
 
     auto *seg_array = fSegmentedData->FindSegment(fSegID[0], fSegID[1], fSegID[2]);
     if (!seg_array) {
@@ -71,7 +75,7 @@ void TChannelSelector::Process() {
         return;
     }
 
-    const auto nData = seg_array->GetEntriesFast();
+    const int nData = seg_array->GetEntriesFast();
     int counter = 0;
     for (int iData = 0; iData < nData; ++iData) {
         auto *data = dynamic_cast<TRawDataObject *>(seg_array->At(iData));
