@@ -50,7 +50,7 @@
   - [EventStore](./new_processor/event_store.md)
   - [General Processors](./new_processor/general_processors.md)
   - [Processing Segmented Data](./new_processor/seg_data.md)
-  - [Mapping Processors](./new_processor/mapping_processor.md)
+  - [Processing Categorized Data](./new_processor/mapping_processor.md)
   - [Data Classes](./new_processor/data_class.md)
   - [Parameter Objects](./new_processor/parameter.md)
 - [Typical Analysis Flow](./analysis_flow/chapter.md)
