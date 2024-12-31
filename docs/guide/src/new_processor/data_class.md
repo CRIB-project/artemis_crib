@@ -65,4 +65,39 @@ class TMUXData : public TDataObject {
 
 ### Step 4: データ構造の記述
 
+MUX は、`[E1, E2, P1, P2, T]`の 5 つのデータの組を出力します。
+これらのデータを一つのオブジェクトで管理できるようなデータ構造を作成します。
+
+```cpp
+class TMUXData : public TDataObject {
+  public:
+    // Getter and Setter
+    Double_t GetE1() const { return fE1; }
+    void SetE1(Double_t value) { fE1 = value; }
+    Double_t GetE2() const { return fE2; }
+    void SetE2(Double_t value) { fE2 = value; }
+    Double_t GetP1() const { return fP1; }
+    void SetP1(Double_t value) { fP1 = value; }
+    Double_t GetP2() const { return fP2; }
+    void SetP2(Double_t value) { fP2 = value; }
+    Double_t GetTrig() const { return fTiming; }
+    void SetTrig(Double_t value) { fTiming = value; }
+
+    static const Int_t kNRAW = 5;
+
+  private:
+    Double_t fE1;
+    Double_t fE2;
+    Double_t fP1;
+    Double_t fP2;
+    Double_t fTiming;
+};
+```
+
+プライベートメンバ変数として、値にアクセスするときは、Getter と Setter を使うようにします。
+
+### Step 5: メソッドの実装
+
+ソースファイルに必要なメソッドの実装を行います。
+
 ## `TMUXDataMappingProcessor`の設計
