@@ -3,7 +3,7 @@
  * @brief   Declaration of TMUXDataMappingProcessor class for mapping categorized data to TMUXData objects.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:46:45
- * @note    last modified: 2024-12-31 22:50:47
+ * @note    last modified: 2024-12-31 22:55:17
  * @details
  */
 
@@ -47,34 +47,22 @@ class TMUXDataMappingProcessor : public TProcessor {
   public:
     /**
      * @brief Constructor.
-     *
-     * Initializes input and output collection names and processor parameters
-     * with default values.
      */
     TMUXDataMappingProcessor();
 
     /**
      * @brief Destructor.
-     *
-     * Releases any allocated resources and cleans up.
      */
     ~TMUXDataMappingProcessor();
 
     /**
      * @brief Initializes the processor with the provided event collection.
-     *
      * @param col Pointer to the `TEventCollection` containing input and output collections.
-     *
-     * This method validates the categorized data collection, initializes the
-     * output collection (`fOutData`), and verifies necessary parameters.
      */
     void Init(TEventCollection *col) override;
 
     /**
      * @brief Processes the categorized data and maps it to TMUXData.
-     *
-     * Clears the output array (`fOutData`), iterates over categorized data,
-     * and populates TMUXData objects for each detector.
      */
     void Process() override;
 
@@ -84,9 +72,6 @@ class TMUXDataMappingProcessor : public TProcessor {
      * @param det_array Pointer to the array of raw data for the detector.
      * @param mux Pointer to the TMUXData object where mapped values will be stored.
      * @return The detector ID associated with the processed data.
-     *
-     * This method extracts raw energy, position, and timing data for a detector
-     * and maps them to the corresponding fields in the `TMUXData` object.
      */
     int ProcessDetectorData(const TObjArray *det_array, TMUXData *mux);
 
@@ -94,8 +79,8 @@ class TMUXDataMappingProcessor : public TProcessor {
     TString fCategorizedDataName; ///< Name of the input categorized data collection.
     TString fOutputColName;       ///< Name of the output TMUXData collection.
 
-    TCategorizedData *fCategorizedData; //! ///< Pointer to the categorized data collection.
-    TClonesArray *fOutData;             //! ///< Pointer to the output TMUXData array.
+    TCategorizedData *fCategorizedData; //! Pointer to the categorized data collection.
+    TClonesArray *fOutData;             //! Pointer to the output TMUXData array.
 
     Int_t fCatID; ///< Category ID used for filtering input data.
 

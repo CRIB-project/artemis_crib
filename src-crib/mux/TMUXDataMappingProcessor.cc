@@ -3,7 +3,7 @@
  * @brief   Implementation of TMUXDataMappingProcessor for mapping categorized data.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:47:17
- * @note    last modified: 2024-12-31 22:51:19
+ * @note    last modified: 2024-12-31 23:01:04
  * @details
  */
 
@@ -86,12 +86,12 @@ void TMUXDataMappingProcessor::Init(TEventCollection *col) {
 
 /**
  * @details
- * The `Process` method iterates over categorized data, processes each
- * detector's data using `ProcessDetectorData`, and populates the output
- * array (`fOutData`) with TMUXData objects.
+ * Processes the categorized data and maps it to TMUXData objects. For each
+ * detector, the method extracts relevant data and creates a TMUXData object
+ * in the output array.
  *
- * If the required input collection is not initialized or the specified
- * category ID is not found, appropriate warnings are logged.
+ * If the input collection is not initialized or the specified category is
+ * not found, appropriate warnings are logged, and the method exits early.
  */
 void TMUXDataMappingProcessor::Process() {
     fOutData->Clear("C");
@@ -118,6 +118,14 @@ void TMUXDataMappingProcessor::Process() {
     }
 }
 
+/**
+ * @details
+ * Processes data for a single detector and maps it to a TMUXData object.
+ * This method extracts energy, position, and timing data from the raw
+ * detector arrays and assigns them to the corresponding fields in `mux`.
+ *
+ * Special handling is applied to timing data to aggregate multiple values.
+ */
 int TMUXDataMappingProcessor::ProcessDetectorData(const TObjArray *det_array, TMUXData *mux) {
     double raw_data[TMUXData::kNRAW] = {kInvalidD, kInvalidD, kInvalidD, kInvalidD, kInvalidD};
     int detID = kInvalidI;
