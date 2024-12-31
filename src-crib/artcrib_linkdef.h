@@ -17,13 +17,6 @@
 #pragma link C++ class art::crib::TModuleData + ;
 #pragma link C++ class art::crib::TSegmentOutputProcessor;
 #pragma link C++ class art::crib::TScalerMonitorProcessor;
-#pragma link C++ class art::crib::TSimpleVectorData + ;
-#pragma link C++ class art::crib::TSimpleVectorDataInt + ;
-#pragma link C++ class art::crib::TSimpleVectorDataUInt + ;
-#pragma link C++ class art::crib::TSimpleVectorDataShort + ;
-#pragma link C++ class art::crib::TSimpleVectorDataUShort + ;
-#pragma link C++ class art::crib::TSimpleVectorDataLong + ;
-#pragma link C++ class art::crib::TSimpleVectorDataDouble + ;
 #pragma link C++ class art::crib::TChannelSelector;
 #pragma link C++ class art::crib::TMapSelector;
 // MUX

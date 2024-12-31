@@ -1,35 +1,28 @@
 # Data Classes
 
-前節で、`TChannelSelector`を作成した際に、出力するブランチを`TCloneArray`の要素に`art::TSimpleData`を格納しました。
-このようなデータ構造を新しく作成してみましょう。
+今までは、`fValue`の一要素だけを持つ`art::TSimpleData`を`TClonesArray`の要素として使っていましたが、より複雑な構造を持つオブジェクトを扱いたい場合、新しいデータクラスを作成します。
 
-`art::TSimpleData`は`fValue`の一要素だけを持つクラスでしたが、今回は`std::vector<T>`の要素を一つ持つクラスを作成してみましょう。
+このページでは、`art::crib::TMUXData`のクラスを実際に見ながら、データクラスの構造について理解していきます。
 
-さまざまなデータを持つ複雑なクラスを作成する際も、ここで紹介する手順に沿って作成することができます。
+- [TMUXData.h](https://github.com/CRIB-project/artemis_crib/blob/main/src-crib/mux/TMUXData.h)
+- [TMUXData.cc](https://github.com/CRIB-project/artemis_crib/blob/main/src-crib/mux/TMUXData.cc)
 
-## 設計
+最終的に、前節のように`catdata`から、MUX のデータとして、この`TMUXData`型にデータをつめる Mapping Processor を使って、実際に`TMUXData`を使用する例を見ていきます。
 
-以下のようなデータクラスを作成します。
+- [TMUXDataMappingProcessor.h](https://github.com/CRIB-project/artemis_crib/blob/main/src-crib/mux/TMUXDataMappingProcessor.h)
+- [TMUXDataMappingProcessor.cc](https://github.com/CRIB-project/artemis_crib/blob/main/src-crib/mux/TMUXDataMappingProcessor.cc)
 
-- 名前: `TSimpleVectorData`
-- 名前空間: `art::crib` (CRIB で開発したクラスにつける)
-- メンバクラス: `std::vector<T>`の型のメンバ変数を持つ
-- テンプレート: `<T>`として`Double_t`、`Int_t`、`UInt_t`を実装
-
-> **Note**: ROOT で使用するクラスは事前に、利用するテンプレート型を辞書に登録する必要があります。
-> したがって、ここではテンプレート型を定義して、上に述べた型に対して定義する形をとります。
-
-## ヘッダファイル
+## `TMUXData`の設計
 
 ### Step 1: インクルードガード
 
-Processor の作成と同様に、固有のインクルードガードを設定してください。
+Processor の作成の際と同様に、ヘッダーファイルに固有のインクルードガードを設定してください。
 
 ```cpp
-#ifndef _CRIB_TSIMPLEVECTORDATA_H
-#define _CRIB_TSIMPLEVECTORDATA_H
+#ifndef _CRIB_TMUXDATA_H
+#define _CRIB_TMUXDATA_H
 
-#endif // _CRIB_TSIMPLEVECTORDATA_H
+#endif // _CRIB_TMUXDATA_H
 ```
 
 ### Step 2: 名前空間のブロック
@@ -48,51 +41,28 @@ artemis で使用するデータクラスは、全て`art::TDataObject`を継承
 
 ```cpp
 #include <TDataObject.h>
-#include <vector>
 
 namespace art::crib {
-template <typename T>
-class TSimpleVectorData : public TDataObject {
+class TMUXData : public TDataObject {
   public:
-    TSimpleVectorData();
-    ~TSimpleVectorData();
-
-  private:
-    std::vector<T> fVec;
-}
-} // namespace art::crib
-```
-
-ここでは、コンストラクタとデストラクタ、また、`std::vector<T>`型のメンバ変数として、`fVec`を定義しています。
-
-### Step 4: 必要なメソッドの定義
-
-- コピーコンストラクタ、代入演算子
-- Copy メソッド(override)
-- Clear メソッド(override)
-
-これらのメソッドは、他のプロセッサから呼ばれる可能性があり、適切に実装しなければ、思った動作をしない可能性があります。
-
-これらを定義しておきます。
-
-```cpp
-class TSimpleVectorData : public TDataObject {
-  public:
-    TSimpleVectorData(const TSimpleVectorData &rhs);
-    TSimpleVectorData &operator=(const TSimpleVectorData &rhs);
+    TMUXData();
+    ~TMUXData();
+    TMUXData(const TMUXData &rhs);
+    TMUXData &operator=(const TMUXData &rhs);
 
     void Copy(TObject &dest) const override;
     void Clear(Option_t *opt = "") override;
-}
-```
-
-### Step 5: ROOT のマクロ
-
-辞書に登録するためのマクロを設定します。
-
-```cpp
-class TSimpleVectorData : public TDataObject {
   private:
-    ClassDefOverride(TSimpleVectorData, 0);
-}
+    ClassDefOverride(TMUXData, 1);
+};
+} // namespace art::crib
 ```
+
+ここでは、コンストラクタとデストラクタ、コピーコンストラクタ、代入演算子、`Copy`、`Clear`メソッドを宣言しています。
+後に実装を書きますが、これらは全てのデータクラスで実装する必要があることに注意してください。
+
+また、ROOT で扱えるようにするために`ClassDef`のマクロを使用しています。
+
+### Step 4: データ構造の記述
+
+## `TMUXDataMappingProcessor`の設計

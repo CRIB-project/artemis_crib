@@ -3,16 +3,17 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-07-30 09:49:05
- * @note    last modified: 2024-08-23 21:29:16
+ * @note    last modified: 2024-12-30 23:48:23
  * @details
  */
 
 #include "TMUXData.h"
 
-using art::crib::TMUXData;
+#include <constant.h>
 
-ClassImp(TMUXData);
+ClassImp(art::crib::TMUXData);
 
+namespace art::crib {
 TMUXData::TMUXData()
     : fE1(kInvalidD), fE2(kInvalidD), fP1(kInvalidD), fP2(kInvalidD), fTiming(kInvalidD) {
     TDataObject::SetID(kInvalidI);
@@ -54,3 +55,5 @@ void TMUXData::Clear(Option_t *opt) {
     fP2 = kInvalidD;
     fTiming = kInvalidD;
 }
+
+} // namespace art::crib
