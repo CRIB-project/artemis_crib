@@ -23,9 +23,9 @@
 #pragma link C++ class art::crib::TMUXData + ;
 #pragma link C++ class art::crib::TMUXDataMappingProcessor;
 #pragma link C++ class art::crib::TMUXPositionConverter;
-#pragma link C++ class art::crib::TMUXPositionValidator;
-#pragma link C++ class art::crib::TMUXCalibrationProcessor;
-// telescope
+// #pragma link C++ class art::crib::TMUXCalibrationProcessor;
+// #pragma link C++ class art::crib::TMUXPositionValidator;
+//  telescope
 #pragma link C++ class art::crib::TTelescopeData + ;
 #pragma link C++ class art::crib::TTelescopeProcessor;
 // reconst

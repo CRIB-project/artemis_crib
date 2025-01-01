@@ -12,11 +12,11 @@ set(CRIBSOURCES
     TChannelSelector.cc
     TMapSelector.cc
     # mux
-    mux/TMUXCalibrationProcessor.cc
     mux/TMUXData.cc
     mux/TMUXDataMappingProcessor.cc
     mux/TMUXPositionConverter.cc
-    mux/TMUXPositionValidator.cc
+    #mux/TMUXCalibrationProcessor.cc
+    #mux/TMUXPositionValidator.cc
     # telescope
     telescope/TTelescopeData.cc
     telescope/TTelescopeProcessor.cc
@@ -57,11 +57,11 @@ set(CRIBHEADERS
     TChannelSelector.h
     TMapSelector.h
     # mux
-    mux/TMUXCalibrationProcessor.h
     mux/TMUXData.h
     mux/TMUXDataMappingProcessor.h
     mux/TMUXPositionConverter.h
-    mux/TMUXPositionValidator.h
+    #mux/TMUXCalibrationProcessor.h
+    #mux/TMUXPositionValidator.h
     # telescope
     telescope/TTelescopeData.h
     telescope/TTelescopeProcessor.h
