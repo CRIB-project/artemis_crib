@@ -3,7 +3,7 @@
  * @brief   Implementation of TMUXDataMappingProcessor for mapping categorized data.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:47:17
- * @note    last modified: 2024-12-31 23:01:04
+ * @note    last modified: 2025-01-01 10:28:07
  * @details
  */
 
@@ -77,7 +77,7 @@ void TMUXDataMappingProcessor::Init(TEventCollection *col) {
     }
 
     delete fOutData; // Release memory allocated for fOutData if it exists
-    fOutData = new TClonesArray("art::TMUXData");
+    fOutData = new TClonesArray("art::crib::TMUXData");
     fOutData->SetName(fOutputColName);
     col->Add(fOutputColName, fOutData, fOutputIsTransparent);
     Info("Init", "%s -> %s, CatID = %d",
