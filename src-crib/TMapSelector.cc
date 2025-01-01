@@ -3,7 +3,7 @@
  * @brief   extract one catid data
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-23 11:56:21
- * @note    last modified: 2024-12-30 16:40:41
+ * @note    last modified: 2024-12-31 23:27:23
  * @details
  */
 
@@ -28,18 +28,19 @@ TMapSelector::TMapSelector() : fCategorizedData(nullptr), fOutData(nullptr) {
 }
 
 TMapSelector::~TMapSelector() {
-    // release fOutData in TEventCollection
+    delete fOutData;
+    fOutData = nullptr;
 }
 
 void TMapSelector::Init(TEventCollection *col) {
     // Categorized data initialization
-    auto cat_ref = col->GetObjectRef(fCategorizedDataName);
+    auto *cat_ref = col->GetObjectRef(fCategorizedDataName);
     if (!cat_ref) {
         SetStateError(Form("No input collection '%s'", fCategorizedDataName.Data()));
         return;
     }
 
-    auto cat_obj = static_cast<TObject *>(*cat_ref);
+    auto *cat_obj = static_cast<TObject *>(*cat_ref);
     if (!cat_obj->InheritsFrom("art::TCategorizedData")) {
         SetStateError(Form("Invalid input collection '%s': not TCategorizedData",
                            fCategorizedDataName.Data()));
@@ -53,6 +54,7 @@ void TMapSelector::Init(TEventCollection *col) {
         return;
     }
 
+    delete fOutData; // Release memory allocated for fOutData if it exists
     fOutData = new TClonesArray("art::TSimpleData");
     fOutData->SetName(fOutputColName);
     col->Add(fOutputColName, fOutData, fOutputIsTransparent);

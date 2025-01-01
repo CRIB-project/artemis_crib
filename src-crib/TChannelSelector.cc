@@ -3,7 +3,7 @@
  * @brief   extract one channel data
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-18 15:41:32
- * @note    last modified: 2024-12-23 16:49:44
+ * @note    last modified: 2024-12-31 23:27:02
  * @details
  */
 
@@ -28,18 +28,19 @@ TChannelSelector::TChannelSelector() : fSegmentedData(nullptr), fOutData(nullptr
 }
 
 TChannelSelector::~TChannelSelector() {
-    // release fOutData in TEventCollection
+    delete fOutData;
+    fOutData = nullptr;
 }
 
 void TChannelSelector::Init(TEventCollection *col) {
     // Segmented data initialization
-    auto seg_ref = col->GetObjectRef(fSegmentedDataName);
+    auto *seg_ref = col->GetObjectRef(fSegmentedDataName);
     if (!seg_ref) {
         SetStateError(Form("No input collection '%s'", fSegmentedDataName.Data()));
         return;
     }
 
-    auto seg_obj = static_cast<TObject *>(*seg_ref);
+    auto *seg_obj = static_cast<TObject *>(*seg_ref);
     if (!seg_obj->InheritsFrom("art::TSegmentedData")) {
         SetStateError(Form("Invalid input collection '%s': not TSegmentedData",
                            fSegmentedDataName.Data()));
@@ -53,6 +54,7 @@ void TChannelSelector::Init(TEventCollection *col) {
         return;
     }
 
+    delete fOutData; // Release memory allocated for fOutData if it exists
     fOutData = new TClonesArray("art::TSimpleData");
     fOutData->SetName(fOutputColName);
     col->Add(fOutputColName, fOutData, fOutputIsTransparent);
