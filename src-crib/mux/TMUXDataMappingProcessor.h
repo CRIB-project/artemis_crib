@@ -3,13 +3,14 @@
  * @brief   Declaration of TMUXDataMappingProcessor class for mapping categorized data to TMUXData objects.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:46:45
- * @note    last modified: 2025-01-01 20:17:53
+ * @note    last modified: 2025-01-01 21:17:14
  * @details
  */
 
 #ifndef _CRIB_TMUXDATAMAPPINGPROCESSOR_H_
 #define _CRIB_TMUXDATAMAPPINGPROCESSOR_H_
 
+#include <TCategorizedData.h>
 #include <TProcessor.h>
 
 class TClonesArray;

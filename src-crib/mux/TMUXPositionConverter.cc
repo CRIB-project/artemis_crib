@@ -3,18 +3,24 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:50:14
- * @note    last modified: 2025-01-01 19:17:29
+ * @note    last modified: 2025-01-01 21:34:03
  * @details
  */
 
 #include "TMUXPositionConverter.h"
 
+#include <TObjArray.h>
+#include <TObjString.h>
 #include <constant.h>
 
 ClassImp(art::crib::TMUXPositionConverter);
 
 namespace art::crib {
-TMUXPositionConverter::TMUXPositionConverter() = default;
+TMUXPositionConverter::TMUXPositionConverter() {
+    fParams.clear();
+    fParams.shrink_to_fit();
+}
+
 TMUXPositionConverter::~TMUXPositionConverter() = default;
 
 Double_t TMUXPositionConverter::Convert(const Double_t val) const {
@@ -25,28 +31,52 @@ Double_t TMUXPositionConverter::Convert(const Double_t val) const {
     }
 }
 
-Bool_t TMUXPositionConverter::LoadString(const TString &s) {
-    // const Int_t commentStartIndex = s.First('#');
-    // const TString &strWithoutComment =
-    //     commentStartIndex == -1 ? TString(s) : TString(s).Replace(commentStartIndex, s.Length(), "");
-    // TObjArray *a = strWithoutComment.Tokenize(" ,\t");
-    // const UInt_t nTokens = a->GetEntriesFast();
-    // if (!nTokens) {
-    //     return kFALSE;
-    // } else if (nTokens != fParams.size()) {
-    //     Error("LoadString", "Number of parameter is %d (expected: %d)", nTokens, (UInt_t)fParam.size());
-    //     return kFALSE;
-    // }
+Bool_t TMUXPositionConverter::LoadString(const TString &str) {
+    TString lineContent = str;
+    if (lineContent.BeginsWith("#"))
+        return kFALSE;
 
-    // for (Int_t i = 0, n = fParams.size(); i != n; ++i) {
-    //     const TString &subs = static_cast<TObjString *>(a->UncheckedAt(i))->GetString();
-    //     if (!subs.IsFloat())
-    //         return kFALSE;
-    //     fParams[i] = subs.Atof();
-    // }
+    Ssiz_t hashIndex = str.Index("#");
+    if (hashIndex != kNPOS)
+        lineContent.Remove(hashIndex);
 
-    // fLoaded = kTRUE;
-    return kTRUE;
+    lineContent = lineContent.Strip(TString::kBoth);
+    if (lineContent.IsNull())
+        return kFALSE;
+
+    lineContent.ReplaceAll(",", " ");
+    lineContent.ReplaceAll("\t", " ");
+    TString singleSpaceLine;
+    for (int i = 0; i < lineContent.Length(); ++i) {
+        if (lineContent[i] != ' ' || (i > 0 && lineContent[i - 1] != ' ')) {
+            singleSpaceLine.Append(lineContent[i]);
+        }
+    }
+
+    TObjArray *tokens = singleSpaceLine.Tokenize(" ");
+    if (!tokens) {
+        return kFALSE;
+    }
+
+    for (Int_t i = 0; i < tokens->GetEntries(); ++i) {
+        TObjString *token = dynamic_cast<TObjString *>(tokens->At(i));
+        if (!token) {
+            Warning("LoadString", "Invalid token at index %d", i);
+            continue;
+        }
+
+        TString valueStr = token->GetString();
+        if (!valueStr.IsFloat()) {
+            Warning("LoadString", "Invalid value: %s", valueStr.Data());
+            continue;
+        }
+        fParams.push_back(valueStr.Atof()); // fValues は std::vector<Double_t>
+    }
+
+    delete tokens;
+    Info("LoadString", "Loaded %d parameters", static_cast<int>(fParams.size()));
+
+    return !fParams.empty();
 }
 
 void TMUXPositionConverter::Print(Option_t *) const {

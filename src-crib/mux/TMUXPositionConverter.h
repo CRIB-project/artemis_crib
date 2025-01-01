@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:50:01
- * @note    last modified: 2025-01-01 18:53:55
+ * @note    last modified: 2025-01-01 20:30:45
  * @details
  */
 
@@ -25,7 +25,7 @@ class TMUXPositionConverter : public TConverterBase {
   private:
     std::vector<Double_t> fParams;
 
-    ClassDefOverride(TMUXPositionConverter, 2) // converter with first-degree polynomial
+    ClassDefOverride(TMUXPositionConverter, 2); // converter with first-degree polynomial
 };
 } // namespace art::crib
 
