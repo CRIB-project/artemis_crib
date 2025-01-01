@@ -3,7 +3,7 @@
  * @brief   Implementation of TMUXDataMappingProcessor for mapping categorized data.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:47:17
- * @note    last modified: 2025-01-01 10:28:07
+ * @note    last modified: 2025-01-01 10:48:03
  * @details
  */
 
@@ -134,13 +134,18 @@ int TMUXDataMappingProcessor::ProcessDetectorData(const TObjArray *det_array, TM
         if (!data_array)
             continue;
 
-        if (iType < TMUXData::kNRAW - 1 && data_array->GetEntriesFast() == 1) {
+        if (iType < TMUXData::kNRAW - 1) {
+            // index = 0--3 assuming ADC data
+            if (data_array->GetEntriesFast() != 1) {
+                Warning("ProcessDetectorData", "MUX data [%d] size is not 1", iType);
+                continue;
+            }
             const auto *data = dynamic_cast<const TRawDataObject *>(data_array->At(0));
             if (data) {
                 raw_data[iType] = data->GetValue();
                 detID = data->GetDetID();
             }
-        } else if (iType == TMUXData::kNRAW - 1) {
+        } else { // Timing treatment for MHTDC
             const int nData = data_array->GetEntriesFast();
             for (int iData = 0; iData < nData; ++iData) {
                 const auto *data = dynamic_cast<const TRawDataObject *>(data_array->At(iData));

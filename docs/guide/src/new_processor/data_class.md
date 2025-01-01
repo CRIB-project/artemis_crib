@@ -1,22 +1,21 @@
 # Data Classes
 
-今までは、`fValue`の一要素だけを持つ`art::TSimpleData`を`TClonesArray`の要素として使っていましたが、より複雑な構造を持つオブジェクトを扱いたい場合、新しいデータクラスを作成します。
+In previous examples, we used `art::TSimpleData`, which stores a single `fValue` element, as an item in a `TClonesArray`.
+When handling more complex data structures, you need to define custom data classes.
 
-このページでは、`art::crib::TMUXData`のクラスを実際に見ながら、データクラスの構造について理解していきます。
+This page explains how to design a data class using `art::crib::TMUXData` as an example.
 
-- [TMUXData.h](https://github.com/CRIB-project/artemis_crib/blob/main/src-crib/mux/TMUXData.h)
-- [TMUXData.cc](https://github.com/CRIB-project/artemis_crib/blob/main/src-crib/mux/TMUXData.cc)
+- [TMUXData Documentation](https://crib-project.github.io/artemis_crib/reference/html/classart_1_1crib_1_1TMUXData.html)
 
-最終的に、前節のように`catdata`から、MUX のデータとして、この`TMUXData`型にデータをつめる Mapping Processor を使って、実際に`TMUXData`を使用する例を見ていきます。
+Finally, we demonstrate how to use `TMUXData` in a mapping processor to pack data from `catdata` into the `TMUXData` structure for MUX data.
 
-- [TMUXDataMappingProcessor.h](https://github.com/CRIB-project/artemis_crib/blob/main/src-crib/mux/TMUXDataMappingProcessor.h)
-- [TMUXDataMappingProcessor.cc](https://github.com/CRIB-project/artemis_crib/blob/main/src-crib/mux/TMUXDataMappingProcessor.cc)
+- [TMUXDataMappingProcessor Documentation](https://crib-project.github.io/artemis_crib/reference/html/classart_1_1crib_1_1TMUXDataMappingProcessor.html)
 
-## `TMUXData`の設計
+## Designing `TMUXData`
 
-### Step 1: インクルードガード
+### Step 1: Include Guards
 
-Processor の作成の際と同様に、ヘッダーファイルに固有のインクルードガードを設定してください。
+Add a unique include guard to the header file to prevent multiple inclusions.
 
 ```cpp
 #ifndef _CRIB_TMUXDATA_H
@@ -25,19 +24,19 @@ Processor の作成の際と同様に、ヘッダーファイルに固有のイ�
 #endif // _CRIB_TMUXDATA_H
 ```
 
-### Step 2: 名前空間のブロック
+### Step 2: Namespace Block
 
-`art::crib`の名前空間でブロックを作成し、その中にクラスの実装を書きます。
+Define the class within the `art::crib` namespace to ensure proper organization.
 
 ```cpp
 namespace art::crib {
 } // namespace art::crib
 ```
 
-### Step 3: クラスの定義
+### Step 3: Class Definition
 
-artemis で使用するデータクラスは、全て`art::TDataObject`を継承する必要があります。
-このヘッダファイルをインクルードし、クラスの枠組みを記述します。
+All Artemis data classes must inherit from `art::TDataObject`.
+Include this header file and define the basic class structure:
 
 ```cpp
 #include <TDataObject.h>
@@ -58,15 +57,18 @@ class TMUXData : public TDataObject {
 } // namespace art::crib
 ```
 
-ここでは、コンストラクタとデストラクタ、コピーコンストラクタ、代入演算子、`Copy`、`Clear`メソッドを宣言しています。
-後に実装を書きますが、これらは全てのデータクラスで実装する必要があることに注意してください。
+This class includes:
 
-また、ROOT で扱えるようにするために`ClassDef`のマクロを使用しています。
+- Constructor and destructor
+- Copy constructor and assignment operator
+- `Copy` and `Clear` methods (required for all data classes)
 
-### Step 4: データ構造の記述
+The `ClassDef` macro enables ROOT to manage the class.
 
-MUX は、`[E1, E2, P1, P2, T]`の 5 つのデータの組を出力します。
-これらのデータを一つのオブジェクトで管理できるようなデータ構造を作成します。
+### Step 4: Data Structure Design
+
+MUX modules output five types of data as a group: `[E1, E2, P1, P2, T]`.
+Define a structure to store these values in one object.
 
 ```cpp
 class TMUXData : public TDataObject {
@@ -94,10 +96,178 @@ class TMUXData : public TDataObject {
 };
 ```
 
-プライベートメンバ変数として、値にアクセスするときは、Getter と Setter を使うようにします。
+Store the data in private member variables and provide access through getters and setters.
 
-### Step 5: メソッドの実装
+### Step 5: Implement Methods
 
-ソースファイルに必要なメソッドの実装を行います。
+Implement the required methods in the source file.
+These include:
 
-## `TMUXDataMappingProcessor`の設計
+- Initializing member variables in the constructor
+- Implementing the destructor (if necessary)
+- Copy constructor and assignment operator
+- `Copy` and `Clear` methods
+
+Additionally, handle the logic of the parent class `art::TDataObject`.
+
+```cpp
+#include "TMUXData.h"
+
+#include <constant.h> // for kInvalidD and kInvalidI
+
+ClassImp(art::crib::TMUXData);
+
+namespace art::crib {
+TMUXData::TMUXData()
+    : fE1(kInvalidD), fE2(kInvalidD),
+      fP1(kInvalidD), fP2(kInvalidD),
+      fTiming(kInvalidD) {
+    TDataObject::SetID(kInvalidI);
+}
+
+TMUXData::~TMUXData() = default;
+
+TMUXData::TMUXData(const TMUXData &rhs)
+    : TDataObject(rhs),
+      fE1(rhs.fE1),
+      fE2(rhs.fE2),
+      fP1(rhs.fP1),
+      fP2(rhs.fP2),
+      fTiming(rhs.fTiming) {
+}
+
+TMUXData &TMUXData::operator=(const TMUXData &rhs) {
+    if (this != &rhs) {
+        TDataObject::operator=(rhs);
+        fE1 = rhs.fE1;
+        fE2 = rhs.fE2;
+        fP1 = rhs.fP1;
+        fP2 = rhs.fP2;
+        fTiming = rhs.fTiming;
+    }
+    return *this;
+}
+
+void TMUXData::Copy(TObject &dest) const {
+    TDataObject::Copy(dest);
+    auto *cobj = dynamic_cast<TMUXData *>(&dest);
+    cobj->fE1 = this->GetE1();
+    cobj->fE2 = this->GetE2();
+    cobj->fP1 = this->GetP1();
+    cobj->fP2 = this->GetP2();
+    cobj->fTiming = this->GetTrig();
+}
+
+void TMUXData::Clear(Option_t *opt) {
+    TDataObject::Clear(opt);
+    TDataObject::SetID(kInvalidI);
+    fE1 = kInvalidD;
+    fE2 = kInvalidD;
+    fP1 = kInvalidD;
+    fP2 = kInvalidD;
+    fTiming = kInvalidD;
+}
+} // namespace art::crib
+```
+
+These methods ensure that the data class is properly initialized, copied, and cleared during its lifecycle.
+
+## Designing `TMUXDataMappingProcessor`
+
+With the `TMUXData` class created, we can now use it in an actual processor.
+This section also explains the general structure of the `Process()` function in a Mapping Processor.
+For detailed information, refer to [Mapping Processors](./mapping_processor.md).
+
+### Selecting the Category ID
+
+The Category ID (`catid`) groups detectors or data requiring similar processing.
+Unlike the `TMapSelector` processor introduced earlier, all data within a single `catid` is generally processed together in a single processor.
+
+```cpp
+// fCatID: Int_t
+const auto *cat_array = fCategorizedData->FindCategory(fCatID);
+```
+
+All data in this `cat_array` will be used within the processor.
+
+### Iterating Through Detector IDs
+
+To access all data within `cat_array`, iterate using a `for` loop:
+
+```cpp
+const int nDet = cat_array->GetEntriesFast();
+    for (int iDet = 0; iDet < nDet; ++iDet) {
+        const auto *det_array = static_cast<const TObjArray *>(cat_array->At(iDet));
+    }
+```
+
+> **Note**: The `detid` specified in the map file does not directly match the array index.
+
+You can retrieve the `detid` from `art::TRawDataObject` and store it in the `art::crib::TMUXData` object:
+
+```cpp
+// data : art::crib::TMUXData*
+int detID = data->GetDetID();
+muxData->SetID(detID);
+```
+
+`SetID` is defined in the parent class `art::TDataObject`.
+When interacting with the object in Artemis, use `fID` for access:
+
+- `detid` <-> `fID`
+
+Example:
+
+```shell
+artemis [] tree->Draw("obj.fID")
+```
+
+### Accessing `TRawDataObject`
+
+To retrieve a data object from `det_array`:
+
+```cpp
+const auto *data_array = static_cast<const TObjArray *>(det_array->At(iType));
+const auto *data = dynamic_cast<const TRawDataObject *>(data_array->At(0));
+```
+
+For multi-hit TDCs, where multiple data points exist in a single segment, the size of `data_array` increases.
+When receiving data from `catdata` (as a **Mapping Processor**), the data is handled as `art::TRawDataObject`.
+
+### Storing Data in the Output Object
+
+To store data in the output object defined in `Init()` or similar functions, allocate memory using `TClonesArray`'s `ConstructedAt(idx)`:
+
+```cpp
+auto *outData = static_cast<TMUXData *>(fOutData->ConstructedAt(idx));
+outData->SetE1(raw_data[0]);
+outData->SetE2(raw_data[1]);
+outData->SetP1(raw_data[2]);
+outData->SetP2(raw_data[3]);
+outData->SetTrig(raw_data[4]);
+```
+
+Here, the output object is cast to `art::crib::TMUXData`, and the data is stored using the defined setters.
+
+For the next event, clear the values by calling:
+
+```cpp
+fOutData->Clear("C");
+```
+
+This invokes the `Clear()` function defined in `art::crib::TMUXData`.
+Ensure that all elements are correctly cleared; otherwise, data from previous events might persist.
+Proper implementation of the `Clear()` function is essential.
+
+## Summary
+
+- **TMUXData**: A custom data class tailored for MUX data.
+- **TMUXDataMappingProcessor**: Demonstrates how to process and store data using the custom class.
+  - Group data by `catid` and access it using `detid`.
+  - Process raw data (`TRawDataObject`) and store it in `TMUXData`.
+- **Key Considerations**:
+  - Use `SetID` to store `detid` and access it consistently with `fID`.
+  - Implement the `Clear()` function correctly to avoid processing errors in subsequent events.
+
+This guide completes the design and usage of `TMUXData` and its integration into a mapping processor.
+The example provides a solid foundation for handling more complex data structures in similar workflows.
