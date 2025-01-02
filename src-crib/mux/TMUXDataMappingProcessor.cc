@@ -3,7 +3,7 @@
  * @brief   Implementation of TMUXDataMappingProcessor for mapping categorized data.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:47:17
- * @note    last modified: 2025-01-01 10:48:03
+ * @note    last modified: 2025-01-02 13:48:41
  * @details
  */
 
@@ -14,6 +14,7 @@
 #include <TRawDataObject.h>
 #include <constant.h>
 
+/// ROOT macro for class implementation
 ClassImp(art::crib::TMUXDataMappingProcessor);
 
 namespace art::crib {

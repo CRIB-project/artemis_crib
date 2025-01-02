@@ -3,14 +3,13 @@
  * @brief   Declaration of TMUXDataMappingProcessor class for mapping categorized data to TMUXData objects.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:46:45
- * @note    last modified: 2025-01-01 21:17:14
+ * @note    last modified: 2025-01-02 12:17:09
  * @details
  */
 
-#ifndef _CRIB_TMUXDATAMAPPINGPROCESSOR_H_
-#define _CRIB_TMUXDATAMAPPINGPROCESSOR_H_
+#ifndef CRIB_TMUXDATAMAPPINGPROCESSOR_H_
+#define CRIB_TMUXDATAMAPPINGPROCESSOR_H_
 
-#include <TCategorizedData.h>
 #include <TProcessor.h>
 
 class TClonesArray;
@@ -80,8 +79,8 @@ class TMUXDataMappingProcessor : public TProcessor {
     TString fCategorizedDataName; ///< Name of the input categorized data collection.
     TString fOutputColName;       ///< Name of the output TMUXData collection.
 
-    TCategorizedData *fCategorizedData; //!< Pointer to the categorized data collection.
-    TClonesArray *fOutData;             //!< Pointer to the output TMUXData array.
+    TCategorizedData *fCategorizedData; ///<! Pointer to the categorized data collection.
+    TClonesArray *fOutData;             ///<! Pointer to the output TMUXData array.
 
     Int_t fCatID; ///< Category ID used for filtering input data.
 
@@ -92,4 +91,4 @@ class TMUXDataMappingProcessor : public TProcessor {
 };
 } // namespace art::crib
 
-#endif // _CRIB_TMUXDATAMAPPINGPROCESSOR_H_
+#endif // CRIB_TMUXDATAMAPPINGPROCESSOR_H_

@@ -3,12 +3,12 @@
  * @brief   Header file for the TMUXData class.
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-07-30 09:48:52
- * @note    last modified: 2024-12-31 21:44:28
+ * @note    last modified: 2025-01-02 12:16:56
  * @details
  */
 
-#ifndef _CRIB_TMUXDATA_H
-#define _CRIB_TMUXDATA_H
+#ifndef CRIB_TMUXDATA_H
+#define CRIB_TMUXDATA_H
 
 #include "TDataObject.h"
 
@@ -114,4 +114,4 @@ class TMUXData : public TDataObject {
 };
 } // namespace art::crib
 
-#endif // _CRIB_TMUXDATA_H
+#endif // CRIB_TMUXDATA_H

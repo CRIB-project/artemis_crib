@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:50:14
- * @note    last modified: 2025-01-01 21:34:03
+ * @note    last modified: 2025-01-02 13:50:50
  * @details
  */
 
@@ -13,39 +13,61 @@
 #include <TObjString.h>
 #include <constant.h>
 
+#include <algorithm>
+#include <iterator>
+
+/// ROOT macro for class implementation
 ClassImp(art::crib::TMUXPositionConverter);
 
 namespace art::crib {
-TMUXPositionConverter::TMUXPositionConverter() {
-    fParams.clear();
-    fParams.shrink_to_fit();
-}
+TMUXPositionConverter::TMUXPositionConverter() = default;
 
 TMUXPositionConverter::~TMUXPositionConverter() = default;
 
+/**
+ * @details
+ * - Checks if `fParams` is empty. If so, returns `kInvalidI` and logs a warning.
+ * - Uses `std::lower_bound` to find the first element in `fParams` not less than `val`.
+ * - If `val` is out of range (less than the first or greater than the last element), returns `kInvalidI`.
+ * - Otherwise, returns the index of the boundary just below `val`.
+ */
 Double_t TMUXPositionConverter::Convert(const Double_t val) const {
-    if (fParams[0] < val && val < fParams[1]) {
-        return 1;
-    } else {
+    if (fParams.empty()) {
+        Warning("Convert", "fParams is empty. Returning invalid value.");
         return kInvalidI;
     }
+
+    auto it = std::lower_bound(fParams.begin(), fParams.end(), val);
+    if (it == fParams.begin() || it == fParams.end()) {
+        return kInvalidI;
+    }
+
+    return std::distance(fParams.begin(), it - 1);
 }
 
+/**
+ * @details
+ * - Strips leading and trailing spaces and removes comments starting with `#`.
+ * - Replaces commas and tabs with spaces, and normalizes multiple spaces into a single space.
+ * - Splits the string into tokens, attempts to convert each token to a `Double_t`, and stores valid values in `fParams`.
+ * - Invalid tokens are skipped, and a warning is logged.
+ * - After parsing, `fParams` is sorted to prepare for binary search operations.
+ */
 Bool_t TMUXPositionConverter::LoadString(const TString &str) {
+    if (str.BeginsWith("#") || str.Strip(TString::kBoth).IsNull()) {
+        return kFALSE;
+    }
+
     TString lineContent = str;
-    if (lineContent.BeginsWith("#"))
-        return kFALSE;
-
-    Ssiz_t hashIndex = str.Index("#");
-    if (hashIndex != kNPOS)
+    Ssiz_t hashIndex = lineContent.Index("#");
+    if (hashIndex != kNPOS) {
         lineContent.Remove(hashIndex);
-
+    }
     lineContent = lineContent.Strip(TString::kBoth);
-    if (lineContent.IsNull())
-        return kFALSE;
 
     lineContent.ReplaceAll(",", " ");
     lineContent.ReplaceAll("\t", " ");
+
     TString singleSpaceLine;
     for (int i = 0; i < lineContent.Length(); ++i) {
         if (lineContent[i] != ' ' || (i > 0 && lineContent[i - 1] != ' ')) {
@@ -58,7 +80,7 @@ Bool_t TMUXPositionConverter::LoadString(const TString &str) {
         return kFALSE;
     }
 
-    for (Int_t i = 0; i < tokens->GetEntries(); ++i) {
+    for (int i = 0; i < tokens->GetEntries(); ++i) {
         TObjString *token = dynamic_cast<TObjString *>(tokens->At(i));
         if (!token) {
             Warning("LoadString", "Invalid token at index %d", i);
@@ -70,18 +92,23 @@ Bool_t TMUXPositionConverter::LoadString(const TString &str) {
             Warning("LoadString", "Invalid value: %s", valueStr.Data());
             continue;
         }
-        fParams.push_back(valueStr.Atof()); // fValues は std::vector<Double_t>
+        fParams.emplace_back(valueStr.Atof());
     }
-
     delete tokens;
-    Info("LoadString", "Loaded %d parameters", static_cast<int>(fParams.size()));
+
+    std::sort(fParams.begin(), fParams.end());
+    Info("LoadString", "Loaded %zu parameters", fParams.size());
 
     return !fParams.empty();
 }
 
+/**
+ * @details
+ * Iterates over all elements in `fParams` and logs their values using ROOT's `Info` function.
+ */
 void TMUXPositionConverter::Print(Option_t *) const {
-    // const TString indent(' ', gROOT->GetDirLevel());
-    // printf("OBJ: %s\t%s\n", IsA()->GetName(), GetName());
-    // printf("%s f(x) = %lf + %lf * x\n", indent.Data(), fParam[0], fParam[1]);
+    for (const auto &e : fParams) {
+        Info("Print", "fParams element: %lf", e);
+    }
 }
 } // namespace art::crib
