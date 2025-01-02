@@ -3,26 +3,19 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:08:53
- * @note    last modified: 2024-08-23 21:28:58
+ * @note    last modified: 2025-01-02 18:31:59
  * @details if no valid converter given, this processor does nothing.
  */
 
-#ifndef _CRIB_TMUXCALIBRATIONPROCESSOR_H
-#define _CRIB_TMUXCALIBRATIONPROCESSOR_H
+#ifndef CRIB_TMUXCALIBRATIONPROCESSOR_H
+#define CRIB_TMUXCALIBRATIONPROCESSOR_H
 
 #include <TProcessor.h>
 
-namespace art {
-class TConverterBase;
-} // namespace art
-
-namespace art::crib {
-class TMUXCalibrationProcessor;
-} // namespace art::crib
-
 class TClonesArray;
 
-class art::crib::TMUXCalibrationProcessor : public TProcessor {
+namespace art::crib {
+class TMUXCalibrationProcessor : public TProcessor {
   public:
     // Default constructor
     TMUXCalibrationProcessor();
@@ -34,20 +27,19 @@ class art::crib::TMUXCalibrationProcessor : public TProcessor {
   protected:
     TString fInputColName;
     TString fOutputColName;
-    TClonesArray **fInData; //!
+    TClonesArray *fInData;  //!
     TClonesArray *fOutData; //!
 
     TString fTimingConverterArrayName;
     TString fChargeConverterArrayName;
     TString fPositionConverterArrayName;
-    std::vector<TConverterBase *> *fTimingConverterArray;   //!
-    std::vector<TConverterBase *> *fChargeConverterArray;   //!
-    std::vector<TConverterBase *> *fPositionConverterArray; //!
-    Bool_t fInputHasMUXData;
+
+    TClonesArray *fTimingConverterArray;   //!
+    TClonesArray *fChargeConverterArray;   //!
+    TClonesArray *fPositionConverterArray; //!
+
     Bool_t fHasReflection;
     Bool_t fInputIsDigital;
-
-    Bool_t fIsSparse;
 
   private:
     // Copy constructor (prohibited)
@@ -55,7 +47,8 @@ class art::crib::TMUXCalibrationProcessor : public TProcessor {
     // Assignment operator (prohibited)
     TMUXCalibrationProcessor &operator=(const TMUXCalibrationProcessor &rhs) = delete;
 
-    ClassDefOverride(TMUXCalibrationProcessor, 1) // processor for calibration of timing and charge data
+    ClassDefOverride(TMUXCalibrationProcessor, 2); // processor for calibration of timing and charge data
 };
+} // namespace art::crib
 
-#endif // _TMUXCALIBRATIONPROCESSOR_H
+#endif // CRIB_TMUXCALIBRATIONPROCESSOR_H

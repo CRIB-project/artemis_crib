@@ -3,96 +3,79 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:09:46
- * @note    last modified: 2025-01-01 10:26:29
+ * @note    last modified: 2025-01-02 18:33:28
  * @details treat only pos1 and ene1
  */
 
 #include "TMUXCalibrationProcessor.h"
+#include "../TProcessorUtil.h"
 
-#include "TConverterUtil.h"
 #include "TMUXData.h"
 #include "TMUXPositionConverter.h"
-#include "TTimingChargeData.h"
+#include <TAffineConverter.h>
 #include <TRandom.h>
+#include <TTimingChargeData.h>
 #include <constant.h>
 
-using art::crib::TMUXCalibrationProcessor;
+ClassImp(art::crib::TMUXCalibrationProcessor);
 
-namespace {
-const TString DEFAULT_CONV_NAME("no_conversion");
-}
-
-ClassImp(TMUXCalibrationProcessor);
-
+namespace art::crib {
 // Default constructor
 TMUXCalibrationProcessor::TMUXCalibrationProcessor()
     : fInData(nullptr), fOutData(nullptr),
       fTimingConverterArray(nullptr), fChargeConverterArray(nullptr),
-      fPositionConverterArray(nullptr),
-      fInputHasMUXData(kFALSE) {
+      fPositionConverterArray(nullptr) {
     RegisterInputCollection("InputCollection",
                             "array of objects inheriting from art::crib::TMUXData",
                             fInputColName, TString("mux_raw"));
     RegisterOutputCollection("OutputCollection", "output class will be art::TTimingChargeData",
                              fOutputColName, TString("mux_cal"));
+
     RegisterProcessorParameter("TimingConverterArray",
                                "normally output of TAffineConverterArrayGenerator",
-                               fTimingConverterArrayName, DEFAULT_CONV_NAME);
+                               fTimingConverterArrayName, TString("no_conversion"));
     RegisterProcessorParameter("ChargeConverterArray",
                                "normally output of TAffineConverterArrayGenerator",
-                               fChargeConverterArrayName, DEFAULT_CONV_NAME);
+                               fChargeConverterArrayName, TString("no_conversion"));
     RegisterProcessorParameter("PositionConverterArray",
                                "normally output of TAffineConverterArrayGenerator",
-                               fPositionConverterArrayName, DEFAULT_CONV_NAME);
+                               fPositionConverterArrayName, TString("no_conversion"));
+
     RegisterProcessorParameter("HasReflection", "whether strip is normal order or not",
                                fHasReflection, kFALSE);
     RegisterProcessorParameter("InputIsDigital", "whether input is digital or not",
                                fInputIsDigital, kTRUE);
-    RegisterProcessorParameter("Sparse", "hit will be inserted at the index corresponding to its id if sparse is 0, otherwize hit will be added ordinaly (default: 1)",
-                               fIsSparse, kTRUE);
 }
 
 TMUXCalibrationProcessor::~TMUXCalibrationProcessor() {
     delete fOutData;
-    delete fTimingConverterArray;
-    delete fChargeConverterArray;
-    delete fPositionConverterArray;
     fOutData = nullptr;
-    fTimingConverterArray = nullptr;
-    fChargeConverterArray = nullptr;
-    fPositionConverterArray = nullptr;
 }
 
 void TMUXCalibrationProcessor::Init(TEventCollection *col) {
+    // Input data initialization
+    auto result = util::GetInputObject<TClonesArray>(
+        col, fInputColName, "TClonesArray", "art::crib::TMUXData");
+
+    if (std::holds_alternative<TString>(result)) {
+        SetStateError(std::get<TString>(result));
+        return;
+    }
+    fInData = std::get<TClonesArray *>(result);
     Info("Init", "%s => %s", fInputColName.Data(), fOutputColName.Data());
-    fInData = reinterpret_cast<TClonesArray **>(col->GetObjectRef(fInputColName.Data()));
-    if (!fInData) {
-        SetStateError(TString::Format("input not found: %s", fInputColName.Data()));
-        return;
+
+    if (fTimingConverterArrayName.CompareTo("no_conversion")) {
+        fTimingConverterArray = util::GetParameterObject(col, fTimingConverterArrayName);
     }
 
-    const TClass *const cl = (*fInData)->GetClass();
-    fInputHasMUXData = cl->InheritsFrom(art::crib::TMUXData::Class());
-
-    if (!fInputHasMUXData) {
-        SetStateError("contents of input array must inherit from art::crib::TMUXData");
-        return;
+    if (fChargeConverterArrayName.CompareTo("no_conversion")) {
+        fChargeConverterArray = util::GetParameterObject(col, fChargeConverterArrayName);
     }
 
-    if (fTimingConverterArrayName.CompareTo(DEFAULT_CONV_NAME)) {
-        TConverterUtil::SetConverterArray(&fTimingConverterArray, fTimingConverterArrayName, col);
-    }
-
-    if (fChargeConverterArrayName.CompareTo(DEFAULT_CONV_NAME)) {
-        TConverterUtil::SetConverterArray(&fChargeConverterArray, fChargeConverterArrayName, col);
-    }
-
-    if (fPositionConverterArrayName.CompareTo(DEFAULT_CONV_NAME)) {
-        TConverterUtil::SetConverterArray(&fPositionConverterArray, fPositionConverterArrayName, col);
-    }
-
-    if (!fTimingConverterArray || !fChargeConverterArray || !fPositionConverterArray) {
-        SetStateError("no timing, charge and position converter registered.");
+    if (fPositionConverterArrayName.CompareTo("no_conversion")) {
+        fPositionConverterArray = util::GetParameterObject(col, fPositionConverterArrayName);
+    } else {
+        SetStateError("Position parameters are necessary");
         return;
     }
 
@@ -103,77 +86,65 @@ void TMUXCalibrationProcessor::Init(TEventCollection *col) {
 
 void TMUXCalibrationProcessor::Process() {
     fOutData->Clear("C");
+    if (!fInData) {
+        Warning("Process", "No Input Data object");
+        return;
+    }
 
-    for (Int_t iData = 0, nData = (*fInData)->GetEntriesFast();
-         iData != nData; ++iData) {
+    int nData = fInData->GetEntriesFast();
+    if (nData == 0)
+        return;
+    if (nData > 1) {
+        Warning("Process", "It doesn't support multi-data currently");
+        return;
+    }
 
-        const TDataObject *const inData = static_cast<TDataObject *>((*fInData)->At(iData));
-        const TMUXData *const DataM = dynamic_cast<const TMUXData *>(inData);
+    const auto *inData = static_cast<const TDataObject *>(fInData->At(0));
+    const auto *data = dynamic_cast<const TMUXData *>(inData);
+    if (!data)
+        return;
 
-        // process of position
-        if (!fPositionConverterArray)
-            return;
-        Double_t pos1_raw = DataM->GetP1();
-        Int_t detID = kInvalidI;
-        for (Int_t i = 0; i < (Int_t)(fPositionConverterArray->size()); ++i) {
-            detID = fPositionConverterArray->at(i)->Convert(pos1_raw);
-            if (detID == 1) {
-                detID = i;
+    // int mux_detid = data->GetID();
+    int hit1_detid = static_cast<TMUXPositionConverter *>(fPositionConverterArray->At(0))
+                         ->Convert(data->GetP1());
+    // int hit2_detid = static_cast<TMUXPositionConverter *>(fPositionConverterArray->At(1))
+    //                      ->Convert(data->GetP2());
+
+    if (!IsValid(hit1_detid))
+        return;
+
+    if (fHasReflection) {
+        for (int i = 0; i < 8; ++i) {
+            if (hit1_detid == i) {
+                hit1_detid = 7 - i;
                 break;
-            } else {
-                detID = kInvalidI;
             }
         }
-        if (!IsValid(detID))
-            continue;
-        // if(detID == kInvalidI) continue;
-
-        if (fHasReflection) {
-            for (Int_t i = 0; i < 8; ++i) {
-                if (detID == i) {
-                    detID = 7 - i;
-                    break;
-                }
-            }
-        }
-
-        TTimingChargeData *outData = static_cast<TTimingChargeData *>(fOutData->ConstructedAt(iData));
-        outData->SetDetID(detID);
-
-        // TDataObject *const outDataID = dynamic_cast<TDataObject*>(outData);
-        // outDataID->SetID(detID);
-
-        // process of charge and timing
-        Double_t charge = DataM->GetE1() + (fInputIsDigital ? gRandom->Uniform() : 0);
-        if (fChargeConverterArray && detID >= (Int_t)fChargeConverterArray->size()) {
-            SetStateError(TString::Format("size of ChargeConverterArray (%d) is smaller than detID (%d)", (Int_t)fChargeConverterArray->size(), detID));
-            return;
-        }
-        const Double_t outputQ =
-            fChargeConverterArray ? fChargeConverterArray->at(detID)->Convert(charge) : charge;
-        ICharge *const outDataQ = dynamic_cast<ICharge *>(outData);
-        outDataQ->SetCharge(outputQ);
-
-        const Double_t timing = DataM->GetTrig() + (fInputIsDigital ? gRandom->Uniform() : 0);
-        if (fTimingConverterArray && detID >= (Int_t)fTimingConverterArray->size()) {
-            SetStateError(TString::Format("size of TimingConverterArray (%d) is smaller than detID (%d)", (Int_t)fTimingConverterArray->size(), detID));
-            return;
-        }
-        const Double_t outputT =
-            fTimingConverterArray ? fTimingConverterArray->at(detID)->Convert(timing) : timing;
-        ITiming *const outDataT = dynamic_cast<ITiming *>(outData);
-        outDataT->SetTiming(outputT);
     }
 
-    if (fIsSparse) {
-        // sort data in the same event in ascending order of timing
-        TTimingChargeData::SetSortType(TTimingChargeData::kTiming);
-        TTimingChargeData::SetSortOrder(TTimingChargeData::kASC);
-        fOutData->Sort();
-        fOutData->Compress();
-    } else {
-        for (Int_t i = 0, n = fOutData->GetEntriesFast(); i != n; ++i) {
-            fOutData->ConstructedAt(i);
+    auto *outData = static_cast<TTimingChargeData *>(fOutData->ConstructedAt(0));
+    outData->SetID(hit1_detid);
+
+    // process of energy and timing
+    double e1_raw = data->GetE1() + (fInputIsDigital ? gRandom->Uniform() : 0);
+    double e1_cal = e1_raw;
+    if (fChargeConverterArray) {
+        auto *energy_prm = static_cast<TAffineConverter *>(fChargeConverterArray->At(hit1_detid));
+        if (energy_prm) {
+            e1_cal = energy_prm->Convert(e1_raw);
         }
     }
+    outData->SetCharge(e1_cal);
+
+    // use first timing
+    double t1_raw = data->GetTrig() + (fInputIsDigital ? gRandom->Uniform() : 0);
+    double t1_cal = t1_raw;
+    if (fTimingConverterArray) {
+        auto *timing_prm = static_cast<TAffineConverter *>(fTimingConverterArray->At(hit1_detid));
+        if (timing_prm) {
+            t1_cal = timing_prm->Convert(t1_raw);
+        }
+    }
+    outData->SetTiming(t1_cal);
 }
+} // namespace art::crib
