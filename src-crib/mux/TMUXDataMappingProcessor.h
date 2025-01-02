@@ -3,7 +3,7 @@
  * @brief   Declaration of TMUXDataMappingProcessor class for mapping categorized data to TMUXData objects.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:46:45
- * @note    last modified: 2025-01-02 12:17:09
+ * @note    last modified: 2025-01-02 22:02:40
  * @details
  */
 
@@ -31,6 +31,7 @@ class TMUXData;
  * extracting and transforming raw detector values.
  *
  * ### Example steering file
+ *
  * ```yaml
  * Processor:
  *   - name: MyTMUXDataMappingProcessor
