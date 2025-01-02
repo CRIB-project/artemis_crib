@@ -3,26 +3,27 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-30 10:02:46
- * @note    last modified: 2024-08-23 21:31:27
+ * @note    last modified: 2025-01-02 22:53:03
  * @details
  */
 
 #include "TMUXPositionValidator.h"
+#include "../TProcessorUtil.h"
 
 #include "TMUXData.h"
 
-using art::crib::TMUXPositionValidator;
+ClassImp(art::crib::TMUXPositionValidator);
 
-ClassImp(TMUXPositionValidator);
-
+namespace art::crib {
 TMUXPositionValidator::TMUXPositionValidator()
     : fInput(nullptr), fOutput(nullptr) {
     RegisterInputCollection("InputCollection", "Input collection",
-                            fInputName, TString("input"));
-    RegisterOutputCollection("OutputCollection", "Output collection", fOutputName, TString("validated"));
+                            fInputColName, TString("input"));
+    RegisterOutputCollection("OutputCollection", "Output collection",
+                             fOutputColName, TString("validated"));
 
-    const DoubleVec_t range(3, 0.);
-    RegisterProcessorParameter("ValidPositionRange", "[min,max,offset] => Pmin = offset + min etc. ignored if min == max",
+    const DoubleVec_t range(2, 0.);
+    RegisterProcessorParameter("ValidPositionRange", "[min, max] ignored if min == max",
                                fValidPositionRange, range);
 }
 
@@ -31,51 +32,45 @@ TMUXPositionValidator::~TMUXPositionValidator() {
     fOutput = nullptr;
 }
 
-TMUXPositionValidator::TMUXPositionValidator(const TMUXPositionValidator &) {
-}
-
-TMUXPositionValidator &TMUXPositionValidator::operator=(const TMUXPositionValidator &rhs) {
-    if (this != &rhs) {
-    }
-    return *this;
-}
-
 void TMUXPositionValidator::Init(TEventCollection *col) {
-    fInput = reinterpret_cast<TClonesArray **>(col->GetObjectRef(fInputName.Data()));
-    if (!fInput) {
-        SetStateError(TString::Format("input not found: %s", fInputName.Data()));
+    auto result = util::GetInputObject<TClonesArray>(
+        col, fInputColName, "TClonesArray", "art::crib::TMUXData");
+
+    if (std::holds_alternative<TString>(result)) {
+        SetStateError(std::get<TString>(result));
         return;
     }
+    fInData = std::get<TClonesArray *>(result);
+    Info("Init", "%s => %s", fInputColName.Data(), fOutputColName.Data());
 
+    if (fValidPositionRange.size() != 0) {
+        SetStateError(Form("Position range size should be 0, but %zu",
+                           fValidPositionRange.size()));
+        return;
+    }
     if (fValidPositionRange[0] > fValidPositionRange[1]) {
         SetStateError("Position range : min > max");
         return;
     }
-    fValidPositionMin = fValidPositionRange[2] + fValidPositionRange[0];
-    fValidPositionMax = fValidPositionRange[2] + fValidPositionRange[1];
 
-    const TClass *inClass = (*fInput)->GetClass();
-    if (!inClass->InheritsFrom(TDataObject::Class())) {
-        SetStateError(Form("Input class '%s' does not inherits from TDataObject", inClass->GetName()));
-        return;
-    }
-    fOutput = new TClonesArray(inClass);
-    col->Add(fOutputName, fOutput, fOutputIsTransparent);
+    fOutData = new TClonesArray("art::crib::TMUXData");
+    fOutData->SetName(fOutputColName);
+    col->Add(fOutputColName, fOutData, fOutputIsTransparent);
 }
 
 void TMUXPositionValidator::Process() {
-    fOutput->Clear("C");
-    Int_t nHits = (*fInput)->GetEntriesFast(); // should be 1
-    for (Int_t iHit = 0; iHit != nHits; ++iHit) {
-        const TMUXData *const posData = dynamic_cast<const TMUXData *>((*fInput)->At(iHit));
-        const TDataObject *const data = static_cast<TDataObject *>((*fInput)->At(iHit));
-        if (!posData)
+    fOutData->Clear("C");
+
+    const int nData = fInData->GetEntriesFast();
+    for (int iData = 0; iData < nData; ++iData) {
+        const auto *data = dynamic_cast<const TMUXData *>(fInData->At(iData));
+        if (!data)
             continue;
-        Double_t pos = posData->GetP1();
-        if (pos < fValidPositionMin || fValidPositionMax < pos) {
+        Double_t pos1_raw = data->GetP1();
+        if (pos1_raw < fValidPositionRange[0] || fValidPositionRange[1] < pos1_raw)
             continue;
-        }
-        TObject *const outData = fOutput->ConstructedAt(fOutput->GetEntriesFast());
+        auto *outData = fOutData->ConstructedAt(fOutData->GetEntriesFast());
         data->Copy(*outData);
     }
 }
+} // namespace art::crib

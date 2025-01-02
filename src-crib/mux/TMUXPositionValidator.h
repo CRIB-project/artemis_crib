@@ -3,45 +3,39 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-30 10:02:32
- * @note    last modified: 2024-08-21 17:47:25
+ * @note    last modified: 2025-01-02 22:52:20
  * @details
  */
 
-#ifndef _CRIB_TMUXPOSITIONVALIDATOR_H_
-#define _CRIB_TMUXPOSITIONVALIDATOR_H_
+#ifndef CRIB_TMUXPOSITIONVALIDATOR_H_
+#define CRIB_TMUXPOSITIONVALIDATOR_H_
 
 #include <TProcessor.h>
 
-namespace art::crib {
-class TMUXPositionValidator;
-} // namespace art::crib
-
 class TClonesArray;
 
-class art::crib::TMUXPositionValidator : public TProcessor {
+namespace art::crib {
+class TMUXPositionValidator : public TProcessor {
   public:
     TMUXPositionValidator();
     ~TMUXPositionValidator();
 
+    void Init(TEventCollection *col) override;
+    void Process() override;
+
+  private:
+    TString fInputColName;  // name of input collection
+    TString fOutputColName; // name of output collection
+    TClonesArray *fInData;  //! input
+    TClonesArray *fOutData; //! output
+
+    DoubleVec_t fValidPositionRange;
+
     TMUXPositionValidator(const TMUXPositionValidator &rhs);
     TMUXPositionValidator &operator=(const TMUXPositionValidator &rhs);
 
-  protected:
-    virtual void Init(TEventCollection *col) override;
-    virtual void Process() override;
-
-  private:
-    TString fInputName;    // name of input collection
-    TString fOutputName;   // name of output collection
-    TClonesArray **fInput; //! input
-    TClonesArray *fOutput; //! output
-
-    //   Int_t fTimeVariable; // 0 time 1 timestamp
-    DoubleVec_t fValidPositionRange;
-    Double_t fValidPositionMin;
-    Double_t fValidPositionMax;
-
     ClassDefOverride(TMUXPositionValidator, 1) // validate time in certain window
 };
+} // namespace art::crib
 
-#endif // _TMUXPOSITIONVALIDATOR_H_
+#endif // CRIB_TMUXPOSITIONVALIDATOR_H_

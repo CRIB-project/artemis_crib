@@ -3,7 +3,7 @@
  * @brief   Implementation of the TMUXCalibrationProcessor class for calibrating timing, charge, and position data.
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:09:46
- * @note    last modified: 2025-01-02 22:20:24
+ * @note    last modified: 2025-01-02 22:33:28
  * @details
  */
 
@@ -74,6 +74,7 @@ TMUXCalibrationProcessor::~TMUXCalibrationProcessor() {
  * If the required position converter array is not provided, the processor is put into an error state.
  */
 void TMUXCalibrationProcessor::Init(TEventCollection *col) {
+    // lambda function for initialize converter arrays
     auto initConverterArray = [this, col](const TString &name, TClonesArray *&array, const char *paramName) {
         if (name == kNoConversion) {
             Warning("Init", "Parameter '%s' is not set. Using no conversion.", paramName);
