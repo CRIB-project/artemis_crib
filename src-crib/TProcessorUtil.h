@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2025-01-02 14:48:14
- * @note    last modified: 2025-01-02 16:57:18
+ * @note    last modified: 2025-01-03 17:02:45
  * @details
  */
 
@@ -53,7 +53,9 @@ GetInputObject(
 }
 
 inline TClonesArray *GetParameterObject(
-    TEventCollection *col, const TString &name) {
+    TEventCollection *col,
+    const TString &name,
+    const TString &elementTypeName = "art::TParameterObject") {
     // Parameter objects can be get by `GetInfo`
     auto *obj = col->GetInfo(name);
     if (!obj || !obj->InheritsFrom("TClonesArray")) {
@@ -62,7 +64,7 @@ inline TClonesArray *GetParameterObject(
 
     auto *prm_obj = static_cast<TClonesArray *>(obj);
     const auto *cl = prm_obj->GetClass();
-    if (!cl || !cl->InheritsFrom("art::TConverterBase")) {
+    if (!cl || !cl->InheritsFrom(elementTypeName)) {
         return nullptr;
     }
     return prm_obj;

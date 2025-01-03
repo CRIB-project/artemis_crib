@@ -52,7 +52,7 @@
   - [Processing Segmented Data](./new_processor/seg_data.md)
   - [Processing Categorized Data](./new_processor/mapping_processor.md)
   - [Data Classes](./new_processor/data_class.md)
-  - [Parameter Objects](./new_processor/parameter.md)
+  - [Parameter Objects (Converters)](./new_processor/parameter.md)
 - [Typical Analysis Flow](./analysis_flow/chapter.md)
   - [Energy Calibration](./analysis_flow/energy_calibration.md)
   - [Timing Calibration](./analysis_flow/timing_calibration.md)

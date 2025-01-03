@@ -3,7 +3,7 @@
  * @brief   Implementation of the TMUXCalibrationProcessor class for calibrating timing, charge, and position data.
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:09:46
- * @note    last modified: 2025-01-02 22:33:28
+ * @note    last modified: 2025-01-03 17:04:36
  * @details
  */
 
@@ -80,7 +80,8 @@ void TMUXCalibrationProcessor::Init(TEventCollection *col) {
             Warning("Init", "Parameter '%s' is not set. Using no conversion.", paramName);
             array = nullptr;
         } else {
-            array = util::GetParameterObject(col, name);
+            // need to inherit from art::TConverterBase
+            array = util::GetParameterObject(col, name, "art::TConverterBase");
         }
     };
 
@@ -101,7 +102,8 @@ void TMUXCalibrationProcessor::Init(TEventCollection *col) {
         SetStateError("Position parameters are required");
         return;
     }
-    fPositionConverterArray = util::GetParameterObject(col, fPositionConverterArrayName);
+    // need to inherit from art::TConverterBase
+    fPositionConverterArray = util::GetParameterObject(col, fPositionConverterArrayName, "art::TConverterBase");
 
     fOutData = new TClonesArray("art::TTimingChargeData");
     fOutData->SetName(fOutputColName);

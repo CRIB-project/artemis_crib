@@ -9,6 +9,7 @@ The names below are unofficial and were introduced by [okawak](https://github.co
 - **Command**: Defines commands available in the artemis console.
 - **Decoder**: Manages decoders and their configurations.
 - **EventStore**: Handles events used in the event loop.
+- **EventCollection**: Manages data and parameter objects.
 - **Processor**: Processes data.
 - **Data**: Defines data structures.
 - **Parameter**: Manages parameter objects.
@@ -33,7 +34,7 @@ This chapter provides a step-by-step demonstration of creating a new processor a
 
   Explains `segdata` produced by `art::TRIDFEventStore` and demonstrates how to use it to build a new processor.
 
-- [**Mapping Processors**](./mapping_processor.md)
+- [**Processing Categorized Data**](./mapping_processor.md)
 
   Describes **Mapping Processors**, which map data based on `catdata` output from `art::TMappingProcessor`.
   This section also provides a detailed explanation of `catdata`.
