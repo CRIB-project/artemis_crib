@@ -3,7 +3,7 @@
  * @brief   Processor for calibrating timing, charge, and position data in the MUX system.
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:08:53
- * @note    last modified: 2025-01-02 22:14:09
+ * @note    last modified: 2025-01-03 15:58:57
  * @details
  */
 
@@ -32,15 +32,15 @@ namespace art::crib {
  *   - name: MyTMUXCalibrationProcessor
  *     type: art::crib::TMUXCalibrationProcessor
  *     parameter:
- *       ChargeConverterArray: no_conversion  # [TString] Energy parameter object of TAffineConverter
- *       HasReflection: 0  # [Bool_t] Reverse strip order (0--7) if true
- *       InputCollection: mux_raw  # [TString] Array of TMUXData objects
- *       InputIsDigital: 1  # [Bool_t] Add randomness if true
- *       OutputCollection: mux_cal  # [TString] Output array of TTimingChargeData objects
- *       OutputTransparency: 0  # [Bool_t] Output is persistent if false (default)
+ *       ChargeConverterArray: no_conversion    # [TString] Energy parameter object of TAffineConverter
+ *       HasReflection: 0                       # [Bool_t] Reverse strip order (0--7) if true
+ *       InputCollection: mux_raw               # [TString] Array of TMUXData objects
+ *       InputIsDigital: 1                      # [Bool_t] Add randomness if true
+ *       OutputCollection: mux_cal              # [TString] Output array of TTimingChargeData objects
+ *       OutputTransparency: 0                  # [Bool_t] Output is persistent if false (default)
  *       PositionConverterArray: no_conversion  # [TString] Position parameter object of TMUXPositionConverter
- *       TimingConverterArray: no_conversion  # [TString] Timing parameter object of TAffineConverter
- *       Verbose: 1  # [Int_t] verbose level (default 1 : non quiet)
+ *       TimingConverterArray: no_conversion    # [TString] Timing parameter object of TAffineConverter
+ *       Verbose: 1                             # [Int_t] verbose level (default 1 : non quiet)
  * ```
  */
 class TMUXCalibrationProcessor : public TProcessor {

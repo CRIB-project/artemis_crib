@@ -3,7 +3,7 @@
  * @brief   Declaration of TMUXDataMappingProcessor class for mapping categorized data to TMUXData objects.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:46:45
- * @note    last modified: 2025-01-02 22:02:40
+ * @note    last modified: 2025-01-03 15:49:29
  * @details
  */
 
@@ -30,7 +30,7 @@ class TMUXData;
  * mapping is controlled by a specified category ID (`fCatID`) and involves
  * extracting and transforming raw detector values.
  *
- * ### Example steering file
+ * ### Example Steering File
  *
  * ```yaml
  * Processor:
