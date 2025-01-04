@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:50:14
- * @note    last modified: 2025-01-02 13:50:50
+ * @note    last modified: 2025-01-04 15:56:46
  * @details
  */
 
@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <memory>
 
 /// ROOT macro for class implementation
 ClassImp(art::crib::TMUXPositionConverter);
@@ -54,11 +55,12 @@ Double_t TMUXPositionConverter::Convert(const Double_t val) const {
  * - After parsing, `fParams` is sorted to prepare for binary search operations.
  */
 Bool_t TMUXPositionConverter::LoadString(const TString &str) {
-    if (str.BeginsWith("#") || str.Strip(TString::kBoth).IsNull()) {
+    TString lineContent = str;
+    lineContent = lineContent.Strip(TString::kBoth);
+    if (lineContent.BeginsWith("#") || lineContent.IsNull()) {
         return kFALSE;
     }
 
-    TString lineContent = str;
     Ssiz_t hashIndex = lineContent.Index("#");
     if (hashIndex != kNPOS) {
         lineContent.Remove(hashIndex);
@@ -67,21 +69,15 @@ Bool_t TMUXPositionConverter::LoadString(const TString &str) {
 
     lineContent.ReplaceAll(",", " ");
     lineContent.ReplaceAll("\t", " ");
+    lineContent.ReplaceAll(" +", " ");
 
-    TString singleSpaceLine;
-    for (int i = 0; i < lineContent.Length(); ++i) {
-        if (lineContent[i] != ' ' || (i > 0 && lineContent[i - 1] != ' ')) {
-            singleSpaceLine.Append(lineContent[i]);
-        }
-    }
-
-    TObjArray *tokens = singleSpaceLine.Tokenize(" ");
+    std::unique_ptr<TObjArray> tokens(lineContent.Tokenize(" "));
     if (!tokens) {
         return kFALSE;
     }
 
     for (int i = 0; i < tokens->GetEntries(); ++i) {
-        TObjString *token = dynamic_cast<TObjString *>(tokens->At(i));
+        auto *token = dynamic_cast<TObjString *>(tokens->At(i));
         if (!token) {
             Warning("LoadString", "Invalid token at index %d", i);
             continue;
@@ -94,8 +90,6 @@ Bool_t TMUXPositionConverter::LoadString(const TString &str) {
         }
         fParams.emplace_back(valueStr.Atof());
     }
-    delete tokens;
-
     std::sort(fParams.begin(), fParams.end());
     Info("LoadString", "Loaded %zu parameters", fParams.size());
 
