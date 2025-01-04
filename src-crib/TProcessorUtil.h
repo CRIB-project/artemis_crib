@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2025-01-02 14:48:14
- * @note    last modified: 2025-01-03 17:02:45
+ * @note    last modified: 2025-01-04 16:57:16
  * @details
  */
 
@@ -21,7 +21,7 @@ namespace art::crib::util {
 
 template <typename T>
 std::enable_if_t<
-    std::is_base_of<TObject, T>::value || std::is_same<T, TClonesArray>::value,
+    std::is_base_of<TObject, T>::value,
     std::variant<T *, TString>>
 GetInputObject(
     TEventCollection *col,
