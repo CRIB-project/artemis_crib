@@ -216,6 +216,6 @@ It’s important to design parameter files and objects according to the specific
 - **Custom Parameter Classes**: Extend `art::TParameterObject` or `art::TConverterBase` to implement parameter-specific logic.
   - `LoadString`: Reads and processes individual rows from parameter files.
   - `Convert`: Transforms raw values based on the parameters.
-- `Indexing`: File rows map directly to `TClonesArray` indices, aligning with detector strip numbers or other entities.
+- **Indexing**: File rows map directly to `TClonesArray` indices, aligning with detector strip numbers or other entities.
 
 By tailoring parameter files and classes to match your application’s requirements, you can optimize data access and streamline processing workflows in Artemis.

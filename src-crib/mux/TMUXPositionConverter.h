@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:50:01
- * @note    last modified: 2025-01-02 13:46:59
+ * @note    last modified: 2025-01-05 17:37:40
  * @details
  */
 
@@ -21,6 +21,21 @@ namespace art::crib {
  * The TMUXPositionConverter class provides functionality to load numeric parameters
  * from a file and convert MUX position signals into silicon-strip detector
  * strip numbers using binary search. It inherits from TConverterBase.
+ *
+ * ### Example Steering File
+ *
+ * ```yaml
+ * Processor:
+ *   - name: MyTParameterArrayLoader
+ *     type: art::TParameterArrayLoader
+ *     parameter:
+ *       FileFormat: text        # [TString] file format : text (default), yaml
+ *       FileName: path/to/file  # [TString] input filename
+ *       Name: parameter         # [TString] name of parameter array output
+ *       OutputTransparency: 0   # [Bool_t] Output is persistent if false (default)
+ *       Type: TParameterObject  # [TString] type(class) of parameter
+ *       Verbose: 1              # [Int_t] verbose level (default 1 : non quiet)
+ * ```
  */
 class TMUXPositionConverter : public TConverterBase {
   public:
