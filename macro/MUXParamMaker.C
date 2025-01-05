@@ -1,68 +1,112 @@
 /**
  * @file    MUXParamMaker.C
- * @brief   MUX position parameter calibraion
- * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
+ * @brief
+ * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-12-23 15:16:39
- * @note    treat only pos1 output
+ * @note    last modified: 2025-01-04 15:48:38
+ * @details
  */
 
-#include <algorithm>
-#include <iterator>
+#include <cstdlib>
+#include <fstream>
+#include <memory>
 #include <vector>
 
 void Usage() {
-    std::cout << "MUX position calibration" << std::endl;
-    std::cout << "Usage: MUXParamMaker(TH1* h1, TString output=\"prm/si26a/test/test.dat, const Int_t peaknum=16\");" << std::endl;
-    std::cout << "\th1     : create position histogram before using this" << std::endl;
-    std::cout << "\toutput : the name of parameter file" << std::endl;
-    std::cout << "\tpeaknum: the number of peaks" << std::endl;
+    std::cout << "======================================================================\n"
+              << "MUX position calibration\n"
+              << "Usage: MUXParamMaker.C arguments:\n"
+              << "    h1       : [TH1 *] create position histogram before using this\n"
+              << "    telname  : [TString] telescope name (ex. tel1, tel2)\n"
+              << "    sidename : [TString] should be dEX or dEY\n"
+              << "    runname  : [TString] runname used for output filename\n"
+              << "    runnum   : [TString] runnum used for output filename\n"
+              << "    peaknum  : [int] the number of peaks, default = 16\n"
+              << "======================================================================\n";
 }
 
-void MUXParamMaker(TH1 *h1 = NULL, TString output = "prm/si26a/test/test.dat", const Int_t peaknum = 16) {
+void MUXParamMaker(TH1 *h1 = nullptr,
+                   const TString &telname = "telx",
+                   const TString &sidename = "dE",
+                   const TString &runname = "run",
+                   const TString &runnum = "0000",
+                   const int peaknum = 16) {
+    // Fit range
+    const double RANGE_OFFSET = 10.0;
+
+    const char *artwork_dir = getenv("ARTEMIS_WORKDIR");
+    if (!artwork_dir) {
+        std::cerr << "Error: ARTEMIS_WORKDIR environment variable is not set.\n";
+        return;
+    }
+
     if (!h1) {
+        std::cerr << "Error: Histogram is not provided.\n";
         Usage();
         return;
     }
-    if (output == "prm/si26a/test/test.dat") {
-        std::cout << "Warning: output file name is DEFAULT" << std::endl;
-    }
 
-    TSpectrum *spec = new TSpectrum(peaknum, 1);
-    std::ofstream fout(output.Data());
-    std::cout << "--Info: " << output << " is created" << std::endl;
-    fout << "# " << output << " is created from MUXParamMaker.C" << endl;
-
-    Int_t nfound = spec->Search(h1, 2, "", 0.001);
-    if (nfound != peaknum) {
-        std::cout << "Error: 33 in MUXParamMaker: cannot find " << peaknum << " peaks (only found " << nfound << " peaks)" << std::endl;
-        for (Int_t i = 0; i < peaknum; ++i) {
-            fout << "0.0 0.0" << endl;
-        }
-        fout.close();
+    if (telname == "telx" || sidename == "dE") {
+        std::cerr << "Error: telname and sidename must be specified.\n";
+        Usage();
         return;
     }
-    Double_t *xpeaks = spec->GetPositionX();
+
+    std::cout << "Info: Process MUXParamMakeer.C\n"
+              << "      Parameters:\n"
+              << "        h1 = " << h1->GetName() << "\n"
+              << "        telname = " << telname << "\n"
+              << "        sidename = " << sidename << "\n"
+              << "        runname = " << runname << "\n"
+              << "        runnum = " << runnum << "\n"
+              << "        peaknum = " << peaknum << "\n";
+
+    TString outFileName = Form("%s/prm/%s/pos_%s/%s%s.dat",
+                               artwork_dir, telname.Data(), sidename.Data(),
+                               runname.Data(), runnum.Data());
+
+    std::ofstream fout(outFileName.Data());
+    if (!fout) {
+        std::cerr << " Error: Failed to create file " << outFileName << "\n ";
+        return;
+    }
+    std::cout << "Info: Creating file " << outFileName << "\n";
+    // header comment
+    fout << "# Created using MUXParamMaker.C\n";
+
+    auto spec = std::make_unique<TSpectrum>(peaknum, 1);
+    int nfound = spec->Search(h1, 2, "", 0.001);
+    if (nfound != peaknum) {
+        std::cerr << "Error: Expected " << peaknum << " peaks, but found " << nfound << ".\n";
+        for (int i = 0; i < peaknum; ++i) {
+            fout << "0.0";
+            if (i < peaknum - 1) {
+                fout << ", ";
+            }
+        }
+        fout << "\n";
+        return;
+    }
+
+    double *xpeaks = spec->GetPositionX();
     std::sort(xpeaks, xpeaks + peaknum);
 
-    std::vector<Double_t> x(peaknum, 0.0);
-    TF1 *f[peaknum];
-    for (Int_t i = 0; i < peaknum; ++i) {
-        TString tmp;
-        tmp.Form("f[%d]", i);
-        f[i] = new TF1(tmp.Data(), "gaus(0)");
-        f[i]->SetRange(xpeaks[i] - 10.0, xpeaks[i] + 10.0);
-        f[i]->SetParameters(100, xpeaks[i], 1);
-        f[i]->SetParLimits(2, 0, 100);
-        h1->Fit(f[i], "rq");
-        x[i] = f[i]->GetParameter(1);
-        f[i]->Draw("same");
+    std::vector<double> peaks_pos(peaknum, 0.0);
+    std::vector<std::unique_ptr<TF1>> functions(peaknum);
+    for (int i = 0; i < peaknum; ++i) {
+        TString func_name = Form("f[%d]", i);
+        functions[i] = std::make_unique<TF1>(func_name.Data(), "gaus(0)");
+        functions[i]->SetRange(xpeaks[i] - RANGE_OFFSET, xpeaks[i] + RANGE_OFFSET);
+        functions[i]->SetParameters(100, xpeaks[i], 1);
+        functions[i]->SetParLimits(2, 0, 100);
+        h1->Fit(functions[i].get(), "rq");
+        peaks_pos[i] = functions[i]->GetParameter(1);
+        functions[i]->DrawClone("same");
     }
 
-    fout << x[0] - 10.0 << " " << (x[0] + x[1]) / 2.0 << endl;
-    for (Int_t i = 1; i < peaknum - 1; ++i) {
-        fout << (x[i - 1] + x[i]) / 2.0 << " " << (x[i] + x[i + 1]) / 2.0 << endl;
+    fout << peaks_pos[0] - RANGE_OFFSET << ", ";
+    for (int i = 1; i < peaknum; ++i) {
+        fout << (peaks_pos[i - 1] + peaks_pos[i]) / 2.0 << ", ";
     }
-    fout << (x[peaknum - 2] + x[peaknum - 1]) / 2.0 << " " << x[peaknum - 1] + 10 << endl;
-
-    fout.close();
+    fout << peaks_pos[peaknum - 1] + RANGE_OFFSET << "\n";
 }

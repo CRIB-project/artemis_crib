@@ -3,17 +3,19 @@
  * @brief   Implementation of TMUXDataMappingProcessor for mapping categorized data.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:47:17
- * @note    last modified: 2025-01-01 10:48:03
+ * @note    last modified: 2025-01-02 16:57:45
  * @details
  */
 
 #include "TMUXDataMappingProcessor.h"
+#include "../TProcessorUtil.h"
 
 #include "TMUXData.h"
 #include <TCategorizedData.h>
 #include <TRawDataObject.h>
 #include <constant.h>
 
+/// ROOT macro for class implementation
 ClassImp(art::crib::TMUXDataMappingProcessor);
 
 namespace art::crib {
@@ -56,19 +58,14 @@ TMUXDataMappingProcessor::~TMUXDataMappingProcessor() {
  */
 void TMUXDataMappingProcessor::Init(TEventCollection *col) {
     // Categorized data initialization
-    auto cat_ref = col->GetObjectRef(fCategorizedDataName);
-    if (!cat_ref) {
-        SetStateError(Form("No input collection '%s'", fCategorizedDataName.Data()));
-        return;
-    }
+    auto result = util::GetInputObject<TCategorizedData>(
+        col, fCategorizedDataName, "art::TCategorizedData");
 
-    auto cat_obj = static_cast<TObject *>(*cat_ref);
-    if (!cat_obj->InheritsFrom("art::TCategorizedData")) {
-        SetStateError(Form("Invalid input collection '%s': not TCategorizedData",
-                           fCategorizedDataName.Data()));
+    if (std::holds_alternative<TString>(result)) {
+        SetStateError(std::get<TString>(result));
         return;
     }
-    fCategorizedData = static_cast<TCategorizedData *>(cat_obj);
+    fCategorizedData = std::get<TCategorizedData *>(result);
 
     // CatID validation
     if (fCatID < 0) {

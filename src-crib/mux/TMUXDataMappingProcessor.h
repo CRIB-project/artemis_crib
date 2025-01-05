@@ -3,12 +3,12 @@
  * @brief   Declaration of TMUXDataMappingProcessor class for mapping categorized data to TMUXData objects.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:46:45
- * @note    last modified: 2024-12-31 22:55:17
+ * @note    last modified: 2025-01-03 15:49:29
  * @details
  */
 
-#ifndef _CRIB_TMUXDATAMAPPINGPROCESSOR_H_
-#define _CRIB_TMUXDATAMAPPINGPROCESSOR_H_
+#ifndef CRIB_TMUXDATAMAPPINGPROCESSOR_H_
+#define CRIB_TMUXDATAMAPPINGPROCESSOR_H_
 
 #include <TProcessor.h>
 
@@ -30,7 +30,8 @@ class TMUXData;
  * mapping is controlled by a specified category ID (`fCatID`) and involves
  * extracting and transforming raw detector values.
  *
- * ### Example steering file
+ * ### Example Steering File
+ *
  * ```yaml
  * Processor:
  *   - name: MyTMUXDataMappingProcessor
@@ -79,8 +80,8 @@ class TMUXDataMappingProcessor : public TProcessor {
     TString fCategorizedDataName; ///< Name of the input categorized data collection.
     TString fOutputColName;       ///< Name of the output TMUXData collection.
 
-    TCategorizedData *fCategorizedData; //! Pointer to the categorized data collection.
-    TClonesArray *fOutData;             //! Pointer to the output TMUXData array.
+    TCategorizedData *fCategorizedData; ///<! Pointer to the categorized data collection.
+    TClonesArray *fOutData;             ///<! Pointer to the output TMUXData array.
 
     Int_t fCatID; ///< Category ID used for filtering input data.
 
@@ -91,4 +92,4 @@ class TMUXDataMappingProcessor : public TProcessor {
 };
 } // namespace art::crib
 
-#endif // _CRIB_TMUXDATAMAPPINGPROCESSOR_H_
+#endif // CRIB_TMUXDATAMAPPINGPROCESSOR_H_

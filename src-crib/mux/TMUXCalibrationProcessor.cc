@@ -1,179 +1,188 @@
 /**
  * @file    TMUXCalibrationProcessor.cc
- * @brief
+ * @brief   Implementation of the TMUXCalibrationProcessor class for calibrating timing, charge, and position data.
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:09:46
- * @note    last modified: 2025-01-01 10:26:29
- * @details treat only pos1 and ene1
+ * @note    last modified: 2025-01-03 17:04:36
+ * @details
  */
 
 #include "TMUXCalibrationProcessor.h"
+#include "../TProcessorUtil.h"
 
-#include "TConverterUtil.h"
 #include "TMUXData.h"
 #include "TMUXPositionConverter.h"
-#include "TTimingChargeData.h"
+#include <TAffineConverter.h>
 #include <TRandom.h>
+#include <TTimingChargeData.h>
 #include <constant.h>
 
-using art::crib::TMUXCalibrationProcessor;
+/// ROOT macro for class implementation
+ClassImp(art::crib::TMUXCalibrationProcessor);
+
+namespace art::crib {
 
 namespace {
-const TString DEFAULT_CONV_NAME("no_conversion");
-}
+/**
+ * @brief Constant representing no conversion.
+ */
+const TString kNoConversion = "no_conversion";
+/**
+ * @brief Threshold for applying reflection to the detector ID.
+ */
+constexpr int kReflectionThreshold = 8;
+} // namespace
 
-ClassImp(TMUXCalibrationProcessor);
-
-// Default constructor
 TMUXCalibrationProcessor::TMUXCalibrationProcessor()
     : fInData(nullptr), fOutData(nullptr),
       fTimingConverterArray(nullptr), fChargeConverterArray(nullptr),
-      fPositionConverterArray(nullptr),
-      fInputHasMUXData(kFALSE) {
-    RegisterInputCollection("InputCollection",
-                            "array of objects inheriting from art::crib::TMUXData",
+      fPositionConverterArray(nullptr) {
+    RegisterInputCollection("InputCollection", "Array of TMUXData objects",
                             fInputColName, TString("mux_raw"));
-    RegisterOutputCollection("OutputCollection", "output class will be art::TTimingChargeData",
+    RegisterOutputCollection("OutputCollection", "Output array of TTimingChargeData objects",
                              fOutputColName, TString("mux_cal"));
+
     RegisterProcessorParameter("TimingConverterArray",
-                               "normally output of TAffineConverterArrayGenerator",
-                               fTimingConverterArrayName, DEFAULT_CONV_NAME);
+                               "Timing parameter object of TAffineConverter",
+                               fTimingConverterArrayName, kNoConversion);
     RegisterProcessorParameter("ChargeConverterArray",
-                               "normally output of TAffineConverterArrayGenerator",
-                               fChargeConverterArrayName, DEFAULT_CONV_NAME);
+                               "Energy parameter object of TAffineConverter",
+                               fChargeConverterArrayName, kNoConversion);
     RegisterProcessorParameter("PositionConverterArray",
-                               "normally output of TAffineConverterArrayGenerator",
-                               fPositionConverterArrayName, DEFAULT_CONV_NAME);
-    RegisterProcessorParameter("HasReflection", "whether strip is normal order or not",
+                               "Position parameter object of TMUXPositionConverter",
+                               fPositionConverterArrayName, kNoConversion);
+
+    RegisterProcessorParameter("HasReflection", "Reverse strip order (0--7) if true",
                                fHasReflection, kFALSE);
-    RegisterProcessorParameter("InputIsDigital", "whether input is digital or not",
+    RegisterProcessorParameter("InputIsDigital", "Add randomness if true",
                                fInputIsDigital, kTRUE);
-    RegisterProcessorParameter("Sparse", "hit will be inserted at the index corresponding to its id if sparse is 0, otherwize hit will be added ordinaly (default: 1)",
-                               fIsSparse, kTRUE);
 }
 
 TMUXCalibrationProcessor::~TMUXCalibrationProcessor() {
     delete fOutData;
-    delete fTimingConverterArray;
-    delete fChargeConverterArray;
-    delete fPositionConverterArray;
     fOutData = nullptr;
-    fTimingConverterArray = nullptr;
-    fChargeConverterArray = nullptr;
-    fPositionConverterArray = nullptr;
 }
 
+/**
+ * @details
+ * This method initializes the processor by:
+ * - Retrieving the input and output data collections based on user configuration.
+ * - Setting up the converter arrays (`fTimingConverterArray`, `fChargeConverterArray`, `fPositionConverterArray`)
+ *   based on the specified parameters.
+ * - Logging warnings if parameters are not set or if required converters are missing.
+ *
+ * If the required position converter array is not provided, the processor is put into an error state.
+ */
 void TMUXCalibrationProcessor::Init(TEventCollection *col) {
+    // lambda function for initialize converter arrays
+    auto initConverterArray = [this, col](const TString &name, TClonesArray *&array, const char *paramName) {
+        if (name == kNoConversion) {
+            Warning("Init", "Parameter '%s' is not set. Using no conversion.", paramName);
+            array = nullptr;
+        } else {
+            // need to inherit from art::TConverterBase
+            array = util::GetParameterObject(col, name, "art::TConverterBase");
+        }
+    };
+
+    auto result = util::GetInputObject<TClonesArray>(
+        col, fInputColName, "TClonesArray", "art::crib::TMUXData");
+
+    if (std::holds_alternative<TString>(result)) {
+        SetStateError(std::get<TString>(result));
+        return;
+    }
+    fInData = std::get<TClonesArray *>(result);
     Info("Init", "%s => %s", fInputColName.Data(), fOutputColName.Data());
-    fInData = reinterpret_cast<TClonesArray **>(col->GetObjectRef(fInputColName.Data()));
-    if (!fInData) {
-        SetStateError(TString::Format("input not found: %s", fInputColName.Data()));
+
+    initConverterArray(fTimingConverterArrayName, fTimingConverterArray, "TimingConverterArray");
+    initConverterArray(fChargeConverterArrayName, fChargeConverterArray, "ChargeConverterArray");
+
+    if (fPositionConverterArrayName == kNoConversion) {
+        SetStateError("Position parameters are required");
         return;
     }
-
-    const TClass *const cl = (*fInData)->GetClass();
-    fInputHasMUXData = cl->InheritsFrom(art::crib::TMUXData::Class());
-
-    if (!fInputHasMUXData) {
-        SetStateError("contents of input array must inherit from art::crib::TMUXData");
-        return;
-    }
-
-    if (fTimingConverterArrayName.CompareTo(DEFAULT_CONV_NAME)) {
-        TConverterUtil::SetConverterArray(&fTimingConverterArray, fTimingConverterArrayName, col);
-    }
-
-    if (fChargeConverterArrayName.CompareTo(DEFAULT_CONV_NAME)) {
-        TConverterUtil::SetConverterArray(&fChargeConverterArray, fChargeConverterArrayName, col);
-    }
-
-    if (fPositionConverterArrayName.CompareTo(DEFAULT_CONV_NAME)) {
-        TConverterUtil::SetConverterArray(&fPositionConverterArray, fPositionConverterArrayName, col);
-    }
-
-    if (!fTimingConverterArray || !fChargeConverterArray || !fPositionConverterArray) {
-        SetStateError("no timing, charge and position converter registered.");
-        return;
-    }
+    // need to inherit from art::TConverterBase
+    fPositionConverterArray = util::GetParameterObject(col, fPositionConverterArrayName, "art::TConverterBase");
 
     fOutData = new TClonesArray("art::TTimingChargeData");
     fOutData->SetName(fOutputColName);
     col->Add(fOutputColName, fOutData, fOutputIsTransparent);
 }
 
+/**
+ * @details
+ * The `Process` method performs the following steps:
+ * 1. Clears the output data collection to prepare for new entries.
+ * 2. Checks the validity of the input data:
+ *    - If no data is present (`nData == 0`), the method exits as this is a valid condition.
+ *    - If multiple data entries are found, a warning is logged and the method exits, as multi-data processing is not supported.
+ * 3. Retrieves the first entry in the input collection and casts it to `TMUXData`.
+ * 4. Converts the position data (`P1`) to a detector ID.
+ * 5. Applies reflection to the detector ID if `fHasReflection` is enabled.
+ * 6. Calibrates the charge and timing values using the respective converter arrays.
+ * 7. Stores the calibrated data in the output collection.
+ */
 void TMUXCalibrationProcessor::Process() {
     fOutData->Clear("C");
-
-    for (Int_t iData = 0, nData = (*fInData)->GetEntriesFast();
-         iData != nData; ++iData) {
-
-        const TDataObject *const inData = static_cast<TDataObject *>((*fInData)->At(iData));
-        const TMUXData *const DataM = dynamic_cast<const TMUXData *>(inData);
-
-        // process of position
-        if (!fPositionConverterArray)
-            return;
-        Double_t pos1_raw = DataM->GetP1();
-        Int_t detID = kInvalidI;
-        for (Int_t i = 0; i < (Int_t)(fPositionConverterArray->size()); ++i) {
-            detID = fPositionConverterArray->at(i)->Convert(pos1_raw);
-            if (detID == 1) {
-                detID = i;
-                break;
-            } else {
-                detID = kInvalidI;
-            }
-        }
-        if (!IsValid(detID))
-            continue;
-        // if(detID == kInvalidI) continue;
-
-        if (fHasReflection) {
-            for (Int_t i = 0; i < 8; ++i) {
-                if (detID == i) {
-                    detID = 7 - i;
-                    break;
-                }
-            }
-        }
-
-        TTimingChargeData *outData = static_cast<TTimingChargeData *>(fOutData->ConstructedAt(iData));
-        outData->SetDetID(detID);
-
-        // TDataObject *const outDataID = dynamic_cast<TDataObject*>(outData);
-        // outDataID->SetID(detID);
-
-        // process of charge and timing
-        Double_t charge = DataM->GetE1() + (fInputIsDigital ? gRandom->Uniform() : 0);
-        if (fChargeConverterArray && detID >= (Int_t)fChargeConverterArray->size()) {
-            SetStateError(TString::Format("size of ChargeConverterArray (%d) is smaller than detID (%d)", (Int_t)fChargeConverterArray->size(), detID));
-            return;
-        }
-        const Double_t outputQ =
-            fChargeConverterArray ? fChargeConverterArray->at(detID)->Convert(charge) : charge;
-        ICharge *const outDataQ = dynamic_cast<ICharge *>(outData);
-        outDataQ->SetCharge(outputQ);
-
-        const Double_t timing = DataM->GetTrig() + (fInputIsDigital ? gRandom->Uniform() : 0);
-        if (fTimingConverterArray && detID >= (Int_t)fTimingConverterArray->size()) {
-            SetStateError(TString::Format("size of TimingConverterArray (%d) is smaller than detID (%d)", (Int_t)fTimingConverterArray->size(), detID));
-            return;
-        }
-        const Double_t outputT =
-            fTimingConverterArray ? fTimingConverterArray->at(detID)->Convert(timing) : timing;
-        ITiming *const outDataT = dynamic_cast<ITiming *>(outData);
-        outDataT->SetTiming(outputT);
+    if (!fInData) {
+        Warning("Process", "No Input Data object");
+        return;
     }
 
-    if (fIsSparse) {
-        // sort data in the same event in ascending order of timing
-        TTimingChargeData::SetSortType(TTimingChargeData::kTiming);
-        TTimingChargeData::SetSortOrder(TTimingChargeData::kASC);
-        fOutData->Sort();
-        fOutData->Compress();
-    } else {
-        for (Int_t i = 0, n = fOutData->GetEntriesFast(); i != n; ++i) {
-            fOutData->ConstructedAt(i);
-        }
+    const int nData = fInData->GetEntriesFast();
+    if (nData == 0)
+        return;
+    else if (nData > 1) {
+        Warning("Process", "It doesn't support multi-data currently");
+        return;
     }
+
+    const auto *data = dynamic_cast<const TMUXData *>(fInData->At(0));
+    if (!data)
+        return;
+
+    // int mux_detid = data->GetID();
+    int hit1_detid = ConvertPosition(data->GetP1(), 0);
+    // int hit2_detid = ConvertPosition(data->GetP2(), 1); // not implemented
+
+    if (!IsValid(hit1_detid))
+        return;
+
+    if (fHasReflection && hit1_detid >= 0 && hit1_detid < kReflectionThreshold) {
+        hit1_detid = kReflectionThreshold - 1 - hit1_detid;
+    }
+
+    auto *outData = static_cast<TTimingChargeData *>(fOutData->ConstructedAt(0));
+    outData->SetID(hit1_detid);
+    outData->SetCharge(CalibrateValue(data->GetE1(), hit1_detid, fChargeConverterArray));
+    outData->SetTiming(CalibrateValue(data->GetTrig(), hit1_detid, fTimingConverterArray));
 }
+
+/**
+ * @details
+ * Converts a raw position value to a detector ID by using the position converter array.
+ * If the position converter array is not available or the conversion fails, an invalid value (`kInvalidD`) is returned.
+ */
+double TMUXCalibrationProcessor::ConvertPosition(double pos, int id) const {
+    if (!fPositionConverterArray)
+        return kInvalidD;
+    auto *converter = static_cast<TMUXPositionConverter *>(fPositionConverterArray->At(id));
+    return converter ? converter->Convert(pos) : kInvalidD;
+}
+
+/**
+ * @details
+ * Calibrates a raw value (such as timing or charge) using the specified converter array.
+ * If the input is digital (`fInputIsDigital`), a random value is added to the raw input to simulate analog noise.
+ * If the converter array is not available or the conversion fails, the raw value is returned unchanged.
+ */
+double TMUXCalibrationProcessor::CalibrateValue(double raw, int id, const TClonesArray *converterArray) const {
+    raw += (fInputIsDigital ? gRandom->Uniform() : 0);
+    if (!converterArray)
+        return raw;
+    auto *converter = static_cast<TAffineConverter *>(converterArray->At(id));
+    return converter ? converter->Convert(raw) : raw;
+}
+
+} // namespace art::crib

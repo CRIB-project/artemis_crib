@@ -1,138 +1,143 @@
 #!/bin/bash
 
-#===== USER SETTING ======================================
-# need this format! [mux_id, tel_name, dEX or dEY]
-# The delimiter must be a space
-mux_usage=(
-   "MUX1-1 tel6 dEX"
-   "MUX1-2 tel6 dEY"
-   "MUX2-1 tel5 dEX"
-   "MUX2-2 tel5 dEY"
-   "MUX3-1 tel4 dEX"
-   "MUX3-2 tel4 dEY"
-)
-#=========================================================
+# Global variables
+tel_names=("tel1" "tel2" "tel3" "tel4" "tel5" "tel6")
+side_names=("dEX" "dEY")
 
-arthome=$(
-   cd "$(dirname "$0")" || exit 1
-   pwd
-)
-time=$(date)
-
-usage() {
-   printf "Set the symbolic link for MUX position parameter\n"
-   printf "Before use this shellscript, please check the MUX conf in this file!\n\n"
-   printf "\033[1m\033[4mUsage:\033[0m $ ./setmuxprm.sh [ARGUMENT or OPTION]\n\n"
-   printf "\033[1m\033[4mArguments:\033[0m\n"
-   printf "  -h        Print help\n"
-   printf "  -c        Clean the parameter files (delete old experiment files)\n"
-   printf "  -l        Print available parameters\n"
-   printf "  run0000   The name of parameter files. Set this parameter\n"
-}
-
-prm_clean() {
-   while true; do
-      read -rp "WARNING: all the MUX parameter files will be cleaned, is it okay? (y/n): " _answer
-      case ${_answer} in
-      y)
-         say "clean the parameter files..."
-
-         for mux_info in "${mux_usage[@]}"; do
-            read -ra mux <<<"${mux_info}"
-            mux_prm_dir="$arthome/prm/${mux[1]}/pos_${mux[2]}"
-            link_file=$(readlink -f "$mux_prm_dir/current")
-            for file in "$mux_prm_dir"/*; do
-               if [ "$file" = "$link_file" ] || [ "$file" = "$mux_prm_dir/current" ]; then
-                  continue
-               fi
-               say "rm $file"
-               rm -f "$file"
-            done
-         done
-         break
-         ;;
-      n)
-         say "cancelled"
-         break
-         ;;
-      esac
-   done
-}
-
-show_list() {
-   say "avaliable parameter list:"
-   for mux_info in "${mux_usage[@]}"; do
-      read -ra mux <<<"${mux_info}"
-      say "$mux_info:"
-      mux_prm_dir="$arthome/prm/${mux[1]}/pos_${mux[2]}"
-      cd "$mux_prm_dir" || exit 1
-      for file in *; do
-         if [ "$file" = "current" ]; then
-            continue
-         fi
-         say " - $file"
-      done
-      printf "\n"
-   done
-
-   cd "$arthome" || exit 1
-}
-
-main() {
-   if [ "$1"_ = _ ]; then
-      err "need correct argument"
-   fi
-
-   if [ $# -ne 1 ]; then
-      err "need correct argument"
-   fi
-
-   for mux_info in "${mux_usage[@]}"; do
-      read -ra mux <<<"${mux_info}"
-
-      mux_prm_dir="$arthome/prm/${mux[1]}/pos_${mux[2]}"
-      cd "$mux_prm_dir" || exit 1
-      if [ -f "$1.dat" ]; then
-         say "${mux[0]} ${mux[1]} ${mux[2]}: $mux_prm_dir/$1.dat is current"
-         rm -f current
-         ln -sf "$1.dat" current
-      else
-         err "$mux_prm_dir/$1 not found."
-      fi
-   done
-
-   cd "$arthome" || exit 1
-   echo "${time} using $1 prm" >>"$arthome/.log_mux"
-}
-
+# Utility functions
 say() {
-   printf "\33[1msetmuxprm.sh\33[0m: %s\n" "$1"
+  printf "\33[1msetmuxprm.sh\33[0m: %s\n" "$1"
 }
 
 err() {
-   say "$1" >&2
-   usage
-   exit 1
+  say "$1" >&2
+  exit 1
 }
 
-while getopts "hcl" OPT; do
-   case $OPT in
-   h)
-      usage
-      exit 0
-      ;;
-   c)
-      prm_clean
-      exit 0
-      ;;
-   l)
-      show_list
-      exit 0
-      ;;
-   \?)
-      err "invalid option!"
-      ;;
-   esac
-done
+need_cmd() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    err "Command not found: $1"
+  fi
+}
 
-main "$@"
+get_relative_path() {
+  realpath --relative-to="$ARTEMIS_WORKDIR" "$1"
+}
+
+check_dir() {
+  local dir="$1"
+  if [ ! -d "$dir" ]; then
+    say "Directory not found: $(get_relative_path "$dir"). Skipping..."
+    return 1
+  fi
+}
+
+# Clean parameters
+prm_clean() {
+  local deleted_files=()
+
+  if gum confirm "WARNING: All the MUX parameter files will be cleaned. Continue?"; then
+    for tel_name in "${tel_names[@]}"; do
+      for side_name in "${side_names[@]}"; do
+        local mux_prm_dir="$ARTEMIS_WORKDIR/prm/$tel_name/pos_$side_name"
+        check_dir "$mux_prm_dir" || continue
+
+        local link_file
+        link_file=$(readlink -f "$mux_prm_dir/current")
+        for file in "$mux_prm_dir"/*; do
+          if [[ "$file" == "$mux_prm_dir/test.dat" || "$file" == "$link_file" || "$file" == "$mux_prm_dir/current" ]]; then
+            continue
+          fi
+          gum spin --title "Removing $file" -- rm -f "$file"
+          deleted_files+=("$file")
+        done
+      done
+    done
+
+    if [ ${#deleted_files[@]} -gt 0 ]; then
+      say "Deleted files:"
+      printf "  %s\n" "${deleted_files[@]}"
+    else
+      say "No files were deleted."
+    fi
+  else
+    say "Clean operation cancelled."
+  fi
+}
+
+show_list() {
+  say "Available parameter list:"
+  for tel_name in "${tel_names[@]}"; do
+    for side_name in "${side_names[@]}"; do
+      local mux_prm_dir="$ARTEMIS_WORKDIR/prm/$tel_name/pos_$side_name"
+      check_dir "$mux_prm_dir" || continue
+
+      local link_file
+      link_file=$(readlink -f "$mux_prm_dir/current")
+      local file_name
+      file_name=$(basename "$link_file")
+      printf "%s -> %s\n" "$(get_relative_path "$mux_prm_dir")/current" "$file_name"
+
+      for file in "$mux_prm_dir"/*; do
+        if [[ "$file" == "$link_file" || "$file" == "$mux_prm_dir/current" ]]; then
+          continue
+        fi
+        printf "%s\n" "$(get_relative_path "$file")"
+      done
+    done
+  done
+}
+
+main() {
+  for tel_name in "${tel_names[@]}"; do
+    for side_name in "${side_names[@]}"; do
+      local mux_prm_dir="$ARTEMIS_WORKDIR/prm/$tel_name/pos_$side_name"
+      check_dir "$mux_prm_dir" || continue
+
+      rm -f "$mux_prm_dir/current"
+      local options=()
+      for file in "$mux_prm_dir"/*; do
+        [[ "$(basename "$file")" != "current" ]] && options+=("$(basename "$file")")
+      done
+
+      if [ ${#options[@]} -eq 0 ]; then
+        say "No files to link in $(get_relative_path "$mux_prm_dir"). Skipping..."
+        continue
+      fi
+
+      local selected_file
+      selected_file=$(printf "%s\n" "${options[@]}" | gum choose --height=10 --header="Select a file to link as 'current' in $(get_relative_path "$mux_prm_dir")")
+
+      local relative_path
+      relative_path=$(realpath --relative-to="$mux_prm_dir" "$mux_prm_dir/$selected_file")
+      ln -sf "$relative_path" "$mux_prm_dir/current"
+      say "Created symlink: $(get_relative_path "$mux_prm_dir")/current -> $selected_file"
+    done
+  done
+}
+
+need_cmd gum
+need_cmd realpath
+
+if [ -z $ARTEMIS_WORKDIR ]; then
+  err 'Please set the "ARTEMIS_WORKDIR" environment variable and try again.'
+fi
+
+say "Select an operation:"
+operation=$(gum choose "Set parameter" "Show list" "Clean parameters" "Exit")
+
+case $operation in
+"Set parameter")
+  main
+  ;;
+"Show list")
+  show_list
+  ;;
+"Clean parameters")
+  prm_clean
+  ;;
+"Exit")
+  say "Cancelled"
+  exit 0
+  ;;
+esac

@@ -3,7 +3,7 @@
  * @brief   Source file for the TMUXData class.
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-07-30 09:49:05
- * @note    last modified: 2024-12-31 21:49:35
+ * @note    last modified: 2025-01-02 13:48:35
  * @details
  */
 
@@ -11,6 +11,7 @@
 
 #include <constant.h>
 
+/// ROOT macro for class implementation
 ClassImp(art::crib::TMUXData);
 
 namespace art::crib {
