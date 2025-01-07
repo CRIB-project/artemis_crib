@@ -1,3 +1,4 @@
+
 set(CRIBLIB_NAME crib)
 
 set(CRIBSOURCES
@@ -149,6 +150,8 @@ set_target_properties(
   PROPERTIES VERSION ${PROJECT_VERSION}
              SOVERSION ${PROJECT_VERSION_MAJOR}
              PUBLIC_HEADER "${CRIBHEADERS}")
+
+add_subdirectory(main)
 
 install(
   TARGETS ${CRIBLIB_NAME}
