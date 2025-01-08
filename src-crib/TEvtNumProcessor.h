@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022?
- * @note    last modified: 2024-08-23 20:48:59
+ * @note    last modified: 2025-01-08 10:27:37
  * @details originally made by J. W. Hwang
  */
 
@@ -20,7 +20,7 @@ class art::crib::TEvtNumProcessor : public TProcessor {
 
   public:
     TEvtNumProcessor();
-    ~TEvtNumProcessor();
+    ~TEvtNumProcessor() override;
 
     void Init(TEventCollection *col) override;
     void EndOfRun() override;

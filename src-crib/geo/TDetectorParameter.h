@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-18 11:32:42
- * @note    last modified: 2024-08-21 17:54:21
+ * @note    last modified: 2025-01-08 10:30:46
  * @details
  */
 
@@ -19,7 +19,7 @@ class TDetectorParameter;
 class art::crib::TDetectorParameter : public TParameterObject {
   public:
     TDetectorParameter();
-    ~TDetectorParameter();
+    ~TDetectorParameter() override;
 
     TDetectorParameter(const TDetectorParameter &);
     TDetectorParameter &operator=(const TDetectorParameter &rhs);

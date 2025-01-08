@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-07-19 20:20:07
- * @note    last modified: 2024-08-21 17:23:56
+ * @note    last modified: 2025-01-08 10:28:59
  * @details
  */
 
@@ -23,7 +23,7 @@ class TTimingDataMappingProcessor;
 class art::crib::TTimingDataMappingProcessor : public TProcessor {
   public:
     TTimingDataMappingProcessor();
-    ~TTimingDataMappingProcessor();
+    ~TTimingDataMappingProcessor() override;
 
     void Init(TEventCollection *) override;
     void Process() override;

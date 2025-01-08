@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 13:11:23
- * @note    last modified: 2024-08-23 21:16:24
+ * @note    last modified: 2025-01-08 10:35:04
  * @details
  */
 
@@ -24,7 +24,7 @@ class TClonesArray;
 class art::crib::TNBodyReactionProcessor : public TProcessor {
   public:
     TNBodyReactionProcessor();
-    ~TNBodyReactionProcessor();
+    ~TNBodyReactionProcessor() override;
 
     void Init(TEventCollection *col) override;
     void Process() override;

@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-06-13 18:33:54
- * @note    last modified: 2024-08-21 18:18:11
+ * @note    last modified: 2025-01-08 10:29:35
  * @details
  */
 
@@ -27,7 +27,7 @@ class art::crib::TCatCmdTCutG : public TCatCmd {
     Bool_t fisFirst;
 
   public:
-    ~TCatCmdTCutG();
+    ~TCatCmdTCutG() override;
 
     static const char *kFuncNameBase;
     static const char *kLabelNameBase;

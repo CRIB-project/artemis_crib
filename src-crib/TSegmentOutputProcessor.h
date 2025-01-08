@@ -3,7 +3,7 @@
  * @brief   from seg conf, output raw data TTree object
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-12-25 11:40:53
- * @note    last modified: 2024-08-23 20:57:10
+ * @note    last modified: 2025-01-08 10:28:36
  * @details
  */
 
@@ -29,7 +29,7 @@ class TClonesArray;
 class art::crib::TSegmentOutputProcessor : public TProcessor {
   public:
     TSegmentOutputProcessor();
-    ~TSegmentOutputProcessor();
+    ~TSegmentOutputProcessor() override;
 
     TSegmentOutputProcessor(const TSegmentOutputProcessor &);
     TSegmentOutputProcessor &operator=(const TSegmentOutputProcessor &rhs);

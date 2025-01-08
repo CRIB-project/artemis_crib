@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:50:01
- * @note    last modified: 2025-01-05 17:37:40
+ * @note    last modified: 2025-01-08 10:31:54
  * @details
  */
 
@@ -47,7 +47,7 @@ class TMUXPositionConverter : public TConverterBase {
     /**
      * @brief Default destructor.
      */
-    ~TMUXPositionConverter();
+    ~TMUXPositionConverter() override;
 
     /**
      * @brief Converts a value based on the loaded parameters.

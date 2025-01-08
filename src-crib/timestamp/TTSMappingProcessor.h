@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022?
- * @note    last modified: 2024-08-21 18:08:52
+ * @note    last modified: 2025-01-08 10:37:21
  * @details
  */
 
@@ -23,7 +23,7 @@ class TTSMappingProcessor;
 class art::crib::TTSMappingProcessor : public TProcessor {
   public:
     TTSMappingProcessor();
-    ~TTSMappingProcessor();
+    ~TTSMappingProcessor() override;
 
     void Init(TEventCollection *) override;
     void Process() override;

@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-06-13 17:37:11
- * @note    last modified: 2024-08-21 18:23:04
+ * @note    last modified: 2025-01-08 10:30:30
  * @details
  */
 
@@ -21,7 +21,7 @@ class TH2;
 class art::crib::TCmdXYblow : public TCatCmd {
   public:
     TCmdXYblow();
-    ~TCmdXYblow();
+    ~TCmdXYblow() override;
 
     static const char *kFuncNameBase;
     static const char *kLabelNameBase;

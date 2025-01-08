@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-28 14:23:16
- * @note    last modified: 2024-08-23 20:54:16
+ * @note    last modified: 2025-01-08 10:28:23
  * @details
  */
 
@@ -27,7 +27,7 @@ class art::crib::TScalerMonitorProcessor : public TProcessor {
 
   public:
     TScalerMonitorProcessor();
-    ~TScalerMonitorProcessor();
+    ~TScalerMonitorProcessor() override;
 
     void Init(TEventCollection *col) override;
     void Process() override;

@@ -3,7 +3,7 @@
  * @brief   Created from TPPACProcessor
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-08-08 17:27:59
- * @note    last modified: 2024-08-23 20:51:28
+ * @note    last modified: 2025-01-08 10:27:48
  * @details
  */
 
@@ -29,7 +29,7 @@ class art::crib::TF1PPACProcessor : public TProcessor {
   public:
     // Default constructor
     TF1PPACProcessor();
-    ~TF1PPACProcessor();
+    ~TF1PPACProcessor() override;
 
     void Init(TEventCollection *col) override;
     void Process() override;

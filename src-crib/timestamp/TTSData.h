@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022?
- * @note    last modified: 2024-08-24 10:29:05
+ * @note    last modified: 2025-01-08 10:37:13
  * @details
  */
 
@@ -25,7 +25,7 @@ class art::crib::TTSData : public TDataObject {
                    kDESC } ESortOrder;
 
     TTSData();
-    ~TTSData();
+    ~TTSData() override;
 
     TTSData(const TTSData &rhs);
     TTSData &operator=(const TTSData &rhs);

@@ -3,7 +3,7 @@
  * @brief   position and angle random beam generator
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-06-09 17:10:35
- * @note    last modified: 2024-09-03 17:18:53
+ * @note    last modified: 2025-01-08 10:35:20
  * @details
  */
 
@@ -21,7 +21,7 @@ class TClonesArray;
 class art::crib::TRandomBeamGenerator : public TProcessor {
   public:
     TRandomBeamGenerator();
-    ~TRandomBeamGenerator();
+    ~TRandomBeamGenerator() override;
 
     void Init(TEventCollection *) override;
     void Process() override;

@@ -3,7 +3,7 @@
  * @brief   extract one channel data
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-18 15:39:13
- * @note    last modified: 2024-12-29 14:38:47
+ * @note    last modified: 2025-01-08 10:27:26
  * @details
  */
 
@@ -22,7 +22,7 @@ namespace art::crib {
 class TChannelSelector : public TProcessor {
   public:
     TChannelSelector();
-    ~TChannelSelector();
+    ~TChannelSelector() override;
 
     void Init(TEventCollection *col) override;
     void Process() override;

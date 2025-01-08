@@ -3,7 +3,7 @@
  * @brief   Declaration of TMUXDataMappingProcessor class for mapping categorized data to TMUXData objects.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:46:45
- * @note    last modified: 2025-01-03 15:49:29
+ * @note    last modified: 2025-01-08 10:31:44
  * @details
  */
 
@@ -54,7 +54,7 @@ class TMUXDataMappingProcessor : public TProcessor {
     /**
      * @brief Destructor.
      */
-    ~TMUXDataMappingProcessor();
+    ~TMUXDataMappingProcessor() override;
 
     /**
      * @brief Initializes the processor with the provided event collection.

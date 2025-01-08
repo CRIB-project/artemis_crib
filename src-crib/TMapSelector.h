@@ -3,7 +3,7 @@
  * @brief   extract one catid data
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-23 11:56:51
- * @note    last modified: 2024-12-29 21:15:01
+ * @note    last modified: 2025-01-08 10:27:57
  * @details
  */
 
@@ -22,7 +22,7 @@ namespace art::crib {
 class TMapSelector : public TProcessor {
   public:
     TMapSelector();
-    ~TMapSelector();
+    ~TMapSelector() override;
 
     void Init(TEventCollection *col) override;
     void Process() override;

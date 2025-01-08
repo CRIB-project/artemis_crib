@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-06-09 15:57:38
- * @note    last modified: 2024-08-21 18:04:53
+ * @note    last modified: 2025-01-08 10:35:45
  * @details
  */
 
@@ -21,7 +21,7 @@ class TClonesArray;
 class art::crib::TTreeBeamGenerator : public TProcessor {
   public:
     TTreeBeamGenerator();
-    ~TTreeBeamGenerator();
+    ~TTreeBeamGenerator() override;
 
     void Init(TEventCollection *) override;
     void Process() override;

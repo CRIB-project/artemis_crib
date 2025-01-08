@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-06-13 17:28:09
- * @note    last modified: 2024-08-21 18:18:40
+ * @note    last modified: 2025-01-08 10:29:24
  * @details
  */
 
@@ -21,7 +21,7 @@ class art::crib::TCatCmdLoopStop : public TCatCmd {
     TCatCmdLoopStop();
 
   public:
-    ~TCatCmdLoopStop();
+    ~TCatCmdLoopStop() override;
 
     static TCatCmdLoopStop *Instance();
 

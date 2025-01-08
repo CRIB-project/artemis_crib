@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 22:34:15
- * @note    last modified: 2024-09-18 15:55:36
+ * @note    last modified: 2025-01-08 10:34:55
  * @details
  */
 
@@ -23,7 +23,7 @@ class TClonesArray;
 class art::crib::TDetectParticleProcessor : public TProcessor {
   public:
     TDetectParticleProcessor();
-    ~TDetectParticleProcessor();
+    ~TDetectParticleProcessor() override;
 
     void Init(TEventCollection *col) override;
     void Process() override;

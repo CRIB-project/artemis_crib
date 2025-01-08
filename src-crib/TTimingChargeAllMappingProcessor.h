@@ -3,7 +3,7 @@
  * @brief   from TTimingChargeMappingProcessor, both E and T
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022?
- * @note    last modified: 2024-08-21 17:24:11
+ * @note    last modified: 2025-01-08 10:28:49
  * @details
  */
 
@@ -27,7 +27,7 @@ class art::crib::TTimingChargeAllMappingProcessor : public TProcessor {
   public:
     // Default constructor
     TTimingChargeAllMappingProcessor();
-    ~TTimingChargeAllMappingProcessor();
+    ~TTimingChargeAllMappingProcessor() override;
 
     void Init(TEventCollection *) override;
     void Process() override;

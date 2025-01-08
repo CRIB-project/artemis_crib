@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 11:11:02
- * @note    last modified: 2024-08-23 21:26:41
+ * @note    last modified: 2025-01-08 10:34:28
  * @details
  */
 
@@ -26,7 +26,7 @@ class art::crib::TTGTIKProcessor : public TProcessor {
     /// @brief Default constructor.
     TTGTIKProcessor();
     /// @brief Default destructor.
-    ~TTGTIKProcessor();
+    ~TTGTIKProcessor() override;
 
     /// @brief Initialization
     void Init(TEventCollection *col) override;
