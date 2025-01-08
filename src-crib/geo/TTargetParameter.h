@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-17 22:14:55
- * @note    last modified: 2025-01-08 10:30:54
+ * @note    last modified: 2025-01-08 10:40:44
  * @details
  */
 
@@ -40,7 +40,7 @@ class art::crib::TTargetParameter : public TParameterObject {
     Double_t fThickness; //! thickness of the target (mm)
 
   private:
-    ClassDef(TTargetParameter, 0)
+    ClassDefOverride(TTargetParameter, 0)
 };
 
 #endif // end of #ifndef _TTARGETPARAMETER_H_
