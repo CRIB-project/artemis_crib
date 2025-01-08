@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-17 17:11:50
- * @note    last modified: 2024-08-24 10:30:23
+ * @note    last modified: 2025-01-08 10:36:09
  * @details
  */
 
@@ -27,7 +27,7 @@ class art::crib::TTelescopeData : public TDataObject {
                    kDESC } ESortOrder;
 
     TTelescopeData();
-    ~TTelescopeData();
+    ~TTelescopeData() override;
 
     TTelescopeData(const TTelescopeData &rhs);
     TTelescopeData &operator=(const TTelescopeData &rhs);

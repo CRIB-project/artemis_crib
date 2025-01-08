@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-06-13 10:56:18
- * @note    last modified: 2024-08-21 18:22:45
+ * @note    last modified: 2025-01-08 10:30:22
  * @details
  */
 
@@ -21,7 +21,7 @@ class TF1;
 class art::crib::TCmdXstatus : public TCatCmd {
   public:
     TCmdXstatus();
-    ~TCmdXstatus();
+    ~TCmdXstatus() override;
 
     static const char *kFuncNameBase;
     static const char *kLabelNameBase;

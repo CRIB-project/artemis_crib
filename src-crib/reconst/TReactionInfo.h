@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 22:27:43
- * @note    last modified: 2024-09-03 16:14:53
+ * @note    last modified: 2025-01-08 10:34:08
  * @details
  */
 
@@ -25,7 +25,7 @@ class art::crib::TReactionInfo : public TDataObject {
                    kDESC } ESortOrder;
 
     TReactionInfo();
-    ~TReactionInfo();
+    ~TReactionInfo() override;
 
     TReactionInfo(const TReactionInfo &rhs);
     TReactionInfo &operator=(const TReactionInfo &rhs);

@@ -3,7 +3,7 @@
  * @brief
  * @author
  * @date    2023-06-13 17:34:58
- * @note    last modified: 2024-08-21 18:20:18
+ * @note    last modified: 2025-01-08 10:29:55
  * @details
  */
 
@@ -23,7 +23,7 @@ class art::crib::TCmdErase : public TCatCmd {
 
   public:
     TCmdErase();
-    ~TCmdErase();
+    ~TCmdErase() override;
 
     // static TCmdErase* Instance();
     Long_t Cmd(vector<TString>) override;

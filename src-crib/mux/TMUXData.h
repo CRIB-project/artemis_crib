@@ -3,7 +3,7 @@
  * @brief   Header file for the TMUXData class.
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-07-30 09:48:52
- * @note    last modified: 2025-01-02 12:16:56
+ * @note    last modified: 2025-01-08 10:31:32
  * @details
  */
 
@@ -34,7 +34,7 @@ class TMUXData : public TDataObject {
     /**
      * @brief Destructor.
      */
-    ~TMUXData();
+    ~TMUXData() override;
 
     /**
      * @brief Copy constructor.

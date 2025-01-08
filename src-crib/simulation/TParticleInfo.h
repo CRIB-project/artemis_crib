@@ -3,7 +3,7 @@
  * @brief   particle information class
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-05-08 18:07:32
- * @note    last modified: 2024-08-24 10:31:15
+ * @note    last modified: 2025-01-08 10:35:12
  * @details
  */
 
@@ -25,7 +25,7 @@ class art::crib::TParticleInfo : public TDataObject {
                    kDESC } ESortOrder;
 
     TParticleInfo();
-    ~TParticleInfo();
+    ~TParticleInfo() override;
 
     TParticleInfo(const TParticleInfo &rhs);
     TParticleInfo &operator=(const TParticleInfo &rhs);

@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-17 21:30:15
- * @note    last modified: 2024-08-23 21:33:54
+ * @note    last modified: 2025-01-08 10:31:04
  * @details
  */
 
@@ -25,7 +25,7 @@ class art::crib::TUserGeoInitializer : public TProcessor {
     /// @brief constructor
     TUserGeoInitializer();
     /// @brief destructor
-    ~TUserGeoInitializer();
+    ~TUserGeoInitializer() override;
 
     /// @brief init
     void Init(TEventCollection *col) override;

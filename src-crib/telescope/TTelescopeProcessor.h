@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-17 16:53:01
- * @note    last modified: 2024-08-21 17:51:51
+ * @note    last modified: 2025-01-08 10:36:19
  * @details if no valid converter given, this processor does nothing.
  *          it assume we use DSSSD
  */
@@ -25,7 +25,7 @@ class art::crib::TTelescopeProcessor : public TProcessor {
   public:
     // Default constructor
     TTelescopeProcessor();
-    ~TTelescopeProcessor();
+    ~TTelescopeProcessor() override;
 
     void Init(TEventCollection *col) override;
     void Process() override;

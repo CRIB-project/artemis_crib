@@ -3,7 +3,7 @@
  * @brief   for solid target reconstruction
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-09-03 14:33:21
- * @note    last modified: 2024-09-03 16:29:44
+ * @note    last modified: 2025-01-08 10:34:18
  * @details
  */
 
@@ -25,7 +25,7 @@ class art::crib::TReconstProcessor : public TProcessor {
     /// @brief Default constructor.
     TReconstProcessor();
     /// @brief Default destructor.
-    ~TReconstProcessor();
+    ~TReconstProcessor() override;
 
     /// @brief Initialization
     void Init(TEventCollection *col) override;

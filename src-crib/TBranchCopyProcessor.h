@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-06-13 16:06:58
- * @note    last modified: 2024-08-23 20:47:46
+ * @note    last modified: 2025-01-08 10:27:17
  * @details
  */
 
@@ -21,7 +21,7 @@ class TClonesArray;
 class art::crib::TBranchCopyProcessor : public TProcessor {
   public:
     TBranchCopyProcessor();
-    ~TBranchCopyProcessor();
+    ~TBranchCopyProcessor() override;
 
     void Init(TEventCollection *col) override;
     void Process() override;

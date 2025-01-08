@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-06-13 17:52:08
- * @note    last modified: 2024-08-21 18:19:22
+ * @note    last modified: 2025-01-08 10:29:43
  * @details
  */
 
@@ -21,7 +21,7 @@ class TF1;
 class art::crib::TCmdDraw : public TCatCmd {
   public:
     TCmdDraw();
-    ~TCmdDraw();
+    ~TCmdDraw() override;
 
     static const char *kFuncNameBase;
     static const char *kLabelNameBase;

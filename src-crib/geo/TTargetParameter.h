@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-17 22:14:55
- * @note    last modified: 2024-08-21 17:53:40
+ * @note    last modified: 2025-01-08 10:30:54
  * @details
  */
 
@@ -19,7 +19,7 @@ class TTargetParameter;
 class art::crib::TTargetParameter : public TParameterObject {
   public:
     TTargetParameter();
-    ~TTargetParameter();
+    ~TTargetParameter() override;
 
     TTargetParameter(const TTargetParameter &);
     TTargetParameter &operator=(const TTargetParameter &rhs);

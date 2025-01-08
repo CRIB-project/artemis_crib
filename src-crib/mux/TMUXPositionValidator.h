@@ -3,7 +3,7 @@
  * @brief   Header file for the TMUXPositionValidator class.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-30 10:02:32
- * @note    last modified: 2025-01-03 16:05:06
+ * @note    last modified: 2025-01-08 10:32:04
  * @details
  */
 
@@ -47,7 +47,7 @@ class TMUXPositionValidator : public TProcessor {
     /**
      * @brief Destructor.
      */
-    ~TMUXPositionValidator();
+    ~TMUXPositionValidator() override;
 
     /**
      * @brief Initializes the validator by setting up input and output collections.

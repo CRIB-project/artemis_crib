@@ -3,7 +3,7 @@
  * @brief   inherit from TModuleInfo
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-08 17:51:01
- * @note    last modified: 2024-08-21 17:32:39
+ * @note    last modified: 2025-01-08 10:28:08
  * @details
  */
 
@@ -19,7 +19,7 @@ class TModuleData;
 class art::crib::TModuleData : public art::TModuleInfo {
   public:
     TModuleData(const TModuleInfo &info);
-    ~TModuleData();
+    ~TModuleData() override;
 
     TModuleData(const TModuleData &rhs);
     TModuleData &operator=(const TModuleData &rhs);

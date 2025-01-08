@@ -3,7 +3,7 @@
  * @brief   Processor for calibrating timing, charge, and position data in the MUX system.
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:08:53
- * @note    last modified: 2025-01-03 15:58:57
+ * @note    last modified: 2025-01-08 10:31:22
  * @details
  */
 
@@ -53,7 +53,7 @@ class TMUXCalibrationProcessor : public TProcessor {
     /**
      * @brief Destructor. Cleans up allocated resources.
      */
-    ~TMUXCalibrationProcessor();
+    ~TMUXCalibrationProcessor() override;
 
     /**
      * @brief Initializes the processor by setting up input and output collections.
