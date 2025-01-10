@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-06-13 16:06:15
- * @note    last modified: 2025-01-10 10:57:52
+ * @note    last modified: 2025-01-10 11:02:19
  * @details
  */
 
@@ -46,6 +46,11 @@ void TBranchCopyProcessor::Init(TEventCollection *col) {
     Info("Init", "%s => %s copy", fInputColName.Data(), fOutputColName.Data());
 
     const auto *cl = fInData->GetClass();
+    if (!cl) {
+        SetStateError(Form("Failed to get TClass at branch: %s",
+                           fInputColName.Data()));
+        return;
+    }
     fOutData = new TClonesArray(cl);
     fOutData->SetName(fOutputColName);
     col->Add(fOutputColName, fOutData, fOutputIsTransparent);
