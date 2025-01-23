@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-06-09 15:57:01
- * @note    last modified: 2024-08-23 21:21:37
+ * @note    last modified: 2025-01-09 21:03:47
  * @details
  */
 
@@ -13,10 +13,9 @@
 #include <Mass.h> // TSrim library
 #include <TRandom.h>
 
-using art::crib::TTreeBeamGenerator;
+ClassImp(art::crib::TTreeBeamGenerator);
 
-ClassImp(TTreeBeamGenerator);
-
+namespace art::crib {
 TTreeBeamGenerator::TTreeBeamGenerator() : fOutData(nullptr) {
     RegisterInputCollection("InputCollection", "input track collection name", fInputColName, TString("track"));
     RegisterOutputCollection("OutputCollection", "simulation result collection", fOutputColName, TString("beam"));
@@ -95,3 +94,4 @@ void TTreeBeamGenerator::Process() {
     outData->SetZeroTime();
     outData->SetTrack(Data->GetX(), Data->GetY(), 0., angx, angy);
 }
+} // namespace art::crib
