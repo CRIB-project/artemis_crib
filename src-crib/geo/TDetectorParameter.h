@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-18 11:32:42
- * @note    last modified: 2025-01-08 10:30:46
+ * @note    last modified: 2025-01-08 10:41:05
  * @details
  */
 
@@ -78,7 +78,7 @@ class art::crib::TDetectorParameter : public TParameterObject {
     Double_t fMaxRadius;
 
   private:
-    ClassDef(TDetectorParameter, 1) // ppac parameter holder
+    ClassDefOverride(TDetectorParameter, 1) // ppac parameter holder
 };
 
 #endif // end of #ifndef _TDETECTORPARAMETER_H_

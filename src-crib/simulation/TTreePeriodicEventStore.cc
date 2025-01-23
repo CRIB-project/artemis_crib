@@ -3,189 +3,258 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 22:36:36
- * @note    last modified: 2024-08-23 21:23:30
+ * @note    last modified: 2025-01-08 20:02:02
  * @details just modify the process() from TTreeEventStore to return 0
  */
 
 #include "TTreePeriodicEventStore.h"
 
-#include "TChain.h"
-#include "TObjString.h"
-#include "TSystem.h"
+#include <TChain.h>
 #include <TEventHeader.h>
-#include <TFile.h>
 #include <TLeaf.h>
+#include <TObjString.h>
+#include <TSystem.h>
 
-using art::crib::TTreePeriodicEventStore;
+/// ROOT macro for class implementation
+ClassImp(art::crib::TTreePeriodicEventStore);
 
-ClassImp(TTreePeriodicEventStore);
+namespace art::crib {
 
-////////////////////////////////////////////////////////////////////////////////
-/// default constructor.
-
-TTreePeriodicEventStore::TTreePeriodicEventStore()
-    : fFile(nullptr), fTree(nullptr), fEventHeader(nullptr) {
-    RegisterProcessorParameter("FileName", "The name of input file", fFileName, TString("temp.root"));
-    RegisterProcessorParameter("TreeName", "The name of input tree", fTreeName, TString("tree"));
-    RegisterProcessorParameter("MaxEventNum", "The maximum event number to be analyzed. Analyze all the data if this is set to be 0", fMaxEventNum, 0L);
-    fObjects = new TList;
+TTreePeriodicEventStore::TTreePeriodicEventStore() {
+    RegisterProcessorParameter("FileName", "The name of input file", fFileName, fFileName);
+    RegisterProcessorParameter("TreeName", "The name of input tree", fTreeName, fTreeName);
+    RegisterProcessorParameter("MaxEventNum", "The maximum event number to be analyzed.", fMaxEventNum, 0L);
 }
 TTreePeriodicEventStore::~TTreePeriodicEventStore() {
-    if (fFile)
-        fFile->Close();
     fTree = nullptr;
 }
 
+/**
+ * @details
+ * Init method:
+ *  1) Retrieve fCondition from TEventCollection
+ *  2) Get file list from shell command
+ *  3) Build TChain if necessary
+ *  4) Set branch addresses (primitive or class objects)
+ *  5) Load the first entry and get total entry counts
+ */
 void TTreePeriodicEventStore::Init(TEventCollection *col) {
-    // extract files to be analyzed by this process
-    std::vector<TString> files;
-    TString filelist = gSystem->GetFromPipe(Form("ls -tr %s", fFileName.Data()));
-    TObjArray *allfiles = (filelist.Tokenize("\n"));
+    // 1) Get fCondition pointer from TEventCollection (for TLoop control)
+    void **tmpCondRef = col->Get(TLoop::kConditionName)->GetObjectRef();
+    if (!tmpCondRef) {
+        Error("Init", "fCondition: tmpCondRef is null");
+        return;
+    }
+    fCondition = reinterpret_cast<TConditionBit **>(tmpCondRef);
+    if (!fCondition) {
+        Error("Init", "fCondition is null after reinterpret_cast");
+        return;
+    }
+    if (*fCondition) {
+        TConditionBit *condPtr = dynamic_cast<TConditionBit *>(*fCondition);
+        if (!condPtr) {
+            Error("Init", "fCondition: *fCondition is not a TConditionBit!");
+            return;
+        }
+    } else {
+        Warning("Init", "fCondition: *fCondition is null. It might be set later?");
+    }
+
+    // 2) Get the list of files
+    auto filelist = gSystem->GetFromPipe(Form("ls -tr %s", fFileName.Data()));
+    auto *allfiles = filelist.Tokenize("\n");
     if (!allfiles) {
-        Error("Init", "No such files %s", fFileName.Data());
-        SetStateError("Init");
+        SetStateError(Form("No files matched '%s'", fFileName.Data()));
+        if (fCondition)
+            (*fCondition)->Set(TLoop::kStopLoop);
         return;
     }
 
-    if (fMaxEventNum == 0L) {
-        SetStateError("Set MaxEventNum");
+    // Check MaxEventNum
+    if (fMaxEventNum == 0) {
+        SetStateError("MaxEventNum == 0 => No event is processed.");
+        if (fCondition)
+            (*fCondition)->Set(TLoop::kStopLoop);
         return;
     }
-#if USE_MPI
-    int useMPI;
-    MPI_Initialized(&useMPI);
-    if (useMPI) {
-        MPI_Comm_size(MPI_COMM_WORLD, &fNPE);
-        MPI_Comm_rank(MPI_COMM_WORLD, &fRankID);
-        TChain *chain = new TChain(fTreeName);
-        for (Int_t i = fRankID, n = allfiles->GetEntriesFast(); i < n; i += fNPE) {
-            Info("Init", "Add '%s' to Rank %03d", static_cast<TObjString *>(allfiles->At(i))->GetName(), fRankID);
-            chain->Add(static_cast<TObjString *>(allfiles->At(i))->GetName());
-        }
-        fTree = chain;
-    }
-#endif
+
+    // 3) Build TChain if fTree is not created yet
     if (!fTree) {
-        TChain *chain = new TChain(fTreeName);
-        for (Int_t i = 0, n = allfiles->GetEntriesFast(); i < n; ++i) {
-            Info("Init", "Add '%s'", static_cast<TObjString *>(allfiles->At(i))->GetName());
-            chain->Add(static_cast<TObjString *>(allfiles->At(i))->GetName());
+        auto *chain = new TChain(fTreeName);
+        for (int i = 0, n = allfiles->GetEntriesFast(); i < n; ++i) {
+            auto *strObj = dynamic_cast<TObjString *>(allfiles->At(i));
+            if (!strObj)
+                continue;
+            Info("Init", "Add '%s'", (strObj->GetString()).Data());
+            chain->Add(strObj->GetString());
         }
         fTree = chain;
     }
 
-    // TTreeが使える状況であるかのチェックをして、使えなければこのプロセスはストップするということにする。
-    // 万が一プロセス数がファイルの数を超えるような場合でも問題はない。ということは 144 以上のプロセスでくんでもよい。
-    // その場合は、Tree projection のマージで引っかからないように気をつけなければならない。か
+    if (!fTree) {
+        Error("Init", "Failed to create TChain for tree = '%s'", fTreeName.Data());
+        if (fCondition)
+            (*fCondition)->Set(TLoop::kStopLoop);
+        return;
+    }
+
+    // Initialize event counters
     fEventNum = 0;
     fCurrentNum = 0;
-    fCondition = (TConditionBit **)(col->Get(TLoop::kConditionName)->GetObjectRef());
-    // TDirectory *saved = gDirectory;
-    //   fFile = TFile::Open(fFileNam);
-    //   saved->cd();
-    //   if (!fFile) {
-    //      (*fCondition)->Set(TLoop::kStopLoop);
-    //      return ;
-    //   }
-    //   Info("Init","Input tree = %s",fTreeName.Data());
+
+    // 4) Explore each branch and set addresses
     std::vector<TBranch *> useBranch;
-    //   fTree = (TTree*)fFile->Get(fTreeName);
-    if (!fTree) {
-        Error("Init", "Input tree '%s' does not exist in '%s'", fTreeName.Data(),
-              fFileName.Data());
-        (*fCondition)->Set(TLoop::kStopLoop);
-        return;
-    }
-    TIter next(fTree->GetListOfBranches());
-    TBranch *br = nullptr;
-    while ((br = (TBranch *)next())) {
-        TClass *cls = nullptr;
-        EDataType type;
-        ;
-        if (br->GetExpectedType(cls, type)) {
+    TIter nextBr(fTree->GetListOfBranches());
+    while (auto *br = dynamic_cast<TBranch *>(nextBr())) {
+        TClass *cl = nullptr;
+        EDataType dtype = kNoType_t;
+        // If GetExpectedType fails, skip
+        if (br->GetExpectedType(cl, dtype)) {
             Warning("Init", "Unresolved type for branch '%s'", br->GetName());
             continue;
-        } else if (!cls) {
-            // primitive types
-            void *input = nullptr;
-            Int_t counter = 0;
-            // get dimension
-            TLeaf *leaf = br->GetLeaf(br->GetName())->GetLeafCounter(counter);
-            if (leaf)
-                counter = leaf->GetMaximum();
-            switch (type) {
+        }
+
+        // Case A: Primitive type
+        if (!cl) {
+            // We force arrSize to be at least 1
+            int arrSize = 1;
+            if (auto *leaf = br->GetLeaf(br->GetName())) {
+                leaf = leaf->GetLeafCounter(arrSize);
+                if (arrSize < 1) {
+                    arrSize = 1; // enforce a minimum of 1
+                }
+            }
+            void *arrPtr = nullptr;
+            switch (dtype) {
             case kInt_t:
-                input = (void *)new Int_t[counter];
+                arrPtr = new Int_t[arrSize];
                 break;
             case kFloat_t:
-                input = (void *)new Float_t[counter];
+                arrPtr = new Float_t[arrSize];
                 break;
             case kDouble_t:
-                input = (void *)new Double_t[counter];
-                break;
-            case kULong64_t:
-                //            input = (void*) new ULong64_t[counter];
+                arrPtr = new Double_t[arrSize];
                 break;
             default:
                 break;
             }
-            if (!input) {
-                //            SetStateError(TString::Format("branch: %s is unsupported type %s",br->GetName(),TDataType::GetTypeName(type)));
-                //            return;
-            } else {
-                useBranch.push_back(br);
-                col->Add(new TEventObject(br->GetName(), input, TString(TDataType::GetTypeName(type)), nullptr));
-                fTree->SetBranchAddress(br->GetName(), *col->Get(br->GetName())->GetObjectRef());
-                printf("branch : %s (%s) %p\n", br->GetName(), TDataType::GetTypeName(type), *col->Get(br->GetName())->GetObjectRef());
+            if (!arrPtr) {
+                continue;
             }
-        } else {
-#if 1
-            if (cls == TClonesArray::Class()) {
+
+            // Register this array in TEventCollection
+            col->Add(new TEventObject(
+                br->GetName(),
+                arrPtr,
+                TString(TDataType::GetTypeName(dtype)),
+                nullptr));
+            auto **objRef = col->Get(br->GetName())->GetObjectRef();
+            if (!objRef) {
+                Error("Init", "Branch '%s': tmpRef is null (unexpected)", br->GetName());
+                continue;
+            }
+            fTree->SetBranchAddress(br->GetName(), *objRef);
+            useBranch.emplace_back(br);
+            Info("Init", "branch : %s (type=%s, size=%d)",
+                 br->GetName(), TDataType::GetTypeName(dtype), arrSize);
+        }
+        // Case B: Class type (including TClonesArray)
+        else {
+            // Check TClonesArray
+            if (cl == TClonesArray::Class()) {
                 TClonesArray *arr = nullptr;
+                // Temporarily enable only this branch to check its class info
                 fTree->SetBranchStatus("*", 0);
-                fTree->SetBranchStatus(br->GetName());
+                fTree->SetBranchStatus(br->GetName(), 1);
                 fTree->SetBranchAddress(br->GetName(), &arr);
                 fTree->GetEntry(0);
-                TClass *realcls = arr->GetClass();
-                if (!realcls->GetNew()) {
-                    cls = 0;
+
+                if (arr) {
+                    TClass *realcls = arr->GetClass();
+                    if (!realcls || !realcls->GetNew()) {
+                        // If the class cannot be instantiated, skip
+                        cl = nullptr;
+                    }
                 }
                 br->ResetAddress();
             }
-#endif
-            if (cls) {
-                useBranch.push_back(br);
-                // object known by ROOT
-                col->Add(br->GetName(), (TObject *)cls->New(), kTRUE);
-                fTree->SetBranchAddress(br->GetName(), (TObject **)col->Get(br->GetName())->GetObjectRef());
-                printf("branch : %s\n", br->GetName());
-            }
-            if (cls == TEventHeader::Class()) {
-                fEventHeader = reinterpret_cast<TEventHeader **>(col->GetObjectRef(br->GetName()));
+
+            // If still valid, create an instance and set address
+            if (cl) {
+                // Create a new object of this class
+                auto *obj = static_cast<TObject *>(cl->New());
+                col->Add(br->GetName(), obj, kTRUE);
+
+                void **tmpRef = col->Get(br->GetName())->GetObjectRef();
+                if (!tmpRef) {
+                    Error("Init", "Branch '%s': tmpRef is null (unexpected)", br->GetName());
+                    continue;
+                }
+
+                auto **objRef = reinterpret_cast<TObject **>(tmpRef);
+                if (!objRef) {
+                    Error("Init", "Branch '%s': objRef is null after cast", br->GetName());
+                    continue;
+                }
+                if (*objRef) {
+                    TObject *checkObj = dynamic_cast<TObject *>(*objRef);
+                    if (!checkObj) {
+                        Error("Init",
+                              "Branch '%s': *objRef is not a TObject. Type mismatch?",
+                              br->GetName());
+                        continue;
+                    }
+                }
+
+                fTree->SetBranchAddress(br->GetName(), objRef);
+
+                useBranch.emplace_back(br);
+
+                // If it's TEventHeader, store pointer in fEventHeader
+                if (cl == TEventHeader::Class()) {
+                    fEventHeader = static_cast<art::TEventHeader *>(obj);
+                }
+                Info("Init", "Branch: %s (class=%s)", br->GetName(), cl->GetName());
             }
         }
     }
-    TIter nextinfo(fTree->GetUserInfo());
-    TObject *obj = nullptr;
-    while ((obj = nextinfo()) != nullptr) {
-        col->AddInfo(obj->GetName(), obj, kTRUE);
+
+    // Add user info objects to the collection
+    TIter nextInfo(fTree->GetUserInfo());
+    while (auto *infoObj = nextInfo()) {
+        col->AddInfo(infoObj->GetName(), infoObj, kTRUE);
     }
+
+    // Enable only branches we decided to use
     fTree->SetBranchStatus("*", 0);
-    for (Int_t i = 0, n = useBranch.size(); i < n; ++i) {
-        fTree->SetBranchStatus(useBranch[i]->GetName());
+    for (auto *br : useBranch) {
+        fTree->SetBranchStatus(br->GetName(), 1);
     }
+
+    // Load the first entry and get total entries
     fTree->LoadTree(0);
     fTree->GetEntry(0);
     fTreeEventNum = fTree->GetEntries();
 }
 
+/**
+ * @details
+ * Process method: called for each event
+ *  - Load entry from fTree
+ *  - Increment counters
+ *  - Wrap around if needed
+ *  - Stop if reaching fMaxEventNum
+ */
 void TTreePeriodicEventStore::Process() {
     fTree->GetEntry(fCurrentNum);
-    fCurrentNum++;
-    fEventNum++;
+    ++fCurrentNum;
+    ++fEventNum;
+
+    // Wrap around if we reach the end of the tree
     if (fEventNum == fTreeEventNum) {
         fCurrentNum = 0;
     }
+    // Stop if we reached the maximum events
     if (fMaxEventNum == fEventNum) {
         SetStopLoop();
         SetEndOfRun();
@@ -193,9 +262,7 @@ void TTreePeriodicEventStore::Process() {
 }
 
 Int_t TTreePeriodicEventStore::GetRunNumber() const {
-    if (nullptr == fEventHeader)
-        return 0;
-    return (*fEventHeader)->GetRunNumber();
+    return (fEventHeader) ? fEventHeader->GetRunNumber() : 0;
 }
 
 const char *TTreePeriodicEventStore::GetRunName() const {
@@ -203,7 +270,7 @@ const char *TTreePeriodicEventStore::GetRunName() const {
 }
 
 std::string TTreePeriodicEventStore::GetStrRunName() const {
-    if (nullptr == fEventHeader)
-        return "";
-    return std::string((*fEventHeader)->GetRunName());
+    return (fEventHeader) ? std::string(fEventHeader->GetRunName()) : "";
 }
+
+} // namespace art::crib

@@ -3,7 +3,7 @@
  * @brief   inherit from TModuleInfo
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-08 17:51:01
- * @note    last modified: 2025-01-08 10:28:08
+ * @note    last modified: 2025-01-08 10:40:13
  * @details
  */
 
@@ -42,7 +42,7 @@ class art::crib::TModuleData : public art::TModuleInfo {
     Int_t fMod;
 
   private:
-    ClassDef(TModuleData, 2) // module information
+    ClassDefOverride(TModuleData, 2) // module information
 };
 
 #endif // _TMODULEDATA_H_

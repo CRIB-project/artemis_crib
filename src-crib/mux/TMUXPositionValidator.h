@@ -3,7 +3,7 @@
  * @brief   Header file for the TMUXPositionValidator class.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-30 10:02:32
- * @note    last modified: 2025-01-08 10:32:04
+ * @note    last modified: 2025-01-08 20:01:24
  * @details
  */
 
@@ -71,7 +71,7 @@ class TMUXPositionValidator : public TProcessor {
     TMUXPositionValidator(const TMUXPositionValidator &rhs) = delete;
     TMUXPositionValidator &operator=(const TMUXPositionValidator &rhs) = delete;
 
-    ClassDefOverride(TMUXPositionValidator, 2) ///< ROOT class definition macro.
+    ClassDefOverride(TMUXPositionValidator, 2); ///< ROOT class definition macro.
 };
 
 } // namespace art::crib
