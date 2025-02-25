@@ -1,0 +1,137 @@
+Anchor:
+
+ - &input ridf/@NAME@@NUM@.ridf
+ - &output output/beamcoin/tel5/tel5_@NAME@@NUM@.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+
+  - include: tref.yaml
+  - include: rf/rf.yaml
+  - include: coin/coin.yaml
+  - include: ppac/dlppac.yaml
+
+  - include: 
+      name: ssd/f3ssd.yaml
+      replace:
+        NAME: @NAME@
+        NUM: @NUM@
+
+
+  - name: proc_gateinit
+    type: art::TGateArrayInitializer
+    parameter:
+      OutputTransparency: 1
+
+  - name: proc_gate
+    type: art::TTreeFormulaGateProcessor
+    parameter:
+      Definitions:
+        - "nopileup; coin_raw@.GetEntriesFast()==1"
+        - "single; coin.fID==0"
+        - "ppaca_normal; abs(f3appac.fX) < 50.0 && abs(f3appac.fY) < 50.0"
+        - "ppacb_normal; abs(f3bppac.fX) < 50.0 && abs(f3bppac.fY) < 50.0"
+        #- "ppaca_trig; abs(f3appac.fTAnode + 33.0) < 5.0" # RUNNUM < 249
+        - "ppaca_trig; abs(f3appac.fTAnode + 27.0) < 5.0" # RUNNUM >= 249
+        - "ppacb_trig; abs(f3bppac.fTAnode ) < 1.0"
+        - "si26_rf0; abs(rf_cal_0.fTiming - 23.75 - 2.23) < 3.75 || abs(rf_cal_0.fTiming - 75.75 - 2.23) < 3.75" # si26
+        #- "si26_rf0; abs(rf_cal_0.fTiming - 29.0) < 9.0 || abs(rf_cal_0.fTiming - 79.0) < 9.0" # wide
+        #- "si26_tof; abs((f3bppac.fTAnode - f3appac.fTAnode) - 31.65) < 1.15" # RUNNUM < 249
+        - "si26_tof; abs((f3bppac.fTAnode - f3appac.fTAnode) - 25.15) < 1.15" # RUNNUM < 249
+        - "hit; tel5.fID > 0"
+      OutputTransparency: 1
+      Verbose: 1
+
+  - name: nopileup_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: nopileup
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: single_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: single
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: ppaca_normal_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: ppaca_normal
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: ppacb_normal_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: ppacb_normal
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: ppaca_trig_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: ppaca_trig
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: ppacb_trig_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: ppacb_trig
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: si26_rf0_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: si26_rf0
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: si26_tof_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: si26_tof
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: hit_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: hit
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

@@ -1,0 +1,34 @@
+# check only RUNNUM >= 249
+Anchor:
+ - &input ridf/@NAME@@NUM@.ridf
+ - &output output/single/@GATE@/@NAME@/@GATE@_@NAME@@NUM@.root
+ - &histout output/single/@GATE@/@NAME@/@GATE@_@NAME@NUM@.hist.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+  - include: tref.yaml
+  - include: rf/rf.yaml
+  - include: coin/coin.yaml
+  - include: ppac/dlppac.yaml
+
+  - include: gate/single/@GATE@_before.yaml
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

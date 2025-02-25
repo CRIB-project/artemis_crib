@@ -1,0 +1,47 @@
+Processor:
+  - include: ssd/lowgain.yaml
+
+  - include: ssd/multiMUX.yaml
+
+  - include:
+      name: ssd/tel.inc.yaml
+      replace:
+        NAME: tel1
+        CATID_dEX: 11
+        CATID_dEY: 12
+        CATID_E:   13
+        RUNNAME: @NAME@
+        RUNNUM: @NUM@
+
+  - include:
+      name: ssd/tel_single_mux.inc.yaml
+      replace:
+        NAME: tel2
+        CATID_dEX: 21
+        CATID_dEY: 22
+        CATID_E:   23
+        RUNNAME: @NAME@
+        RUNNUM: @NUM@
+
+  - include:
+      name: ssd/tel_single_mux.inc.yaml
+      replace:
+        NAME: tel3
+        CATID_dEX: 31
+        CATID_dEY: 32
+        CATID_E:   33
+        RUNNAME: @NAME@
+        RUNNUM: @NUM@
+
+  - include:
+      name: ssd/tel4.yaml
+      replace:
+        NAME: @NAME@
+        NUM: @NUM@
+
+  - include:
+      name: ssd/tel5.yaml
+      replace:
+        NAME: @NAME@
+        NUM: @NUM@
+

@@ -1,0 +1,56 @@
+Anchor:
+
+ - &input output/@NAME@/all_yield.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+#  - name: root_eventstore
+#    type: art::TTreeEventStore
+#    parameter:
+#      OutputTransparency: 1
+#      FileName: *input
+#      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/alpha/all_phys_yield.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/alpha/all_bg_yield.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/proton/all_phys_yield.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/proton/all_bg_yield.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/proton/error/yield_syserror_all.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/proton/error/yield_syserror_beam.root
+      TreeName: tree

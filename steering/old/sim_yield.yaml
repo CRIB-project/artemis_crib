@@ -1,0 +1,31 @@
+Anchor:
+
+# - &input output/track/si26_phys.root
+ - &inputtxt macro/txt/si26ap_nonsmoker.txt
+ - &output output/simulation/yield/simple.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: counter
+    type: art::TCounterEventStore
+    parameter:
+      #MaxLoop: 3131788000
+      MaxLoop: 10000
+      OutputTransparency: 0
+
+
+  - name: proc_yield_simulation
+    type: art::TSimYieldProcessor
+    parameter:
+      Inputtxt: *inputtxt
+      OutputCollection: event
+      SolidAngle: 0.01
+      EventNumber: 4000000
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

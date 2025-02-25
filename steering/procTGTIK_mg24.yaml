@@ -1,0 +1,82 @@
+
+Anchor:
+ - &input output/coin/@GATE@/@NAME@_@GATE@_proton.root
+ - &output rootfile/yield/@NAME@_@GATE@yield.root
+ - &histout rootfile/yield/@NAME@_@GATE@yield.hist.root
+
+# particle information
+ - &TARGET He250torr
+ - &NAME1 24Mg12
+ - &NAME2 a
+ - &NAME3 27Al13
+ - &NAME4 p
+ - &M1 23.97845 # amu
+ - &M2 4.00150609413
+ - &M3 26.974406
+ - &M4 1.0072764519
+ - &A1 24
+ - &A2 4
+ - &A3 27
+ - &A4 1
+ - &Z1 12
+ - &Z2 2
+ - &Z3 13
+ - &Z4 1
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree
+
+  - name: proc_copy_processor
+    type: art::TBranchCopyProcessor
+    parameter:
+      InputCollection:     tel
+      OutputCollection:    telescope
+
+  - name: proc_copy_processor
+    type: art::TBranchCopyProcessor
+    parameter:
+      InputCollection:     track
+      OutputCollection:    tracking
+
+  - name: geometry_initialize
+    type: art::TUserGeoInitializer
+    parameter:
+      Name: prm_detectors
+      FileName: prm/geo/si26a.yaml
+      OutputTransparency: 1
+
+  - name: tgtik_proc
+    type: art::TTGTIKProcessor
+    parameter:
+      InitialBeamEnergy: 40.0 # MeV
+      EnergyThreshold: 0.1 # MeV (detected energy threshold)
+      TargetGasName: *TARGET
+      ParticleName: [*NAME1, *NAME2, *NAME3, *NAME4]
+      ParticleMass: [*M1, *M2, *M3, *M4]
+      ParticleAtomicNum: [*Z1, *Z2, *Z3, *Z4]
+      InputCollection: telescope
+      InputTrackCollection: tracking
+      OutputCollection: reconst
+      DetectorParameter: prm_detectors
+
+# yield Hist
+  - name: hist_yield
+    type: art::TTreeProjectionProcessor
+    parameter:
+      FileName: hist/yield/yield.yaml
+      Type:     art::TTreeProjection
+      OutputFilename: *histout
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

@@ -1,0 +1,32 @@
+Processor:
+  - include: ssd/lowgain.yaml
+
+  - include: ssd/multiMUX.yaml
+
+  - include:
+      name: ssd/tel1_calibrun.yaml
+
+#  - include:
+#      name: ssd/tel2_calibrun.yaml
+#      replace:
+#        NAME: @NAME@
+#        NUM: @NUM@
+
+#  - include:
+#      name: ssd/tel3_calibrun.yaml
+#      replace:
+#        NAME: @NAME@
+#        NUM: @NUM@
+
+#  - include:
+#      name: ssd/tel4_calibrun.yaml
+#      replace:
+#        NAME: @NAME@
+#        NUM: @NUM@
+
+#  - include:
+#      name: ssd/tel5_calibrun.yaml
+#      replace:
+#        NAME: @NAME@
+#        NUM: @NUM@
+

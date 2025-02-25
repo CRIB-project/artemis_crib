@@ -1,0 +1,91 @@
+Anchor:
+
+  # @NAME@ = phys or bg
+ - &input output/coin/tel3/merge/tel3_@NAME@.root
+ - &output output/alpha/tel3/tel3_@NAME@.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree
+
+  - name: proc_copy_processor
+    type: art::TTreeCopyProcessor
+    parameter:
+      InputCollection:     tel3
+      OutputCollection:    tel
+
+  - name: proc_prepTGTIK_processor
+    type: art::TTGTIKPrepProcessor
+    parameter:
+      InputCollection_a:     f3appac
+      InputCollection_b:     f3bppac
+      InputCollection_tel:   tel3
+      OutputCollection: alpha
+      WindowPosition: 677.0
+
+  - name: proc_gateinit
+    type: art::TGateArrayInitializer
+    parameter:
+      OutputTransparency: 1
+
+  - name: proc_gate
+    type: art::TTreeFormulaGateProcessor
+    parameter:
+      Definitions:
+        - "tel_ene; abs(sqrt(tel.fdEX * tel.fEtotal)-0.070*tel.fdEY - 4.1) < 0.5"
+        - "tel_timing; abs(tel.fdEXTiming - 220.0) < 30.0 && abs(tel.fdEYTiming - 315.0) < 35.0"
+        - "detx; abs(alpha.fDetx + 80.0) < 60.0"
+        - "dety; abs(alpha.fDety - 0.0) < 60.0"
+        - "detz; abs(alpha.fDetz - 400.0) < 30.0"
+      OutputTransparency: 1
+      Verbose: 1
+
+  - name: tel_ene_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: tel_ene
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+
+  - name: tel_timing_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: tel_timing
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+  
+  - name: detx_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: detx
+      OutputTransparency: 1
+      StopIf: 0
+
+  - name: dety_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: dety
+      OutputTransparency: 1
+      StopIf: 0
+
+  - name: detz_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: detz
+      OutputTransparency: 1
+      StopIf: 0
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

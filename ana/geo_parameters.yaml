@@ -1,0 +1,84 @@
+---
+diagram:
+  output_name: "/home/okawa/art_analysis/develop/develop/ana2/figure/geometry/geo" # .png and .eps
+  x_range: 10 # use the ratio
+  y_range: 6 # use the ratio
+  width_cm: 9 # actual x width
+  font_size: 6
+  font_family: "Liberation Sans"
+  scale_text_size: 4
+
+# number is ratio
+beam:
+  x_start: 0
+  y_start: 0.5
+  x_end: 0.5
+  y_end: 0.5
+  color: "red"
+  width: 1
+  text_offset_x: 0.34
+  text_offset_y: 0.54
+  label: "$^{26}$Si Beam"
+
+ppac:
+  xmin_a: 0.02 # left of the PPACa rectangle
+  height: 0.3
+  width: 0.035
+  distance: 0.1
+  text_offset: 0.7
+  scale_height: 0.04
+  arrow_height: 0.09
+  label_a: "PPACa"
+  label_b: "PPACb"
+  distance_label: "322 mm"
+  linewidth: 0.5
+  dotted_linewidth: 0.5
+  arrow_linewidth: 0.5
+
+chamber:
+  xmin: 0.26
+  ymin: 0.02
+  scale_height: 0.04
+  arrow_height: 0.09
+  window_params:
+    width: 0.005
+    height: 0.06
+    color: "blue"
+    label: "Mylar\nWindow"
+    fontsize: 5
+    text_x: 0.21
+    text_y: 0.444
+  linewidth: 0.5
+  arrow_linewidth: 0.5
+  label_b_to_chamber: "355 mm"
+
+# not support yet
+target:
+  xmin: 0.5
+  ymin: 0.5
+
+si_detectors:
+  draw_points: true
+  radius: 0.06
+  # 50 mm <-> 1/12 now
+  point_offsets: [0.351, 0.434, 0.518]
+  scale_height: 0.04
+  arrow_height: 0.09
+  arrow_linewidth: 0.5
+  distance_label: "222 mm"
+  points_labels: ["50 mm", "50 mm"]
+  linewidth: 0.5
+  ## detector setting
+  det_height: 0.1389
+  det_gap: 0.01
+  det_centers: [2, 2, 2, 1, 0] # index of point_offsets
+  det_widths:
+    - [0.005, 0.005, 0.01, 0.01]
+    - [0.005, 0.005, 0.01, 0.01]
+    - [0.005, 0.005, 0.01, 0.01]
+    - [0.005, 0.01, 0.01]
+    - [0.005, 0.01, 0.01]
+  det_angles: [-4.0, 27.0, -48.0, 62.0, -73.0] # degree
+  det_distances: [0.3991, 0.2492, 0.1833, 0.1892, 0.1875]
+  det_scale_texts: ["239.5 mm", "149.5 mm", "110.0 mm", "113.5 mm", "112.5 mm"]
+  det_arrow_linewidth: 0.5

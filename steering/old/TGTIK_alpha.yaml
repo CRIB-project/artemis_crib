@@ -1,0 +1,51 @@
+Anchor:
+ - &input output/alpha/all_@NAME@.root
+ - &output output/alpha/all_@NAME@_yield.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree
+
+  - name: proc_copy_processor
+    type: art::TTreeCopyProcessor
+    parameter:
+      InputCollection:     tel
+      OutputCollection:    telescope
+
+  - name: proc_copy_processor
+    type: art::TTreeCopyProcessor
+    parameter:
+      InputCollection:     alpha
+      OutputCollection:    info
+
+
+  - name: proc_TGTIK_processor
+    type: art::TTGTIKProcessor2
+    parameter:
+      InputCollection:   alpha
+      OutputCollection:  yield
+      InitialBeamEnergy: 53.35
+      GasPressure: 250.0
+      Temperature: 300.0
+      M1: 25.992333818   # si26
+      M2: 4.00260325413  # alpha
+      M3: 25.992333818    # si26
+      M4: 4.00260325413 # alpha
+      Z1: 14
+      Z2: 2
+      Z3: 14
+      Z4: 2
+
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

@@ -1,0 +1,31 @@
+Anchor:
+
+ - &input ridf/@NAME@@NUM@.ridf
+ - &output output/enewztest/test_@NAME@@NUM@.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+  - name: enewz_test
+    type: art::TEnewzTestProcessor
+    parameter:
+      OutputTransparency: 1
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

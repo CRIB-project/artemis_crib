@@ -1,0 +1,78 @@
+Anchor:
+  - &input output/coin/@GATE@/@NAME@_@GATE@_proton.root
+  #- &output rootfile/yield/@NAME@_@GATE@yield_ground.root
+  #- &output rootfile/yield2/@NAME@_@GATE@yield_@NUM@.root
+  - &output /home/okawa/art_analysis/develop/develop/ana3/yield/40/raw/@NAME@_@GATE@yield_@NUM@.root
+
+  #- &histout rootfile/yield/@NAME@_@GATE@yield_excited.hist.root
+
+  # particle information
+  - &ini_energy 55.36 # MeV
+  - &TARGET he
+
+  - &A1 26
+  - &A2 4
+  - &A3 29
+  - &A4 1
+
+  - &Z1 14
+  - &Z2 2
+  - &Z3 15
+  - &Z4 1
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree
+
+  - name: proc_copy_processor
+    type: art::crib::TBranchCopyProcessor
+    parameter:
+      InputCollection: tel
+      OutputCollection: telescope
+
+  - name: proc_copy_processor
+    type: art::crib::TBranchCopyProcessor
+    parameter:
+      InputCollection: track
+      OutputCollection: tracking
+
+  - name: geometry_initialize
+    type: art::crib::TUserGeoInitializer
+    parameter:
+      FileName: prm/geo/si26a.yaml
+      OutputTransparency: 1
+
+  - name: tgtik_proc
+    type: art::crib::TTGTIKProcessor
+    parameter:
+      InputCollection: telescope
+      InputTrackCollection: tracking
+      OutputCollection: reconst
+      InitialBeamEnergy: *ini_energy
+      TargetName: *TARGET
+      TargetPressure: 250.0
+      TargetTemperature: 300.0
+      ParticleZArray: [*Z1, *Z2, *Z3, *Z4]
+      ParticleAArray: [*A1, *A2, *A3, *A4]
+      UseCustomFunction: true
+
+#  # yield Hist
+#  - name: hist_yield
+#    type: art::TTreeProjectionProcessor
+#    parameter:
+#      FileName: hist/yield/yield.yaml
+#      Type: art::TTreeProjection
+#      OutputFilename: *histout
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

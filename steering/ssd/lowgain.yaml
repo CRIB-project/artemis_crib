@@ -1,6 +1,24 @@
 Processor:
+  - name: proc_lowgain_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_lowgain_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel1/ch2MeV_lowgain.dat
+      OutputTransparency: 1
+
+  - name: proc_lowgain_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_lowgain_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel1/ch2ns_lowgain.dat
+      OutputTransparency: 1
+
+
   - name: proc_lowgain_raw
     type: art::TTimingChargeMappingProcessor
+#    type: art::crib::TTimingChargeAllMappingProcessor
     parameter:
       CatID:         8
       ChargeType:    1
@@ -8,3 +26,11 @@ Processor:
       TimingTypeID:  1
       Sparse:        1
       OutputCollection: lowgain_raw
+
+  - name: proc_lowgain
+    type: art::TTimingChargeCalibrationProcessor
+    parameter:
+      InputCollection:      lowgain_raw
+      OutputCollection:     lowgain_cal
+      ChargeConverterArray: prm_lowgain_ch2MeV
+      TimingConverterArray: prm_lowgain_ch2ns

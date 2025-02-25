@@ -1,0 +1,73 @@
+Anchor:
+   
+ - &input ridf/si26a/@NAME@@NUM@.ridf
+ - &output output/@NAME@/@NUM@/all@NAME@@NUM@.root
+ - &histout output/@NAME@/@NUM@/all@NAME@@NUM@.hist.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      #MaxEventNum: 200000
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+        
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+
+  - include: rf/rf.yaml
+  - include: coin/coin.yaml
+  - include: ppac/f1ppac.yaml
+  - include: ppac/dlppac.yaml
+  - include: ssd/f2ssd.yaml
+  - include: ssd/f3ssd.yaml
+
+
+#### RF Hist
+# 
+# - name: projection_rf
+#    type: art::TTreeProjectionProcessor
+#    parameter:
+#      Type:     art::TTreeProjection
+#      FileName: hist/rf/rf.yaml
+#
+#
+#### F1 PPAC Hist
+#
+#  - name: projection_f1ppac
+#    type: art::TTreeProjectionProcessor
+#    parameter:
+#      Type:     art::TTreeProjection
+#      FileName: hist/ppac/f1ppac.yaml
+#
+#
+#### F2PPAC Hist
+#
+#  - name: projection_f2ppac
+#    type: art::TTreeProjectionProcessor
+#    parameter:
+#      Type:     art::TTreeProjection
+#      FileName: hist/ppac/f2ppac.yaml
+#
+#
+#### F2 SSD Hist
+#
+#  - name: projection
+#    type: art::TTreeProjectionProcessor
+#    parameter:
+#      Type:     art::TTreeProjection
+#      FileName: hist/ssd/f2ssd.yaml
+
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName: 
+        - *output

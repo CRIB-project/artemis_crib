@@ -1,0 +1,34 @@
+# for from calib0273 to calib0306 RUN
+Anchor:
+
+ - &input ridf/@NAME@@NUM@.ridf
+ - &output output/@NAME@/@NUM@/calibrun@NAME@@NUM@.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+  - include: 
+      name: ssd/f3ssd_calibrun.yaml
+      replace:
+        NAME: @NAME@
+        NUM: @NUM@
+
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

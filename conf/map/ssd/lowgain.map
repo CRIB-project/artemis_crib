@@ -1,0 +1,12 @@
+# map for ADC of lowgain
+# [category] [id] [[device] [focus] [detector] [module] [ch]] ....
+#
+# Map: energy, timing
+#
+# CREATED for CRIB Exp. 2022.06.29 K.Okawa
+#
+#--------------------------------------------------------------------
+8, 0, 12 0  6   6  28, 12 0  7  16  28 # lowgain 1 
+8, 1, 12 0  6   6  29, 12 0  7  16  29 # lowgain 2
+8, 2, 12 0  6   6  30, 12 0  7  16  30 # lowgain 3
+8, 3, 12 0  6   6  31, 12 0  7  16  31 # lowgain 4

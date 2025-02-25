@@ -9,38 +9,163 @@
 #   - id: [geo2]
 ###################################
 
-E7_V1190:
-  segid: [12, 0, 7]
-  type: V1190A
-  modules:
-    - id: 0
-    - id: 1
+#B3F_V7XX:
+#  segid: [0, 0, 31]
+#  type: V7XX
+#  modules:
+#    - id: 1
+#
+#B3F_V1290:
+#  segid: [0, 0, 31]
+#  type: V1290
+#  modules:
+#    - id: 0
+#
 
-J1_V785:
-  segid: [12, 1, 6]
-  type: V7XX
-  modules:
-    - id: 0
-    - id: 1
-    - id: 2
+#F3_V1290:
+#  segid: [11, 3, 31]
+#  type: V1290
+#  modules:
+#    - id: 0
+#F3_V1190:
+#  segid: [11, 3, 31]
+#  type: V1190
+#  modules:
+#    - id: 1
+#    - id: 2
+#FS0 V1190:
+#  segid: [11, 20, 31]
+#  type: V1190
+#  modules:
+#    - id: 0
+#    - id: 1
+#FS2 V1290:
+#  segid: [11, 22, 31]
+#  type: V1290
+#  modules:
+#    - id: 0
 
-J1_MADC:
-  segid: [12, 1, 6]
-  type: MADC32
-  modules:
-    - id: 3
-    - id: 4
-    - id: 5
+#S2_V1190:
+#  segid: [11, 22, 31]
+#  type: V1190
+#  modules:
+#    - id: 1
+#    - id: 2
+#    - id: 3
+#
 
-J1_V1190:
-  segid: [12, 2, 7]
-  type: V1190A
-  modules:
-    - id: 0
+#MADC32_S2:
+#  # [[dev], [fp], [det]]
+#  segid: [11, 22, 33]
+#  type: MADC32
+#  modules:
+#    - id: 0
 
-Scaler:
-  segid: [12, 2, 63]
-  type: SIS3820
-  modules:
-    - id: 0
+#TC842:
+#  # [[dev], [fp], [det]]
+#  segid: [11, 22, 35]
+#  type: TC842
+#  modules:
+#    - id: 0
 
+
+#
+#F5_V1190:
+#  segid: [0, 5, 50]
+#  type: AMTDC
+#  modules:
+#    - id: 0
+#    - id: 1
+#    - id: 2
+#    - id: 3
+#    - id: 4
+#    - id: 5
+#    - id: 6
+#    - id: 7
+
+#FE12_V1190:
+#  segid: [11, 12, 1]
+#  type: V1190
+#  modules:
+#    - id: 0
+#    - id: 1
+
+#FE7_V1190:
+#  segid: [11, 7, 31]
+#  type: V1190
+#  modules:
+#    - id: 1
+#
+#FE10_V1190:
+#  segid: [11, 10, 31]
+#  type: V1190
+#  modules:
+#    - id: 0
+#    - id: 1
+#
+#B3F_V1190:
+#  segid: [0, 63, 1]
+#  type: V1190
+#  modules:
+#    - id: 7
+#    - id: 8
+#
+#B3F_V1290:
+#  segid: [0, 63, 3]
+#  type: V1290
+#  modules:
+#    - id: 6
+#
+#DALI_V785:
+#  segid: [20, 8, 21]
+#  type: V785DALI
+#  modules:
+#    - id: 6
+#    - id: 7
+#    - id: 8
+#    - id: 9
+#    - id: 10
+#    - id: 11
+#    - id: 12
+#    - id: 13
+#
+#DALI_V1190:
+#  segid: [20, 8, 22]
+#  type: V1190
+#  modules:
+#    - id: 16
+#    - id: 17
+#
+#
+#F7_V1190:
+#  segid: [0, 7, 31]
+#  type: V1190
+#  modules:
+#    - id: 0
+#    - id: 1
+#    - id: 2
+
+      
+# shcr_v1290:
+#   segid: [60,0,10]
+#   type: V1290
+#   modules:
+#     - id: 1
+#
+
+#TINA_V1190:
+#  segid: [11,22,7]
+#  type: V1190B
+#  modules:
+#    - id: 0
+
+#TINA_V785:
+#  segid: [11,22,6]
+#  #segid: [11,22,6]
+#  type : V7XX
+#  modules:
+#    - id: 4
+#    - id: 5
+#    - id: 6
+##    - id: 7
+#    - id: 8

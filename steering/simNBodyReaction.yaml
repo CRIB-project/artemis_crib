@@ -1,141 +1,81 @@
----
 Anchor:
 
- - &input /data/si26a/user/okawa/output/single/si26/high_si26.root
  - &output output/sim/test.root
  - &histout output/sim/test.hist.root
-
- - &loopnum 5000000
- - &beam_A 26
- - &beam_Z 14
- - &beam_E 55.36 # MeV (just before target)
- - &beam_Esigma 1.7 # MeV
- - &target_name he
- - &target_A 4
- - &target_Z 2
- - &target_is_gas true
- - &target_thickness 1000 # mm
- - &target_pressure 250 # torr
-
- - &decay_num 2
- - &reac_Z [15, 1] # (id=0, id=1) reaction particle Z
- - &reac_A [29, 1] # (id=0, id=1) reaction particle A
- - &excited [4.9541, 0.0] # MeV, excited energy
- - &cs_file model/ap.L10
 
 Processor:
   - name: timer
     type: art::TTimerProcessor
 
-## =====================================
-## using random number
-#  - name: random_eventstore
-#    type: art::TRandomNumberEventStore
-#    parameter:
-#      OutputTransparency: 1
-#      MaxLoop: *loopnum
-#
-#  - name: beam_generator
-#    type: art::crib::TRandomBeamGenerator
-#    parameter:
-#      OutputCollection: beam
-#      OutputTrackCollection: track
-#      # beam particle information
-#      MassNum: *beam_A
-#      AtomicNum: *beam_Z
-#      ChargeNum: *beam_Z
-#      IniEnergy: *beam_E
-#      # beam tracking information
-#      Xsigma: 0.0 # mm
-#      Ysigma: 0.0 # mm
-#      Asigma: 0.0 # deg
-#      Bsigma: 0.0 # deg
-#      Esigma: *beam_Esigma
-
-##=====================================
-## using TTree events
-  - name: periodic_tree
-    type: art::crib::TTreePeriodicEventStore
+  - name: count
+    type: art::TCounterEventStore
     parameter:
-      OutputTransparency: 1
-      FileName: *input
-      TreeName: tree
-      MaxEventNum: *loopnum
-
-  - name: proc_copy_processor
-    type: art::crib::TBranchCopyProcessor
-    parameter:
-      InputCollection: f3ppac # need to inherit from TTrack
-      OutputCollection: track
+      OutputTransparency: 0
+      MaxLoop: 1000000
 
   - name: beam_generator
-    type: art::crib::TTreeBeamGenerator
+    type: art::TRandomBeamGenerator
     parameter:
-      InputCollection: track
       OutputCollection: beam
-      # beam particle information
-      MassNum: *beam_A
-      AtomicNum: *beam_Z
-      ChargeNum: *beam_Z
-      IniEnergy: *beam_E
-      Esigma: *beam_Esigma
+      #beam particle information
+      MassNum: 26
+      AtomicNum: 14
+      ChargeNum: 14
+      Mass: 25.99232992 # amu
+      IniEnergy: 83.46 # MeV
+      #IniEnergy: 55.5 # MeV (after window)
+      #beam tracking information
+      Xsigma: 1.0 # mm
+      Ysigma: 1.0 # mm
+      Asigma: 1.0 # deg
+      Bsigma: 1.0 # deg
+      Esigma: 3.3 # MeV
 
-##=====================================
   - name: reaction_proc
-    type: art::crib::TNBodyReactionProcessor
+    type: art::TNBodyReactionProcessor
     parameter:
+      #beam information
       InputCollection: beam
-      OutputCollection: products # size is DecayParticleNum
+      BeamName: 26Si14 # for SRIMlib
+      #target information
+      TargetName: Mylar # from SRIMlib
+      TargetMassNum: 1
+      TargetAtomicNum: 1
+      TargetChargeNum: 1
+      TargetMass: 1.00782503 # amu
+      TargetThickness: 0.013 # mm
+      TargetisGas: 0 # 1->Gas
+      #reaction particles information
+      ReactionParticleName: [26Si14, p] #for SRIMlib
+      DecayParticleNum: 2
+      OutputCollection: products
+      ReactionMassNum: [26, 1]
+      ReactionAtomicNum: [14, 1]
+      ReactionChargeNum: [14, 1]
+      ReactionMass: [25.99232992, 1.00782503] # amu
+      ExciteLevel: [0.0] # for id=0 particle (MeV)
+      #output of reaction information
       OutputReactionCollection: reaction
-      # beam information (for initialize TSrim)
-      BeamNucleus: [*beam_Z, *beam_A] # (Z, A)
-      BeamEnergy: *beam_E
-      # target information
-      TargetIsGas: *target_is_gas # false: solid, true: gas target
-      TargetName: *target_name # from TSrim energy loss
-      TargetMassNum: *target_A # hit ion
-      TargetAtomicNum: *target_Z # hit ion
-      TargetThickness: *target_thickness # mm (for gas target, allow up to this value)
-      TargetPressure: *target_pressure # Torr (used for gas target)
-      # reaction particles information
-      DecayParticleNum: *decay_num
-      ReactionMassNum: *reac_A # will be [id=0, id=1]
-      ReactionAtomicNum: *reac_Z
-      ExciteLevel: *excited # MeV
-      # cross section file, if not, it use constant cross section for energy
-      # require: "energy cross-section" format, deliminator should be a space ' '
-      CrossSectionPath: *cs_file
-      CrossSectionType: 0 # 0: LAB, kinematics is different, 1: LAB, kinematics is same, 2: CM
 
   - name: detector_initialize
-    type: art::crib::TUserGeoInitializer
+    type: art::TUserGeoInitializer
     parameter:
-      FileName: prm/geo/current
-      Visible: false
+      Name: prm_detectors
+      FileName: prm/geo/si26a.yaml
       OutputTransparency: 1
 
   - name: detector_proc
-    type: art::crib::TDetectParticleProcessor
+    type: art::TDetectParticleProcessor
     parameter:
+      ReactionParticleName: [26Si14, p]
+      TargetisGas: 0 # 1->Gas
+      TargetName: # gas target case
+      DetectorParameter: prm_detectors
       InputCollection: products
-      InputTrackCollection: track
-      OutputCollection: detects
-      # target information (use if gas target)
-      TargetIsGas: *target_is_gas # true -> gas target
-      TargetName: *target_name # it is used in gas target case
-      TargetPressure: *target_pressure # Torr (used for gas target)
-      EnergyResolution: [0.0] # x 100 = %, det id = 0, 1, ...
-
-  - name: particle_sep_proc
-    type: art::TSeparateOutputProcessor
-    parameter:
-      InputCollection: detects
-      OutputCollections:
-        - heavy
-        - light
+      OutputCollection: telescope
 
   - name: progress
-    type: art::crib::TEvtNumProcessor
+    type: art::TEvtNumProcessor
     parameter:
       OutputTransparency: 0
       PrintEvent: 1

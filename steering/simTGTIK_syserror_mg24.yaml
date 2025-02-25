@@ -1,0 +1,180 @@
+Anchor:
+
+ - &input output/single/mg24/high_mg24.root
+ - &output rootfile/syserror/mg24ap.root
+ - &histout rootfile/syserror/mg24ap.hist.root
+
+# particle information
+ - &TARGET He250torr
+ - &NAME1 24Mg12
+ - &NAME2 a
+ - &NAME3 27Al13
+ - &NAME4 p
+ - &M1 23.97845 # amu
+ - &M2 4.00150609413
+ - &M3 26.974406
+ - &M4 1.0072764519
+ - &A1 24
+ - &A2 4
+ - &A3 27
+ - &A4 1
+ - &Z1 12
+ - &Z2 2
+ - &Z3 13
+ - &Z4 1
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+### no beam spread effect
+#  - name: count
+#    type: art::TCounterEventStore
+#    parameter:
+#      OutputTransparency: 0
+#      MaxLoop: 1000000
+#
+#  - name: beam_generator
+#    type: art::TRandomBeamGenerator
+#    parameter:
+#      OutputCollection: beam
+#      OutputTrackCollection: tracking
+#      #beam particle information
+#      MassNum: *A1
+#      AtomicNum: *Z1
+#      ChargeNum: *Z1
+#      Mass: *M1 # amu
+#      IniEnergy: 40.0 # MeV (after window)
+#      #beam tracking information
+#      Xsigma: 0.0 # mm
+#      Ysigma: 0.0 # mm
+#      Asigma: 0.0 # deg
+#      Bsigma: 0.0 # deg
+#      #Esigma: 3.3 # MeV
+#      Esigma: 0.0 # MeV
+
+### using beam data
+  - name: periodic_tree
+    type: art::TTreePeriodicEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree
+      MaxEventNum: 100000000
+
+  - name: proc_copy_processor
+    type: art::TBranchCopyProcessor
+    parameter:
+      InputCollection:     f3ppac
+      OutputCollection:    tracking
+
+  - name: beam_generator
+    type: art::TTreeBeamGenerator
+    parameter:
+      InputCollection: tracking
+      OutputCollection: beam
+      #beam particle information
+      MassNum: *A1
+      AtomicNum: *Z1
+      ChargeNum: *Z1
+      Mass: *M1 # amu
+      IniEnergy: 40.0 # MeV (after window)
+      #beam tracking information
+      Esigma: 3.3 # MeV
+
+  - name: reaction_proc
+    type: art::TNBodyReactionProcessor
+    parameter:
+      #beam information
+      InputCollection: beam
+      BeamName: *NAME1 # for SRIMlib
+      #target information
+      TargetName: *TARGET # from SRIMlib
+      TargetMassNum: *A2
+      TargetAtomicNum: *Z2
+      TargetChargeNum: *Z2
+      TargetMass: *M2 # amu
+      TargetThickness: 1000.0 # mm
+      TargetisGas: 1 # 1->Gas
+      MinusPosition: -200 # mm (default: 0)
+      #reaction particles information
+      ReactionParticleName: [*NAME3, *NAME4] #for SRIMlib
+      DecayParticleNum: 2
+      OutputCollection: products
+      ReactionMassNum: [*A3, *A4]
+      ReactionAtomicNum: [*Z3, *Z4]
+      ReactionChargeNum: [*Z3, *Z4]
+      ReactionMass: [*M3, *M4] # amu
+      ExciteLevel: [0.0] # for id=0 particle (MeV)
+      #ExciteLevel: [0.0, 1.383, 1.954, 2.423] # for id=0 particle (MeV)
+      #output of reaction information
+      OutputReactionCollection: reaction
+
+  - name: reaction_particle_sep_proc
+    type: art::TSeparateOutputProcessor
+    parameter:
+      InputCollection: products
+      OutputCollections:
+        - heavy
+        - light
+
+  - name: reaction_particle_sep_proc
+    type: art::TSeparateOutputProcessor
+    parameter:
+      InputCollection: reaction
+      OutputCollections:
+        - reaction_heavy
+        - reaction_light
+
+  - name: geometry_initialize
+    type: art::TUserGeoInitializer
+    parameter:
+      Name: prm_detectors
+      FileName: prm/geo/si26a.yaml
+      OutputTransparency: 1
+
+  - name: detector_proc
+    type: art::TDetectParticleProcessor
+    parameter:
+      ReactionParticleName: [*NAME3, *NAME4]
+      EnergyResolution: [0.0] # x 100 = %
+      TargetisGas: 1 # 1->Gas
+      TargetName: *TARGET # it is used in gas target case
+      GetOnlyLightParticle: 1 # 0->false 1->true
+      DetectorParameter: prm_detectors
+      InputCollection: products
+      OutputCollection: telescope
+
+  - name: tgtik_proc
+    type: art::TTGTIKProcessor
+    parameter:
+      InitialBeamEnergy: 40.0 # MeV
+      EnergyThreshold: 0.0 # MeV (detected energy threshold)
+      TargetGasName: *TARGET
+      ParticleName: [*NAME1, *NAME2, *NAME3, *NAME4]
+      ParticleMass: [*M1, *M2, *M3, *M4]
+      ParticleAtomicNum: [*Z1, *Z2, *Z3, *Z4]
+      InputCollection: telescope
+      InputTrackCollection: tracking
+      OutputCollection: reconst
+      DetectorParameter: prm_detectors
+
+  - name: hist_yield
+    type: art::TTreeProjectionProcessor
+    parameter:
+      FileName: hist/syserror/ecm_error.yaml
+      Type:     art::TTreeProjection
+      OutputFilename: *histout
+
+  - name: progress
+    type: art::TEvtNumProcessor
+    parameter:
+      OutputTransparency: 0
+      PrintEvent: 1
+      PrintEventNum: 10000
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

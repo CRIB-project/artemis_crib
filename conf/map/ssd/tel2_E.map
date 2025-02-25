@@ -1,10 +1,10 @@
-# map for ssd of STM circuit
+# map for ADC of dssd
 # [category] [id] [[device] [focus] [detector] [module] [ch]] ....
 #
-# for telescope 2 single pad SSD
-# Map: energy, timing
+# Map: energy
+#
+# CREATED for CRIB Exp. 2022.06.29 K.Okawa
 #
 #--------------------------------------------------------------------
-22, 0,  12 1  6   5  1,  12 2  7  0  113 
-22, 1,  12 1  6   5  6,  12 2  7  0  118
-22, 2,  12 1  6   5  9,  12 2  7  0  121
+23, 0, 12 0  6   6  18, 12 0  7  16  18 # E1 
+23, 1, 12 0  6   6  19, 12 0  7  16  19 # E2 

@@ -1,0 +1,62 @@
+Anchor:
+ - &all_high output/single/all/high_all.root
+ - &all_bg output/single/all/bg_all.root
+ - &si26_high output/single/si26/high_si26.root
+ - &si26_bg output/single/si26/bg_si26.root
+ - &al25_high output/single/al25/high_al25.root
+ - &al25_bg output/single/al25/bg_al25.root
+ - &mg24_high output/single/mg24/high_mg24.root
+ - &mg24_bg output/single/mg24/bg_mg24.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore1
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *all_high
+
+  - name: root_eventstore2
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *all_bg
+
+  - name: root_eventstore3
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *si26_high
+
+  - name: root_eventstore4
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *si26_bg
+
+  - name: root_eventstore5
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *al25_high
+
+  - name: root_eventstore6
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *al25_bg
+
+  - name: root_eventstore7
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *mg24_high
+
+  - name: root_eventstore8
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *mg24_bg
+

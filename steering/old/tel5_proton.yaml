@@ -1,0 +1,130 @@
+Anchor:
+
+  # @NAME@ = phys or bg
+ - &input output/coin/tel5/merge/tel5_@NAME@.root
+ - &output output/proton/tel5/tel5_@NAME@.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree
+
+  - name: proc_copy_processor
+    type: art::TTreeCopyProcessor
+    parameter:
+      InputCollection:     tel5
+      OutputCollection:    tel
+
+  - name: proc_prepTGTIK_processor
+    type: art::TTGTIKPrepProcessor
+    parameter:
+      InputCollection_a:     f3appac
+      InputCollection_b:     f3bppac
+      InputCollection_tel:   tel5
+      OutputCollection: proton
+      WindowPosition: 677.0
+
+  - name: proc_ppac_tracking
+    type: art::TPPACTrackingProcessor
+    parameter:
+      InputColName:
+        - f3appac
+        - f3bppac
+      OutputColName:   f3ppac
+      OutputTransparency: 0
+
+
+
+  - name: proc_gateinit
+    type: art::TGateArrayInitializer
+    parameter:
+      OutputTransparency: 1
+
+  - name: proc_gate
+    type: art::TTreeFormulaGateProcessor
+    parameter:
+      Definitions:
+#        - "tel_ene; (abs(sqrt(tel.fdE * tel.fEtotal) - 2.9) < 0.7) || (tel.fdE < 0.1 && tel.GetEvec(0) > 6.0 && tel.GetEvec(1) > 0.1)"
+        - "tel_ene; ( (abs(sqrt(tel.fdE * tel.fEtotal) - 2.9) < 0.7) || (tel.fdE < 0.1 && tel.fEtotal > 3.0) ) && abs(tel.GetETimingvec(0) + 190.0) < 30.0"
+#        - "tel_ene_exclude; tel.GetEvec(0) < 6.0 && tel.GetEvec(1) > 0.1"
+#        - "tel_timing; abs(tel.GetETimingvec(0) + 190.0) < 30.0"
+#        - "tel_timing; abs((tel.fEtotal + 0.23*tel.GetETimingvec(0)) + 26.0) < 6.0 && abs(tel.GetETimingvec(0) + 190.0) < 30.0"
+        #- "detx; abs(proton.fDetx + 110.0) < 50.0"
+        #- "dety; abs(proton.fDety - 0.0) < 60.0"
+        #- "detz; abs(proton.fDetz - 250.0) < 40.0"
+        - "window_pos; abs(f3ppac.GetX(677.0)) < 20.0 && abs(f3ppac.GetY(677.0)) < 20.0"
+        - "angle; abs((180.0/3.14)*f3ppac.fA) < 3.0 && abs((180.0/3.14)*f3ppac.fB) < 3.0"
+      OutputTransparency: 1
+      Verbose: 1
+
+  - name: tel_ene_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: tel_ene
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+  
+#  - name: tel_ene_exclude_gate
+#    type: art::TGateStopProcessor
+#    parameter:
+#      GateName: tel_ene_exclude
+#      OutputTransparency: 1
+#      StopIf: 1
+#      Verbose: 1
+#
+#  - name: tel_timing_gate
+#    type: art::TGateStopProcessor
+#    parameter:
+#      GateName: tel_timing
+#      OutputTransparency: 1
+#      StopIf: 0
+#      Verbose: 1
+  
+#  - name: detx_gate
+#    type: art::TGateStopProcessor
+#    parameter:
+#      GateName: detx
+#      OutputTransparency: 1
+#      StopIf: 0
+#
+#  - name: dety_gate
+#    type: art::TGateStopProcessor
+#    parameter:
+#      GateName: dety
+#      OutputTransparency: 1
+#      StopIf: 0
+#
+#  - name: detz_gate
+#    type: art::TGateStopProcessor
+#    parameter:
+#      GateName: detz
+#      OutputTransparency: 1
+#      StopIf: 0
+
+  - name: window_pos_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: window_pos
+      OutputTransparency: 1
+      StopIf: 0
+
+  - name: angle_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: angle
+      OutputTransparency: 1
+      StopIf: 0
+
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

@@ -1,0 +1,5 @@
+Type: art::TSimParameter
+Contents:
+  prm_simulation:
+    SimulationName: test
+    SimulationNum: test

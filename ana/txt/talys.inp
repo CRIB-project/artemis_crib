@@ -1,0 +1,19 @@
+#
+# General
+#
+projectile a
+element Si
+mass 26
+energy 0.5 9.0 0.05
+channels y
+outdiscrete y
+maxlevelsbin p 40
+ejectiles p
+#
+# Model
+#
+#alphaomp 1
+#
+# Output
+#
+#outomp y

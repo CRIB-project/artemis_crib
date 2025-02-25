@@ -1,0 +1,129 @@
+Anchor:
+
+# - &input_phy output/coin/@TEL@/merge/@TEL@_phys.root
+# - &input_bg  output/coin/@TEL@/merge/@TEL@_bg.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+#  - name: root_eventstore
+#    type: art::TTreeEventStore
+#    parameter:
+#      OutputTransparency: 1
+#      FileName: *input_phy
+#      TreeName: tree
+#
+#  - name: root_eventstore
+#    type: art::TTreeEventStore
+#    parameter:
+#      OutputTransparency: 1
+#      FileName: *input_bg
+#      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/coin/tel1/merge/tel1_phys.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/coin/tel2/merge/tel2_phys.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/coin/tel3/merge/tel3_phys.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/coin/tel4/merge/tel4_phys.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/coin/tel5/merge/tel5_phys.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/coin/tel1/merge/tel1_bg.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/coin/tel2/merge/tel2_bg.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/coin/tel3/merge/tel3_bg.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/coin/tel4/merge/tel4_bg.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/coin/tel5/merge/tel5_bg.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/simulation/ES/ES_phys.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/simulation/ES/ES2_phys.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/simulation/timing/si26ap_timing.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/simulation/ES/ES_phys_simple.root
+      TreeName: tree
+
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/simulation/timing/si26ap_timing2.root
+      TreeName: tree
+

@@ -1,0 +1,30 @@
+Anchor:
+
+ - &input_phy output/beamcoin/merge/beam_phys.root
+ - &input_bg  output/beamcoin/merge/beam_bg.root
+ - &input output/artemis/merge/high.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input_phy
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input_bg
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree

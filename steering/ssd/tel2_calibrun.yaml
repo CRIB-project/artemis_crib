@@ -1,0 +1,209 @@
+Processor:
+  - name: proc_tel2_dEX_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel2_dEX_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel2/ch2MeV_dEX.dat
+      OutputTransparency: 1
+
+######################
+#  - name: proc_tel2_dEX_ch2MeV_raw
+#    type: art::TParameterArrayLoader
+#    parameter:
+#      Name: prm_tel2_dEX_ch2MeV_raw
+#      Type: art::TAffineConverter
+#      FileName: prm/ssd/tel2/ch2MeV_dEX_raw.dat
+#      OutputTransparency: 1
+#######################
+
+  - name: proc_tel2_dEY_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel2_dEY_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel2/ch2MeV_dEY.dat
+      OutputTransparency: 1
+
+  - name: proc_tel2_E_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel2_E_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel2/ch2MeV_E.dat
+      OutputTransparency: 1
+
+
+  - name: proc_tel2_dEX_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel2_dEX_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel2/ch2ns_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_tel2_dEY_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel2_dEY_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel2/ch2ns_dEY.dat
+      OutputTransparency: 1
+
+  - name: proc_tel2_E_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel2_E_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel2/ch2ns_E.dat
+      OutputTransparency: 1
+
+
+  - name: proc_tel2_dEX_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel2_dEX_position
+      Type: art::TMUXPositionConverter
+      FileName: prm/ssd/tel2/pos/@NAME@@NUM@_dEX.dat
+      OutputTransparency: 1
+
+
+  - name: proc_tel2_dEX_raw
+    type: art::TMUXDataMappingProcessor
+    parameter:
+      CatID:         21
+      OutputTransparency: 0 
+      OutputCollection: tel2_dEX_raw
+
+  - name: proc_tel2_dEY_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         22
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel2_dEY_raw
+
+  - name: proc_tel2_E_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         23
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel2_E_raw
+
+
+  - name: proc_tel2_dEX
+    type: art::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      tel2_dEX_raw
+      OutputCollection:     tel2_dEX_cal
+      ChargeConverterArray: prm_tel2_dEX_ch2MeV
+      TimingConverterArray: prm_tel2_dEX_ch2ns
+      PositionConverterArray: prm_tel2_dEX_position
+      HasReflection: 0
+
+#####################
+#  - name: proc_tel2_dEX_raw
+#    type: art::TMUXCalibrationProcessor
+#    parameter:
+#      InputCollection:      tel2_dEX_raw
+#      OutputCollection:     tel2_dEX_cal_raw
+#      ChargeConverterArray: prm_tel2_dEX_ch2MeV_raw
+#      TimingConverterArray: prm_tel2_dEX_ch2ns
+#      PositionConverterArray: prm_tel2_dEX_position
+#      HasReflection: 0
+#######################
+
+  - name: proc_tel2_dEY
+    type: art::TTimingChargeCalibrationProcessor
+    parameter:
+      InputCollection:      tel2_dEY_raw
+      OutputCollection:     tel2_dEY_cal
+      ChargeConverterArray: prm_tel2_dEY_ch2MeV
+      TimingConverterArray: prm_tel2_dEY_ch2ns
+
+  - name: proc_tel2_E
+    type: art::TTimingChargeCalibrationProcessor
+    parameter:
+      InputCollection:      tel2_E_raw
+      OutputCollection:     tel2_E_cal
+      ChargeConverterArray: prm_tel2_E_ch2MeV
+      TimingConverterArray: prm_tel2_E_ch2ns
+
+
+
+## For individual channels
+#  - name: proc_tel2_dEX_raw_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: tel2_dEX_cal_raw
+#      OutputCollections:
+#        - tel2_dEX_cal_raw_0
+#        - tel2_dEX_cal_raw_1
+#        - tel2_dEX_cal_raw_2
+#        - tel2_dEX_cal_raw_3
+#        - tel2_dEX_cal_raw_4
+#        - tel2_dEX_cal_raw_5
+#        - tel2_dEX_cal_raw_6
+#        - tel2_dEX_cal_raw_7
+#        - tel2_dEX_cal_raw_8
+#        - tel2_dEX_cal_raw_9
+#        - tel2_dEX_cal_raw_10
+#        - tel2_dEX_cal_raw_11
+#        - tel2_dEX_cal_raw_12
+#        - tel2_dEX_cal_raw_13
+#        - tel2_dEX_cal_raw_14
+#        - tel2_dEX_cal_raw_15
+#
+#  - name: proc_tel2_dEY_raw_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: tel2_dEY_raw
+#      OutputCollections:
+#        - tel2_dEY_raw_0
+#        - tel2_dEY_raw_1
+#        - tel2_dEY_raw_2
+#        - tel2_dEY_raw_3
+#        - tel2_dEY_raw_4
+#        - tel2_dEY_raw_5
+#        - tel2_dEY_raw_6
+#        - tel2_dEY_raw_7
+#        - tel2_dEY_raw_8
+#        - tel2_dEY_raw_9
+#        - tel2_dEY_raw_10
+#        - tel2_dEY_raw_11
+#        - tel2_dEY_raw_12
+#        - tel2_dEY_raw_13
+#        - tel2_dEY_raw_14
+#        - tel2_dEY_raw_15
+#
+#  - name: proc_tel2_E_raw_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: tel2_E_raw
+#      OutputCollections:
+#        - tel2_E_raw_0
+#        - tel2_E_raw_1
+
+# process telescope
+  - name: proc_telescope2_param
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_telescope2
+      Type: art::TTelescopeParameter
+      FileName: prm/ssd/tel2/tel2_conf.yaml
+      FileFormat: yaml
+      OutputTransparency: 1
+
+  - name: proc_telescope2
+    type: art::TTelescopeProcessor
+    parameter:
+      TelescopeParameter:    prm_telescope2
+      InputCollection1:      tel2_dEX_cal
+      InputCollection2:      tel2_dEY_cal
+      InputCollection3:      tel2_E_cal
+      OutputCollection:      tel2

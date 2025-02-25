@@ -1,0 +1,189 @@
+Processor:
+### ch2MeV converter
+  - name: proc_@NAME@_dEX_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEX_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/@NAME@/ch2MeV_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_dEY_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEY_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/@NAME@/ch2MeV_dEY.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_E_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_E_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/@NAME@/ch2MeV_E.dat
+      OutputTransparency: 1
+
+
+### ch2ns converter
+  - name: proc_@NAME@_dEX_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEX_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/@NAME@/ch2ns_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_dEY_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEY_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/@NAME@/ch2ns_dEY.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_E_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_E_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/@NAME@/ch2ns_E.dat
+      OutputTransparency: 1
+
+
+### position converter for X
+  - name: proc_@NAME@_dEX_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEX_position
+      Type: art::TMUXPositionConverter
+      FileName: prm/ssd/@NAME@/pos/@RUNNAME@@RUNNUM@_dEX.dat
+      OutputTransparency: 1
+
+
+### Mapping processor
+  - name: proc_@NAME@_dEX_raw
+    type: art::TMUXDataMappingProcessor
+    parameter:
+      CatID:         @CATID_dEX@ 
+      OutputTransparency: 0
+      OutputCollection: @NAME@_dEX_raw
+
+  - name: proc_@NAME@_dEY_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         @CATID_dEY@
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: @NAME@_dEY_raw
+      
+  - name: proc_@NAME@_E_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         @CATID_E@
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: @NAME@_E_raw
+
+
+  - name: proc_@NAME@_dEX
+    type: art::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      @NAME@_dEX_raw
+      OutputCollection:     @NAME@_dEX_cal
+      ChargeConverterArray: prm_@NAME@_dEX_ch2MeV
+      TimingConverterArray: prm_@NAME@_dEX_ch2ns
+      PositionConverterArray: prm_@NAME@_dEX_position
+      HasReflection: 0
+
+  - name: proc_@NAME@_dEY
+    type: art::TTimingChargeCalibrationProcessor
+    parameter:
+      InputCollection:      @NAME@_dEY_raw
+      OutputCollection:     @NAME@_dEY_cal
+      ChargeConverterArray: prm_@NAME@_dEY_ch2MeV
+      TimingConverterArray: prm_@NAME@_dEY_ch2ns
+
+  - name: proc_@NAME@_E
+    type: art::TTimingChargeCalibrationProcessor
+    parameter:
+      InputCollection:      @NAME@_E_raw
+      OutputCollection:     @NAME@_E_cal
+      ChargeConverterArray: prm_@NAME@_E_ch2MeV
+      TimingConverterArray: prm_@NAME@_E_ch2ns
+
+## For individual channels
+#  - name: proc_@NAME@_dEX_cal_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: @NAME@_dEX_cal
+#      OutputCollections:
+#        - @NAME@_dEX_cal_0
+#        - @NAME@_dEX_cal_1
+#        - @NAME@_dEX_cal_2
+#        - @NAME@_dEX_cal_3
+#        - @NAME@_dEX_cal_4
+#        - @NAME@_dEX_cal_5
+#        - @NAME@_dEX_cal_6
+#        - @NAME@_dEX_cal_7
+#        - @NAME@_dEX_cal_8
+#        - @NAME@_dEX_cal_9
+#        - @NAME@_dEX_cal_10
+#        - @NAME@_dEX_cal_11
+#        - @NAME@_dEX_cal_12
+#        - @NAME@_dEX_cal_13
+#        - @NAME@_dEX_cal_14
+#        - @NAME@_dEX_cal_15
+#
+#  - name: proc_@NAME@_dEY_cal_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: @NAME@_dEY_cal
+#      OutputCollections:
+#        - @NAME@_dEY_cal_0
+#        - @NAME@_dEY_cal_1
+#        - @NAME@_dEY_cal_2
+#        - @NAME@_dEY_cal_3
+#        - @NAME@_dEY_cal_4
+#        - @NAME@_dEY_cal_5
+#        - @NAME@_dEY_cal_6
+#        - @NAME@_dEY_cal_7
+#        - @NAME@_dEY_cal_8
+#        - @NAME@_dEY_cal_9
+#        - @NAME@_dEY_cal_10
+#        - @NAME@_dEY_cal_11
+#        - @NAME@_dEY_cal_12
+#        - @NAME@_dEY_cal_13
+#        - @NAME@_dEY_cal_14
+#        - @NAME@_dEY_cal_15
+#
+#  - name: proc_@NAME@_E_cal_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: @NAME@_E_cal
+#      OutputCollections:
+#        - @NAME@_E_cal_0
+#        - @NAME@_E_cal_1
+
+# process telescope
+  - name: proc_@NAME@_parameter
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@
+      Type: art::TTelescopeParameter
+      FileName: prm/ssd/@NAME@/@NAME@_conf.yaml
+      FileFormat: yaml
+      OutputTransparency: 1
+
+  - name: proc_@NAME@
+    type: art::TTelescopeProcessor
+    parameter:
+      TelescopeParameter:    prm_@NAME@
+      InputCollection1:      @NAME@_dEX_cal
+      InputCollection2:      @NAME@_dEY_cal
+      InputCollection3:      @NAME@_E_cal
+      OutputCollection:      @NAME@

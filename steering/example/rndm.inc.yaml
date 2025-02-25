@@ -1,3 +1,10 @@
+# @file rndm.inc.yaml
+# @brief random number generation
+# 
+# @date Create        : 2020-01-11 18:07:13 JST
+#       Last Modified : 2020-01-11 18:18:41 JST (ota)
+# @author:  <ota@ata03.atnet>
+# 
 Processor:
   - name: MyTRandomNumberEventStore
     type: art::TRandomNumberEventStore
@@ -8,4 +15,6 @@ Processor:
       OutputCollection: random  # [TString] output name of random values
       OutputTransparency: 0  # [Bool_t] Output is persistent if false (default)
       Verbose: 1  # [Int_t] verbose level (default 1 : non quiet)
-
+                                                  
+---
+# end of rndm.inc.yaml

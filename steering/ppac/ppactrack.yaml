@@ -1,8 +1,0 @@
-  - name: proc_ppac_tracking
-    type: art::TPPACTrackingProcessor
-    parameter:
-      InputColName:
-        - f3appac
-        - f3bppac
-      OutputColName:   f3ppac
-      OutputTransparency: 0

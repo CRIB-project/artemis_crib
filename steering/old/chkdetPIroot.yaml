@@ -1,0 +1,43 @@
+Anchor:
+
+# @NAME@ : alpha or proton, @RUN@ : phys or bg
+ - &input output/@NAME@/all_@RUN@.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+#  - name: root_eventstore
+#    type: art::TTreeEventStore
+#    parameter:
+#      OutputTransparency: 1
+#      FileName: *input
+#      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/alpha/all_phys.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/alpha/all_bg.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/proton/all_phys.root
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: output/proton/all_bg.root
+      TreeName: tree

@@ -1,0 +1,35 @@
+# @file example.tmpl.yaml
+# @brief template for check 
+# 
+# @date Create        : 2020-01-11 18:04:06 JST
+#       Last Modified : 2020-01-11 18:28:07 JST (ota)
+# @author:  <ota@cns.s.u-tokyo.ac.jp>
+#
+anchor:
+  - &treeout output/@NUM@/example_@NUM@.tree.root
+  - &histout output/@NUM@/example_@NUM@.hist.root
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+  - include:
+      name: example/rndm.inc.yaml
+      replace:
+        MAX: @MAX@
+  - name: hist
+    type: art::TTreeProjectionProcessor
+    parameter:
+      FileName: hist/example.hist.yaml
+      OutputFilename: *histout
+      Type: art::TTreeProjection
+      Replace: |
+        MAX: @MAX@
+        
+      
+  - name: treeout
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName: *treeout
+          
+        
+---
+# end of chk.tmpl.yaml

@@ -1,0 +1,57 @@
+Anchor:
+
+ - &input output/track/si26_phys.root
+ - &output output/proton/error/yield_syserror_beam.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+
+  - name: counter
+    type: art::TCounterEventStore
+    parameter:
+      #MaxLoop: 3131788000
+      MaxLoop: 3000000
+      OutputTransparency: 0
+
+  - name: proc_simulation_generator
+    type: art::TSimTreeRandomBeamGenerator
+    parameter:
+      OutputCollection: beam
+      FileName: *input
+      TreeName: tree
+      BeamBranchName: f3ppac
+
+
+  - name: proc_prepTGTIK_processor
+    type: art::TSimTGTIKPrepProcessor
+    parameter:
+      InputCollection:  beam
+      OutputCollection: proton
+      WindowPosition: 677.0
+
+
+  - name: proc_TGTIK_processor
+    type: art::TSimTGTIKProcessor
+    parameter:
+      InputCollection:   proton
+      OutputCollection:  yield
+      InitialBeamEnergy: 55.5
+      GasPressure: 250.0
+      Temperature: 300.0
+      M1: 25.992333818   # si26
+      M2: 4.00260325413  # alpha
+      M3: 28.98180368    # p29
+      M4: 1.007825031898 # proton
+      Z1: 14
+      Z2: 2
+      Z3: 15
+      Z4: 1
+
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

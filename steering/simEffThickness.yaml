@@ -1,0 +1,30 @@
+Anchor:
+
+ - &histout rootfile/effthickness/si26ap.hist.root
+# - &histout rootfile/effthickness/al25ap.hist.root
+# - &histout rootfile/effthickness/mg24ap.hist.root
+
+# particle information
+ - &TARGET He250torr
+ - &NAME1 26Si14
+# - &NAME1 25Al13
+# - &NAME1 24Mg12
+ - &NAME2 a
+ - &M1 25.9846537 # amu
+# - &M1 24.983297 # amu
+# - &M1 23.97845 # amu
+ - &M2 4.00150609413
+
+Processor:
+  - name: effective_thickness_cal
+    type: art::TEffectiveThickness
+    parameter:
+      FileName: *histout
+      ParticleNames: [*NAME1, *NAME2]
+      ParticleMass: [*M1, *M2]
+      TargetName: *TARGET
+      TargetA: 4.0026 # g/mol
+      EnergyRange: [0.0, 8.0] # Ecm MeV
+      DeltaE: 0.5 # MeV
+      Density: 5.4743e-5 # g/cm3
+

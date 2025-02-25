@@ -1,0 +1,9 @@
+# map for ADC of dssd
+# [category] [id] [[device] [focus] [detector] [module] [ch]] ....
+#
+# Map: MUX [ene1, ene2, pos1, pos2, timing]
+#
+# CREATED for CRIB Exp. 2022.06.29 K.Okawa
+#
+#--------------------------------------------------------------------
+21,  0, 12 0  6   7   0, 12 0  6   7   1, 12 0  6   7   2, 12 0  6   7   3, 12 0  7  11   2

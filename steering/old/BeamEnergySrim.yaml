@@ -1,0 +1,5 @@
+Processor:
+  - name: beamenergysrim
+    type: art::TBeamEnergyCalculationSrim
+    parameter:
+      OutputTransparency: 1

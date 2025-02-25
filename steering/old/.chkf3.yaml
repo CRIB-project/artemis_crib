@@ -1,0 +1,40 @@
+Anchor:
+
+ - &input ridf/si26a/@NAME@@NUM@.ridf
+ - &output output/@NAME@/@NUM@/chkf3@NAME@@NUM@.root
+ - &histout output/@NAME@/@NUM@/chkf3@NAME@@NUM@.hist.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      #MaxEventNum: 200000
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+
+  - include: rf/rf.yaml
+  - include: coin/coin.yaml
+  - include: ppac/dlppac.yaml
+
+  - include: 
+      name: ssd/f3ssd.yaml
+      replace:
+        NAME: @NAME@
+        NUM: @NUM@
+
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

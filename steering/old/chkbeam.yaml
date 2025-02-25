@@ -1,0 +1,22 @@
+Anchor:
+
+ - &input_coin output/beamcoin/merge/beam_phys.root
+ - &input_single  output/beamsingle/merge/beam_phys.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input_coin
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input_single
+      TreeName: tree

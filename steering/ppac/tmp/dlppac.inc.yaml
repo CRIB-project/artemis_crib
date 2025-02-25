@@ -1,0 +1,94 @@
+Processor:
+  - name: proc:fe7fe8:ppac:ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm:fe7fe8:ppac:ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ppac/ch2ns.prm
+# ---------------------------------------
+  - name: proc:fe7fe8:ppac:param
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm:fe7fe8:ppac
+      Type: art::TPPACParameter
+      #FileName: prm/ppac/ppac.prm.yaml
+      FileName: prm/dlppac/dlppac.prm.user.yaml
+      FileFormat: yaml
+# ---------------------------------------
+  - name: proc:fe7fe8:ppac
+    type: art::TPPACProcessor
+    parameter:
+      CatID: 15
+      PPACParameter: prm:fe7fe8:ppac
+      TimingConverterArray: prm:fe7fe8:ppac:ch2ns
+      HasEachChConverter: 1
+      DoSeparatePPACs: 1
+      OutputCollection: fe7fe8ppac
+      OutputTransparency: 0
+      ListOfPPACNames:
+        # --------- F3
+        - fe7ppac1
+        - fe7ppac2
+        - fe8ppac
+ 
+
+
+
+# @file chkdlppac.tmpl.yaml
+# @brief check delayline ppacs
+# 
+# @date Create        : 2020-11-21 11:22:17 JST (ota)
+#       Last Modified : 2020-11-22 05:25:06 JST (ota)
+# @author:  <ota@cns.s.u-tokyo.ac.jp>
+#Processor:
+#  - name: proc:ppac:ch2ns
+#    type: art::TParameterArrayLoader
+#    parameter:
+#      Name: prm:ppac:ch2ns
+#      Type: art::TAffineConverter
+#      FileName: prm/dlppac/ch2ns_v1190.prm
+#
+#  - name: proc:ppac:param
+#    type: art::TParameterArrayLoader
+#    parameter:
+#      Name: prm:ppac
+#      Type: art::TPPACParameter
+#      FileName: prm/dlppac/dlppac.prm.user.yaml
+#      FileFormat: yaml
+##      OutputTransparency: 1
+#
+#  - name: proc:ppac
+#    type: art::TPPACProcessor
+#    parameter:
+#      CatID: 13
+#      TimingConverterArray: prm:ppac:ch2ns
+#      PPACParameter: prm:ppac:param
+#      HasEachChConverter: 1
+#      DoSeparatePPACs: 1
+#      OutputTransparency: 0
+#      ListOfPPACNames:
+#        - dl71
+#        - dl72
+#        - dl81
+
+#  - name: prc:ppactrack:f3
+#    type: art::TPPACTrackingProcessor
+#    parameter:
+#      InputColName:
+#        - f3ppac1a
+#        - f3ppac1b
+#        - f3ppac2a
+#        - f3ppac2b
+#      OutputColName:
+#        - f3track
+#
+#  - name: prc:ppactrack:f5
+#    type: art::TPPACTrackingProcessor
+#    parameter:
+#      InputColName:
+#        - f5ppac1a
+#        - f5ppac1b
+#        - f5ppac2a
+#        - f5ppac2b
+#      OutputColName:
+#        - f5track

@@ -1,54 +1,32 @@
 Processor:
-# telescope 1
-  - include:
-      name: tel.inc.yaml
-      replace:
-        NAME: tel1
-        CATID_dEX: 10
-        CATID_dEY: 11
-        CATID_E:   12
+  - include: ssd/lowgain.yaml
 
-# telescope 2
-  - include:
-      name: tel.inc.yaml
-      replace:
-        NAME: tel2
-        CATID_dEX: 20
-        CATID_dEY: 21
-        CATID_E:   22
+  - include: ssd/multiMUX.yaml
 
-# telescope 3
   - include:
-      name: tel.inc.yaml
-      replace:
-        NAME: tel3
-        CATID_dEX: 30
-        CATID_dEY: 31
-        CATID_E:   32
+      name: ssd/tel1.yaml
 
-# telescope 4
   - include:
-      name: tel_mux.inc.yaml
+      name: ssd/tel2.yaml
       replace:
-        NAME: tel4
-        CATID_dEX: 40
-        CATID_dEY: 41
-        CATID_E:   42
+        NAME: @NAME@
+        NUM: @NUM@
 
-# telescope 5
   - include:
-      name: tel_mux.inc.yaml
+      name: ssd/tel3.yaml
       replace:
-        NAME: tel5
-        CATID_dEX: 50
-        CATID_dEY: 51
-        CATID_E:   52
+        NAME: @NAME@
+        NUM: @NUM@
 
-# telescope 6
   - include:
-      name: tel_mux.inc.yaml
+      name: ssd/tel4.yaml
       replace:
-        NAME: tel6
-        CATID_dEX: 60
-        CATID_dEY: 61
-        CATID_E:   62
+        NAME: @NAME@
+        NUM: @NUM@
+
+  - include:
+      name: ssd/tel5.yaml
+      replace:
+        NAME: @NAME@
+        NUM: @NUM@
+

@@ -9,9 +9,12 @@ Processor:
     parameter:
       Definitions: # for tel3
         - "tel; tel@.GetEntriesFast()>0"
-        - "tel_pene; tel.GetEvec(0)>0.01"
-        - "tel_ene; ( (abs(sqrt(tel.fdE * tel.fEtotal) - 2.5) < 1.0) || (tel.fdE < 0.1 && tel.fEtotal > 3.0) ) && abs(tel.GetETimingvec(0) + 190.0) < 30.0"
+        #- "tel_pene; tel.GetEvec(0)>0.01"
+        - "tel_pene; tel.E(1)>0.01"
+        #- "tel_ene; ( (abs(sqrt(tel.fdE * tel.fEtotal) - 2.5) < 1.0) || (tel.fdE < 0.1 && tel.fEtotal > 3.0) ) && abs(tel.GetETimingvec(0) + 190.0) < 30.0"
+        - "tel_ene; ( (abs(sqrt(tel.E(0) * tel.E()) - 2.5) < 1.0) || (tel.E(0) < 0.1 && tel.E() > 3.0) ) && abs(tel.T(1) + 190.0) < 30.0"
 #        - "tel_timing; abs(tel.GetETimingvec(0) + 190.0) < 20.0"
+        #- "tel_timing; tel.E() > -0.2 * tel.T(1) - 26.0"
       OutputTransparency: 1
       Verbose: 1
 
@@ -46,4 +49,3 @@ Processor:
 #      OutputTransparency: 1
 #      StopIf: 0
 #      Verbose: 1
-

@@ -1,0 +1,9 @@
+Anchor:
+
+Processor:
+- name: detector_initialize
+  type: art::TUserGeoInitializer
+  parameter:
+    Name: prm_detector
+    FileName: prm/geo/example.yaml
+    OutputTransparency: 1

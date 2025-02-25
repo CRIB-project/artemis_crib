@@ -1,0 +1,38 @@
+Anchor:
+
+ - &input output/track/si26_phys.root
+ - &input_bg output/track/si26_bg.root
+ - &input2 output/trackcoin/si26_phys.root
+ - &input2_bg output/trackcoin/si26_bg.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input_bg
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input2
+      TreeName: tree
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input2_bg
+      TreeName: tree

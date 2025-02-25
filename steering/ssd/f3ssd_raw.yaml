@@ -1,137 +1,350 @@
 Processor:
-# telescope 1
-  - include:
-      name: dssd_raw.inc.yaml
-      replace:
-        NAME: tel1
-        SIDE: dEX
-        CATID: 10
-
-  - include:
-      name: dssd_raw.inc.yaml
-      replace:
-        NAME: tel1
-        SIDE: dEY
-        CATID: 11
-
-  - include:
-      name: ssd_raw.inc.yaml
-      replace:
-        NAME: tel1
-        CATID: 12
+  - name: proc_lowgain_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         8
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: lowgain_raw
 
 
-# telescope 2
-  - include:
-      name: dssd_raw.inc.yaml
-      replace:
-        NAME: tel2
-        SIDE: dEX
-        CATID: 20
+  - include: ssd/multiMUX.yaml
 
-  - include:
-      name: dssd_raw.inc.yaml
-      replace:
-        NAME: tel2
-        SIDE: dEY
-        CATID: 21
+  - name: proc_tel1_dEX_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         11
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel1_dEX_raw
 
-  - include:
-      name: ssd_raw.inc.yaml
-      replace:
-        NAME: tel2
-        CATID: 22
+  - name: proc_tel1_dEY_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         12
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel1_dEY_raw
 
-
-# telescope 3
-  - include:
-      name: dssd_raw.inc.yaml
-      replace:
-        NAME: tel3
-        SIDE: dEX
-        CATID: 30
-
-  - include:
-      name: dssd_raw.inc.yaml
-      replace:
-        NAME: tel3
-        SIDE: dEY
-        CATID: 31
-
-  - include:
-      name: ssd_raw.inc.yaml
-      replace:
-        NAME: tel3
-        CATID: 32
+  - name: proc_tel1_E_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         13
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel1_E_raw
 
 
-# telescope 4
-  - include:
-      name: dssd_mux_raw.inc.yaml
-      replace:
-        NAME: tel4
-        SIDE: dEX
-        CATID: 40
-        REFLECT: 0 # 0:no 1:yes
+  - name: proc_tel2_dEX_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel2_dEX_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel2/ch2MeV_dEX_raw.dat
+      OutputTransparency: 1
 
-  - include:
-      name: dssd_mux_raw.inc.yaml
-      replace:
-        NAME: tel4
-        SIDE: dEY
-        CATID: 41
-        REFLECT: 1 # 0:no 1:yes
+  - name: proc_tel2_dEX_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel2_dEX_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel2/ch2ns_dEX.dat
+      OutputTransparency: 1
 
-  - include:
-      name: ssd_raw.inc.yaml
-      replace:
-        NAME: tel4
-        CATID: 42
-
-
-# telescope 5
-  - include:
-      name: dssd_mux_raw.inc.yaml
-      replace:
-        NAME: tel5
-        SIDE: dEX
-        CATID: 50
-        REFLECT: 0 # 0:no 1:yes
-
-  - include:
-      name: dssd_mux_raw.inc.yaml
-      replace:
-        NAME: tel5
-        SIDE: dEY
-        CATID: 51
-        REFLECT: 1 # 0:no 1:yes
-
-  - include:
-      name: ssd_raw.inc.yaml
-      replace:
-        NAME: tel5
-        CATID: 52
+  - name: proc_tel2_dEX_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel2_dEX_position
+      Type: art::TMUXPositionConverter
+      FileName: prm/ssd/tel2/pos/@NAME@@NUM@_dEX.dat
+      OutputTransparency: 1
 
 
-# telescope 6
-  - include:
-      name: dssd_mux_raw.inc.yaml
-      replace:
-        NAME: tel6
-        SIDE: dEX
-        CATID: 60
-        REFLECT: 0 # 0:no 1:yes
+  - name: proc_tel2_dEX_raw
+    type: art::TMUXDataMappingProcessor
+    parameter:
+      CatID:         21
+      OutputTransparency: 0 
+      OutputCollection: tel2_dEX_raw
 
-  - include:
-      name: dssd_mux_raw.inc.yaml
-      replace:
-        NAME: tel6
-        SIDE: dEY
-        CATID: 61
-        REFLECT: 1 # 0:no 1:yes
+  - name: proc_tel2_dEY_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         22
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel2_dEY_raw
 
-  - include:
-      name: ssd_raw.inc.yaml
-      replace:
-        NAME: tel6
-        CATID: 62
+  - name: proc_tel2_E_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         23
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel2_E_raw
+
+
+  - name: proc_tel2_dEX
+    type: art::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      tel2_dEX_raw
+      OutputCollection:     tel2_dEX_cal
+      ChargeConverterArray: prm_tel2_dEX_ch2MeV
+      TimingConverterArray: prm_tel2_dEX_ch2ns
+      PositionConverterArray: prm_tel2_dEX_position
+      HasReflection: 0
+
+
+
+  - name: proc_tel3_dEX_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel3_dEX_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel3/ch2MeV_dEX_raw.dat
+      OutputTransparency: 1
+
+  - name: proc_tel3_dEX_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel3_dEX_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel3/ch2ns_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_tel3_dEX_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel3_dEX_position
+      Type: art::TMUXPositionConverter
+      FileName: prm/ssd/tel3/pos/@NAME@@NUM@_dEX.dat
+      OutputTransparency: 1
+
+
+  - name: proc_tel3_dEX_raw
+    type: art::TMUXDataMappingProcessor
+    parameter:
+      CatID:         31
+      OutputTransparency: 0 
+      OutputCollection: tel3_dEX_raw
+
+  - name: proc_tel3_dEY_raw
+    #type: art::TTimingChargeMappingProcessor
+    type: art::TTimingChargeAllMappingProcessor
+    parameter:
+      CatID:         32
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel3_dEY_raw
+
+  - name: proc_tel3_E_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         33
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel3_E_raw
+
+
+  - name: proc_tel3_dEX
+    type: art::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      tel3_dEX_raw
+      OutputCollection:     tel3_dEX_cal
+      ChargeConverterArray: prm_tel3_dEX_ch2MeV
+      TimingConverterArray: prm_tel3_dEX_ch2ns
+      PositionConverterArray: prm_tel3_dEX_position
+      HasReflection: 0
+
+
+  - name: proc_tel4_dEX_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel4_dEX_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel4/ch2MeV_dEX_raw.dat
+      OutputTransparency: 1
+
+  - name: proc_tel4_dEY_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel4_dEY_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel4/ch2MeV_dEY_raw.dat
+      OutputTransparency: 1
+
+
+  - name: proc_tel4_dEX_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel4_dEX_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel4/ch2ns_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_tel4_dEY_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel4_dEY_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel4/ch2ns_dEY.dat
+      OutputTransparency: 1
+
+
+  - name: proc_tel4_dEX_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel4_dEX_position
+      Type: art::TMUXPositionConverter
+      FileName: prm/ssd/tel4/pos/@NAME@@NUM@_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_tel4_dEY_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel4_dEY_position
+      Type: art::TMUXPositionConverter
+      FileName: prm/ssd/tel4/pos/@NAME@@NUM@_dEY.dat
+      OutputTransparency: 1
+
+  - name: proc_tel4_dEY_raw
+    type: art::TMUXDataMappingProcessor
+    parameter:
+      CatID:         42
+      OutputTransparency: 0 
+      OutputCollection: tel4_dEY_raw
+
+  - name: proc_tel4_E_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         43
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel4_E_raw
+
+
+  - name: proc_tel4_dEX
+    type: art::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      tel4_dEX_raw
+      OutputCollection:     tel4_dEX_cal
+      ChargeConverterArray: prm_tel4_dEX_ch2MeV
+      TimingConverterArray: prm_tel4_dEX_ch2ns
+      PositionConverterArray: prm_tel4_dEX_position
+      HasReflection: 0
+
+  - name: proc_tel4_dEY
+    type: art::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      tel4_dEY_raw
+      OutputCollection:     tel4_dEY_cal
+      ChargeConverterArray: prm_tel4_dEY_ch2MeV
+      TimingConverterArray: prm_tel4_dEY_ch2ns
+      PositionConverterArray: prm_tel4_dEY_position
+      HasReflection: 1
+
+
+  - name: proc_tel5_dEX_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_dEX_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel5/ch2MeV_dEX_raw.dat
+      OutputTransparency: 1
+
+  - name: proc_tel5_dEY_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_dEY_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel5/ch2MeV_dEY_raw.dat
+      OutputTransparency: 1
+
+  - name: proc_tel5_dEX_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_dEX_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel5/ch2ns_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_tel5_dEY_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_dEY_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel5/ch2ns_dEY.dat
+      OutputTransparency: 1
+
+  - name: proc_tel5_dEX_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_dEX_position
+      Type: art::TMUXPositionConverter
+      FileName: prm/ssd/tel5/pos/@NAME@@NUM@_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_tel5_dEY_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_dEY_position
+      Type: art::TMUXPositionConverter
+      FileName: prm/ssd/tel5/pos/@NAME@@NUM@_dEY.dat
+      OutputTransparency: 1
+
+
+  - name: proc_tel5_dEY_raw
+    type: art::TMUXDataMappingProcessor
+    parameter:
+      CatID:         52
+      OutputTransparency: 0 
+      OutputCollection: tel5_dEY_raw
+
+  - name: proc_tel5_E_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         53
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel5_E_raw
+
+
+  - name: proc_tel5_dEX
+    type: art::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      tel5_dEX_raw
+      OutputCollection:     tel5_dEX_cal
+      ChargeConverterArray: prm_tel5_dEX_ch2MeV
+      TimingConverterArray: prm_tel5_dEX_ch2ns
+      PositionConverterArray: prm_tel5_dEX_position
+      HasReflection: 0
+
+  - name: proc_tel5_dEY
+    type: art::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      tel5_dEY_raw
+      OutputCollection:     tel5_dEY_cal
+      ChargeConverterArray: prm_tel5_dEY_ch2MeV
+      TimingConverterArray: prm_tel5_dEY_ch2ns
+      PositionConverterArray: prm_tel5_dEY_position
+      HasReflection: 1

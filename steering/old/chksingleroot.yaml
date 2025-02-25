@@ -1,0 +1,78 @@
+Anchor:
+
+ - &input output/beamsingle/merge/beam_@NAME@.root
+ - &output output/track/si26_@NAME@.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree
+
+  - name: proc_copy_processor
+    type: art::TTreeCopyProcessor
+    parameter:
+      InputCollection:     rf_cal_0
+      OutputCollection:    rf
+
+  - name: proc_copy_processor
+    type: art::TTreeCopyProcessor
+    parameter:
+      InputCollection:     f3appac
+      OutputCollection:    ppaca
+
+  - name: proc_copy_processor
+    type: art::TTreeCopyProcessor
+    parameter:
+      InputCollection:     f3bppac
+      OutputCollection:    ppacb
+
+  - name: proc_ppac_tracking
+    type: art::TPPACTrackingProcessor
+    parameter:
+      InputColName:
+        - ppaca
+        - ppacb
+      OutputColName:   f3ppac
+      OutputTransparency: 0
+
+
+  - name: proc_gateinit
+    type: art::TGateArrayInitializer
+    parameter:
+      OutputTransparency: 1
+
+  - name: proc_gate
+    type: art::TTreeFormulaGateProcessor
+    parameter:
+      Definitions:
+        - "window_pos; abs(f3ppac.GetX(677.0)) < 20.0 && abs(f3ppac.GetY(677.0)) < 20.0"
+        - "angle; abs((180.0/3.14)*f3ppac.fA) < 3.0 && abs((180.0/3.14)*f3ppac.fB) < 3.0"
+      OutputTransparency: 1
+      Verbose: 1
+
+  - name: window_pos_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: window_pos
+      OutputTransparency: 1
+      StopIf: 0
+
+  - name: angle_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: angle
+      OutputTransparency: 1
+      StopIf: 0
+
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

@@ -1,0 +1,235 @@
+Processor:
+  - name: proc_tel5_dEX_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_dEX_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel5/ch2MeV_dEX.dat
+      OutputTransparency: 1
+
+######################
+#  - name: proc_tel5_dEX_ch2MeV_raw
+#    type: art::TParameterArrayLoader
+#    parameter:
+#      Name: prm_tel5_dEX_ch2MeV_raw
+#      Type: art::TAffineConverter
+#      FileName: prm/ssd/tel5/ch2MeV_dEX_raw.dat
+#      OutputTransparency: 1
+#######################
+
+  - name: proc_tel5_dEY_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_dEY_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel5/ch2MeV_dEY.dat
+      OutputTransparency: 1
+
+######################
+#  - name: proc_tel5_dEY_ch2MeV_raw
+#    type: art::TParameterArrayLoader
+#    parameter:
+#      Name: prm_tel5_dEY_ch2MeV_raw
+#      Type: art::TAffineConverter
+#      FileName: prm/ssd/tel5/ch2MeV_dEX_raw.dat
+#      OutputTransparency: 1
+#######################
+
+  - name: proc_tel5_E_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_E_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel5/ch2MeV_E.dat
+      OutputTransparency: 1
+
+
+  - name: proc_tel5_dEX_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_dEX_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel5/ch2ns_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_tel5_dEY_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_dEY_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel5/ch2ns_dEY.dat
+      OutputTransparency: 1
+
+  - name: proc_tel5_E_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_E_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/tel5/ch2ns_E.dat
+      OutputTransparency: 1
+
+
+  - name: proc_tel5_dEX_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_dEX_position
+      Type: art::TMUXPositionConverter
+      FileName: prm/ssd/tel5/pos/@NAME@@NUM@_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_tel5_dEY_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_tel5_dEY_position
+      Type: art::TMUXPositionConverter
+      FileName: prm/ssd/tel5/pos/@NAME@@NUM@_dEY.dat
+      OutputTransparency: 1
+
+#  - name: proc_tel5_dEX_raw
+#    type: art::TMUXDataMappingProcessor
+#    parameter:
+#      CatID:         51
+#      OutputTransparency: 0 
+#      OutputCollection: tel5_dEX_raw
+
+  - name: proc_tel5_dEY_raw
+    type: art::TMUXDataMappingProcessor
+    parameter:
+      CatID:         52
+      OutputTransparency: 0 
+      OutputCollection: tel5_dEY_raw
+
+  - name: proc_tel5_E_raw
+    type: art::TTimingChargeMappingProcessor
+    parameter:
+      CatID:         53
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel5_E_raw
+
+
+  - name: proc_tel5_dEX
+    type: art::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      tel5_dEX_raw
+      OutputCollection:     tel5_dEX_cal
+      ChargeConverterArray: prm_tel5_dEX_ch2MeV
+      TimingConverterArray: prm_tel5_dEX_ch2ns
+      PositionConverterArray: prm_tel5_dEX_position
+      HasReflection: 0
+
+#####################
+#  - name: proc_tel5_dEX_raw
+#    type: art::TMUXCalibrationProcessor
+#    parameter:
+#      InputCollection:      tel5_dEX_raw
+#      OutputCollection:     tel5_dEX_cal_raw
+#      ChargeConverterArray: prm_tel5_dEX_ch2MeV_raw
+#      TimingConverterArray: prm_tel5_dEX_ch2ns
+#      PositionConverterArray: prm_tel5_dEX_position
+#      HasReflection: 0
+#######################
+
+  - name: proc_tel5_dEY
+    type: art::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      tel5_dEY_raw
+      OutputCollection:     tel5_dEY_cal
+      ChargeConverterArray: prm_tel5_dEY_ch2MeV
+      TimingConverterArray: prm_tel5_dEY_ch2ns
+      PositionConverterArray: prm_tel5_dEY_position
+      HasReflection: 1
+
+#####################
+#  - name: proc_tel5_dEY_raw
+#    type: art::TMUXCalibrationProcessor
+#    parameter:
+#      InputCollection:      tel5_dEY_raw
+#      OutputCollection:     tel5_dEY_cal_raw
+#      ChargeConverterArray: prm_tel5_dEY_ch2MeV_raw
+#      TimingConverterArray: prm_tel5_dEY_ch2ns
+#      PositionConverterArray: prm_tel5_dEY_position
+#      HasReflection: 1
+#######################
+
+  - name: proc_tel5_E
+    type: art::TTimingChargeCalibrationProcessor
+    parameter:
+      InputCollection:      tel5_E_raw
+      OutputCollection:     tel5_E_cal
+      ChargeConverterArray: prm_tel5_E_ch2MeV
+      TimingConverterArray: prm_tel5_E_ch2ns
+
+## For individual channels
+#  - name: proc_tel5_dEX_raw_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: tel5_dEX_cal_raw
+#      OutputCollections:
+#        - tel5_dEX_cal_raw_0
+#        - tel5_dEX_cal_raw_1
+#        - tel5_dEX_cal_raw_2
+#        - tel5_dEX_cal_raw_3
+#        - tel5_dEX_cal_raw_4
+#        - tel5_dEX_cal_raw_5
+#        - tel5_dEX_cal_raw_6
+#        - tel5_dEX_cal_raw_7
+#        - tel5_dEX_cal_raw_8
+#        - tel5_dEX_cal_raw_9
+#        - tel5_dEX_cal_raw_10
+#        - tel5_dEX_cal_raw_11
+#        - tel5_dEX_cal_raw_12
+#        - tel5_dEX_cal_raw_13
+#        - tel5_dEX_cal_raw_14
+#        - tel5_dEX_cal_raw_15
+#
+#  - name: proc_tel5_dEY_raw_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: tel5_dEY_cal_raw
+#      OutputCollections:
+#        - tel5_dEY_cal_raw_0
+#        - tel5_dEY_cal_raw_1
+#        - tel5_dEY_cal_raw_2
+#        - tel5_dEY_cal_raw_3
+#        - tel5_dEY_cal_raw_4
+#        - tel5_dEY_cal_raw_5
+#        - tel5_dEY_cal_raw_6
+#        - tel5_dEY_cal_raw_7
+#        - tel5_dEY_cal_raw_8
+#        - tel5_dEY_cal_raw_9
+#        - tel5_dEY_cal_raw_10
+#        - tel5_dEY_cal_raw_11
+#        - tel5_dEY_cal_raw_12
+#        - tel5_dEY_cal_raw_13
+#        - tel5_dEY_cal_raw_14
+#        - tel5_dEY_cal_raw_15
+#
+#  - name: proc_tel5_E_raw_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: tel5_E_raw
+#      OutputCollections:
+#        - tel5_E_raw_0
+#        - tel5_E_raw_1
+
+# process telescope
+  - name: proc_telescope5_param
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_telescope5
+      Type: art::TTelescopeParameter
+      FileName: prm/ssd/tel5/tel5_conf.yaml
+      FileFormat: yaml
+      OutputTransparency: 1
+
+  - name: proc_telescope5
+    type: art::TTelescopeProcessor
+    parameter:
+      TelescopeParameter:    prm_telescope5
+      InputCollection1:      tel5_dEX_cal
+      InputCollection2:      tel5_dEY_cal
+      InputCollection3:      tel5_E_cal
+      OutputCollection:      tel5

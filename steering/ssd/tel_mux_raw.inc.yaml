@@ -1,0 +1,114 @@
+Processor:
+
+##### dummy parameters
+  - name: proc_@NAME@_dEX_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEX_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/@NAME@/ch2MeV_dEX_raw.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_dEY_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEY_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/@NAME@/ch2MeV_dEY_raw.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_E_ch2MeV
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_E_ch2MeV
+      Type: art::TAffineConverter
+      FileName: prm/ssd/@NAME@/ch2MeV_E_raw.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_dEX_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEX_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/@NAME@/ch2ns_dEX.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_dEY_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEY_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/@NAME@/ch2ns_dEY.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_E_ch2ns
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_E_ch2ns
+      Type: art::TAffineConverter
+      FileName: prm/ssd/@NAME@/ch2ns_E.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_dEX_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEX_position
+      Type: art::TMUXPositionConverter
+      FileName: prm/ssd/@NAME@/positionX.dat
+      OutputTransparency: 1
+
+  - name: proc_@NAME@_dEY_position
+    type: art::TParameterArrayLoader
+    parameter:
+      Name: prm_@NAME@_dEY_position
+      Type: art::TMUXPositionConverter
+      FileName: prm/ssd/@NAME@/positionY.dat
+      OutputTransparency: 1
+
+
+##### data mapping
+  - name: proc_@NAME@_dEX_raw
+    type: art::TMUXDataMappingProcessor
+    parameter:
+      CatID:         @CATID_dEX@ 
+      OutputCollection: @NAME@_dEX_raw
+
+  - name: proc_@NAME@_dEY_raw
+    type: art::TMUXDataMappingProcessor
+    parameter:
+      CatID:         @CATID_dEY@
+      OutputCollection: @NAME@_dEY_raw
+      
+  - name: proc_@NAME@_E_raw
+    type: art::TTimingChargeAllMappingProcessor
+    parameter:
+      CatID:         @CATID_E@
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: @NAME@_E_raw
+
+
+##### calibration branch using dummy parameters
+  - name: proc_@NAME@_dEX
+    type: art::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      @NAME@_dEX_raw
+      OutputCollection:     @NAME@_dEX_cal
+      ChargeConverterArray: prm_@NAME@_dEX_ch2MeV
+      TimingConverterArray: prm_@NAME@_dEX_ch2ns
+      PositionConverterArray: prm_@NAME@_dEX_position
+      HasReflection: 0
+
+  - name: proc_@NAME@_dEY
+    type: art::TMUXCalibrationProcessor
+    parameter:
+      InputCollection:      @NAME@_dEY_raw
+      OutputCollection:     @NAME@_dEY_cal
+      ChargeConverterArray: prm_@NAME@_dEY_ch2MeV
+      TimingConverterArray: prm_@NAME@_dEY_ch2ns
+      PositionConverterArray: prm_@NAME@_dEY_position
+      HasReflection: 1
+
+

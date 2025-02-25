@@ -1,0 +1,60 @@
+Anchor:
+
+ - &input ridf/@NAME@@NUM@.ridf
+ - &output output/@NAME@/@NUM@/artemis_@NAME@@NUM@.root
+ - &histout output/@NAME@/@NUM@/artemis_@NAME@@NUM@.hist.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+
+  - include: tref.yaml
+  - include: rf/rf.yaml
+  - include: coin/coin.yaml
+  - include: ppac/dlppac.yaml
+
+  - include:
+      name: ssd/f3ssd.yaml
+      replace:
+        NAME: @NAME@
+        NUM: @NUM@
+
+  - name: projection_test
+    type: art::TTreeProjectionProcessor
+    parameter:
+      FileName: hist/ssd/ssd_test.yaml
+      Type:     art::TTreeProjection
+      OutputFilename: *histout
+
+#  - name: gui_server
+#    type: art::TGuiProcessor
+#    parameter:
+#      PortNum: 8000
+
+
+  - name: counter
+    type: art::TEvtNumProcessor
+    parameter:
+      EventNumLimit: 0
+      PrintEvent: 1
+      PrintEvent: 100
+
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

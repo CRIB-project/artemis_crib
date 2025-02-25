@@ -1,0 +1,22 @@
+Type: art::TTelescopeParameter
+Contents:
+  prm_telescope5:
+    TelescopeID: 5
+    EdetNum: 2
+    #dESize:
+    #- 50.0
+    #- 50.0
+    #dEStripNum:
+    #- 16
+    #- 16
+    dEIsDSSD: 1
+    dEXEnergyThreshold:    0.0
+    dEYEnergyThreshold:    0.0
+    # z_ref, distance, angle(degree)
+    #Geometry: 
+    #- 899.0
+    #- 112.5
+    #- -73.0
+    #dE_dE_TimeRange: [-1200.0, 1200.0] #min, max
+    #dE_E_TimeRange:  [-1200.0, 1200.0] #min, max
+#---------------------------------

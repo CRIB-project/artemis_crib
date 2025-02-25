@@ -1,0 +1,48 @@
+Anchor:
+ - &si26_high output/coin/si26/high_si26_proton.root
+ - &si26_bg output/coin/si26/bg_si26_proton.root
+ - &al25_high output/coin/al25/high_al25_proton.root
+ - &al25_bg output/coin/al25/bg_al25_proton.root
+ - &mg24_high output/coin/mg24/high_mg24_proton.root
+ - &mg24_bg output/coin/mg24/bg_mg24_proton.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore1
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *si26_high
+
+  - name: root_eventstore2
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *si26_bg
+
+  - name: root_eventstore3
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *al25_high
+
+  - name: root_eventstore4
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *al25_bg
+
+  - name: root_eventstore5
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *mg24_high
+
+  - name: root_eventstore6
+    type: art::TReadROOTFile
+    parameter:
+      OutputTransparency: 1
+      FileName: *mg24_bg
+

@@ -1,0 +1,179 @@
+Processor:
+#  - name: proc_tel1_dE1_ch2MeV
+#    type: art::TParameterArrayLoader
+#    parameter:
+#      Name: prm_tel1_dE1_ch2MeV
+#      Type: art::TAffineConverter
+#      FileName: prm/si26a/ssd/tel1/ch2MeV_dE1.dat
+#
+#  - name: proc_tel1_dE2_ch2MeV
+#    type: art::TParameterArrayLoader
+#    parameter:
+#      Name: prm_tel1_dE2_ch2MeV
+#      Type: art::TAffineConverter
+#      FileName: prm/si26a/ssd/tel1/ch2MeV_dE2.dat
+#
+#  - name: proc_tel1_E_ch2MeV
+#    type: art::TParameterArrayLoader
+#    parameter:
+#      Name: prm_tel1_E_ch2MeV
+#      Type: art::TAffineConverter
+#      FileName: prm/si26a/ssd/tel1/ch2MeV_E.dat
+#
+#
+#  - name: proc_tel1_dE1_ch2ns
+#    type: art::TParameterArrayLoader
+#    parameter:
+#      Name: prm_tel1_dE1_ch2ns
+#      Type: art::TAffineConverter
+#      FileName: prm/si26a/ssd/tel1/ch2ns_dE1.dat
+#
+#  - name: proc_tel1_dE2_ch2ns
+#    type: art::TParameterArrayLoader
+#    parameter:
+#      Name: prm_tel1_dE2_ch2ns
+#      Type: art::TAffineConverter
+#      FileName: prm/si26a/ssd/tel1/ch2ns_dE2.dat
+#
+#  - name: proc_tel1_E_ch2ns
+#    type: art::TParameterArrayLoader
+#    parameter:
+#      Name: prm_tel1_E_ch2ns
+#      Type: art::TAffineConverter
+#      FileName: prm/si26a/ssd/tel1/ch2ns_E.dat
+
+  - name: proc_tel_dEX_raw
+    type: art::TMUXDataMappingProcessor
+    parameter:
+      CatID:         8 
+      OutputCollection: tel_dEX_raw
+
+  - name: proc_tel_dEY_raw
+    type: art::TMUXDataMappingProcessor
+    parameter:
+      CatID:         9
+      OutputCollection: tel_dEY_raw
+      
+  - name: proc_tel_E_raw
+    type: art::TTimingChargeAllMappingProcessor
+    parameter:
+      CatID:         10 
+      ChargeType:    1
+      ChargeTypeID:  0
+      TimingTypeID:  1
+      Sparse:        1
+      OutputCollection: tel_E_raw
+
+#
+#  - name: proc_tel1_E_raw
+#    type: art::TTimingChargeMappingProcessor
+#    parameter:
+#      CatID:         13
+#      ChargeType:    1
+#      ChargeTypeID:  0
+#      TimingTypeID:  1
+#      Sparse:        1
+#      OutputCollection: tel1_E_raw
+#
+
+#  - name: proc_tel1_dE1
+#    type: art::TTimingChargeCalibrationProcessor
+#    parameter:
+#      InputCollection:      tel1_dE1_raw
+#      OutputCollection:     tel1_dE1_cal
+#      ChargeConverterArray: prm_tel1_dE1_ch2MeV
+#      TimingConverterArray: prm_tel1_dE1_ch2ns
+#
+#  - name: proc_tel1_dE2
+#    type: art::TTimingChargeCalibrationProcessor
+#    parameter:
+#      InputCollection:      tel1_dE2_raw
+#      OutputCollection:     tel1_dE2_cal
+#      ChargeConverterArray: prm_tel1_dE2_ch2MeV
+#      TimingConverterArray: prm_tel1_dE2_ch2ns
+#
+#  - name: proc_tel1_E
+#    type: art::TTimingChargeCalibrationProcessor
+#    parameter:
+#      InputCollection:      tel1_E_raw
+#      OutputCollection:     tel1_E_cal
+#      ChargeConverterArray: prm_tel1_E_ch2MeV
+#      TimingConverterArray: prm_tel1_E_ch2ns
+#
+## For individual channels
+#  - name: proc_tel1_dE1_cal_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: tel1_dE1_cal
+#      OutputCollections:
+#        - tel1_dE1_cal_0
+#        - tel1_dE1_cal_1
+#        - tel1_dE1_cal_2
+#        - tel1_dE1_cal_3
+#        - tel1_dE1_cal_4
+#        - tel1_dE1_cal_5
+#        - tel1_dE1_cal_6
+#        - tel1_dE1_cal_7
+#        - tel1_dE1_cal_8
+#        - tel1_dE1_cal_9
+#        - tel1_dE1_cal_10
+#        - tel1_dE1_cal_11
+#        - tel1_dE1_cal_12
+#        - tel1_dE1_cal_13
+#        - tel1_dE1_cal_14
+#        - tel1_dE1_cal_15
+#
+#  - name: proc_tel1_dE2_cal_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: tel1_dE2_cal
+#      OutputCollections:
+#        - tel1_dE2_cal_0
+#        - tel1_dE2_cal_1
+#        - tel1_dE2_cal_2
+#        - tel1_dE2_cal_3
+#        - tel1_dE2_cal_4
+#        - tel1_dE2_cal_5
+#        - tel1_dE2_cal_6
+#        - tel1_dE2_cal_7
+#        - tel1_dE2_cal_8
+#        - tel1_dE2_cal_9
+#        - tel1_dE2_cal_10
+#        - tel1_dE2_cal_11
+#        - tel1_dE2_cal_12
+#        - tel1_dE2_cal_13
+#        - tel1_dE2_cal_14
+#        - tel1_dE2_cal_15
+#
+#  - name: proc_tel1_E_cal_sep
+#    type: art::TSeparateOutputProcessor
+#    parameter:
+#      InputCollection: tel1_E_cal
+#      OutputCollections:
+#        - tel1_E_cal_0
+#        - tel1_E_cal_1
+#
+## process telescope
+#  - name: proc_telescope1
+#    type: art::TTelescopeProcessor
+#    parameter:
+#      InputCollection1:      tel1_dE1_cal
+#      InputCollection2:      tel1_dE2_cal
+#      InputCollection3:      tel1_E_cal
+#      OutputCollection:      tel1
+#      TelescopeID:           1
+#      dE1EnergyThreshold:    0.0
+#      dE2EnergyThreshold:    0.0
+#      ValiddEdETimeRange:    [-1200.0, 1200.0, 0.0] #min, max, offset
+#      ValiddEETimeRange:     [-1200.0, 1200.0, 0.0] #min, max, offset
+#      InputIsDSSD:           0
+
+# max search in SSSD
+#  - name: proc_sssd_max
+#    type: art::TDssdProcessor
+#    parameter:
+#      SiXName: si_cal 
+#      OutputName: ssd_test
+
+
+

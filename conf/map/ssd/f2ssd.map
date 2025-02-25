@@ -1,7 +1,9 @@
-# map for ADC of F2SSD
+# map for ADC of ssd
 # [category] [id] [[device] [focus] [detector] [geo] [ch]] ....
 #
-# Map: energy, timing
+# Map: energy F2SSD
+#
+# CREATED for CRIB Exp. 2022.06.29 K.Okawa
 #
 #--------------------------------------------------------------------
-   5,   0,  12,   1,  6,   0,   4,  12,   2,  7,   0,   14
+   5,   0,  12,   0,  6,   1,   4

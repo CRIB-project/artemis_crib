@@ -1,0 +1,48 @@
+Anchor:
+
+ - &input ridf/si26a/@NAME@@NUM@.ridf
+ - &output output/@NAME@/@NUM@/beam@NAME@@NUM@.root
+ - &histout output/@NAME@/@NUM@/beam@NAME@@NUM@.hist.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: ridf
+    type: art::TRIDFEventStore
+    parameter:
+      #MaxEventNum: 200000
+      OutputTransparency: 1
+      InputFiles:
+        - *input
+
+  - name: mapper
+    type: art::TMappingProcessor
+    parameter:
+      OutputTransparency: 1
+
+
+  - include: ppac/f1ppac.yaml
+  - include: rf/rf.yaml
+
+
+#### RF Hist
+#  - name: projection_rf
+#    type: art::TTreeProjectionProcessor
+#    parameter:
+#      FileName: hist/rf/rf.yaml
+#      Type:     art::TTreeProjection
+#
+#### F1PPAC Hist
+#  - name: projection_f1ppac
+#    type: art::TTreeProjectionProcessor
+#    parameter:
+#      FileName: hist/ppac/f1ppac.yaml
+#      Type:     art::TTreeProjection
+
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

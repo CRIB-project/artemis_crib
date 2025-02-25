@@ -1,0 +1,81 @@
+Anchor:
+ - &input output/proton/all_@NAME@.root
+ - &output output/proton/all_@NAME@_yield.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree
+
+  - name: proc_copy_processor
+    type: art::TTreeCopyProcessor
+    parameter:
+      InputCollection:     tel
+      OutputCollection:    telescope
+
+  - name: proc_copy_processor
+    type: art::TTreeCopyProcessor
+    parameter:
+      InputCollection:     proton
+      OutputCollection:    info
+
+
+  - name: proc_TGTIK_processor
+    type: art::TTGTIKProcessor2
+    parameter:
+      InputCollection:   proton
+      OutputCollection:  yield
+      InitialBeamEnergy: 55.5
+      GasPressure: 250.0
+      Temperature: 300.0
+      M1: 25.992333818   # si26
+      M2: 4.00260325413  # alpha
+      M3: 28.98180368    # p29
+      M4: 1.007825031898 # proton
+      Z1: 14
+      Z2: 2
+      Z3: 15
+      Z4: 1
+
+  - name: proc_gateinit
+    type: art::TGateArrayInitializer
+    parameter:
+      OutputTransparency: 1
+
+  - name: proc_gate
+    type: art::TTreeFormulaGateProcessor
+    parameter:
+      Definitions:
+        - "ene; 0.0 < telescope.fEtotal && telescope.fEtotal < 30.0"
+        - "pos; yield.fReacZ > -100.0 && yield.fReacZ < 500.0"
+      OutputTransparency: 1
+      Verbose: 1
+
+  - name: ene_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: ene
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+ 
+  - name: pos_gate
+    type: art::TGateStopProcessor
+    parameter:
+      GateName: pos
+      OutputTransparency: 1
+      StopIf: 0
+      Verbose: 1
+ 
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output

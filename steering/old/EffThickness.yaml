@@ -1,0 +1,14 @@
+Processor:
+  - name: thickness
+    type: art::TEffThicknessCalculation
+    parameter:
+      InitialEnergy: 54.47
+      InputZ: 14
+      InputM: 25.992333818
+      InputTargetM: 4.00260325413 
+      Pressure: 250.0
+      Temperature: 300.0
+      DeltaE: 0.1
+      Material: HE
+      MaterialWeight: 4.0
+      OutputTransparency: 1

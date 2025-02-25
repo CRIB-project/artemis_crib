@@ -1,0 +1,23 @@
+Processor:
+  - name: proc_multiMUX_loader
+    type: art::crib::TMUXDataMappingProcessor
+    parameter:
+      CatID:         51
+      OutputTransparency: 0
+      OutputCollection: mux_3_1_raw
+
+  - name: proc_MUX_separate_tel4_dEX
+    type: art::crib::TMUXPositionValidator
+    parameter:
+      InputCollection: mux_3_1_raw
+      OutputCollection: tel4_dEX_raw
+      ValidPositionRange: [800., 1300., 0.]
+      OutputTransparency: 0
+
+  - name: proc_MUX_separate_tel5_dEX
+    type: art::crib::TMUXPositionValidator
+    parameter:
+      InputCollection: mux_3_1_raw
+      OutputCollection: tel5_dEX_raw
+      ValidPositionRange: [1300., 1800., 0.]
+      OutputTransparency: 0

@@ -1,0 +1,14 @@
+Anchor:
+
+ - &input output/artemis/artemis_@NAME@@NUM@.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree

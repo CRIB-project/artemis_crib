@@ -1,21 +1,27 @@
----
+
 Anchor:
-  - &input output/coin/@GATE@/@NAME@_@GATE@_proton.root
-  - &output rootfile/yield/@NAME@_@GATE@yield.root
+ - &input output/coin/@GATE@/@NAME@_@GATE@_proton.root
+ - &output rootfile/yield/@NAME@_@GATE@yield.root
+ - &histout rootfile/yield/@NAME@_@GATE@yield.hist.root
 
-  # particle information
-  - &ini_energy 55.5 # MeV
-  - &TARGET he
-
-  - &A1 26
-  - &A2 4
-  - &A3 29
-  - &A4 1
-
-  - &Z1 14
-  - &Z2 2
-  - &Z3 15
-  - &Z4 1
+# particle information
+ - &TARGET He250torr
+ - &NAME1 26Si14
+ - &NAME2 a
+ - &NAME3 29P15
+ - &NAME4 p
+ - &M1 25.9846537 # amu
+ - &M2 4.00150609413
+ - &M3 28.9735717
+ - &M4 1.0072764519
+ - &A1 26
+ - &A2 4
+ - &A3 29
+ - &A4 1
+ - &Z1 14
+ - &Z2 2
+ - &Z3 15
+ - &Z4 1
 
 Processor:
   - name: timer
@@ -27,38 +33,40 @@ Processor:
       OutputTransparency: 1
       FileName: *input
       TreeName: tree
+      MaxEventNum: 100000000
 
   - name: proc_copy_processor
-    type: art::crib::TBranchCopyProcessor
+    type: art::TBranchCopyProcessor
     parameter:
-      InputCollection: tel
-      OutputCollection: telescope
+      InputCollection:     tel
+      OutputCollection:    telescope
 
   - name: proc_copy_processor
-    type: art::crib::TBranchCopyProcessor
+    type: art::TBranchCopyProcessor
     parameter:
-      InputCollection: track
-      OutputCollection: tracking
+      InputCollection:     track
+      OutputCollection:    tracking
 
   - name: geometry_initialize
-    type: art::crib::TUserGeoInitializer
+    type: art::TUserGeoInitializer
     parameter:
+      Name: prm_detectors
       FileName: prm/geo/si26a.yaml
       OutputTransparency: 1
 
   - name: tgtik_proc
-    type: art::crib::TTGTIKProcessor
+    type: art::TTGTIKProcessor
     parameter:
+      InitialBeamEnergy: 55.5 # MeV
+      EnergyThreshold: 5.0 # MeV (detected energy threshold)
+      TargetGasName: *TARGET
+      ParticleName: [*NAME1, *NAME2, *NAME3, *NAME4]
+      ParticleMass: [*M1, *M2, *M3, *M4]
+      ParticleAtomicNum: [*Z1, *Z2, *Z3, *Z4]
       InputCollection: telescope
       InputTrackCollection: tracking
       OutputCollection: reconst
-      InitialBeamEnergy: *ini_energy
-      TargetName: *TARGET
-      TargetPressure: 250.0
-      TargetTemperature: 300.0
-      ParticleZArray: [*Z1, *Z2, *Z3, *Z4]
-      ParticleAArray: [*A1, *A2, *A3, *A4]
-      UseCustomFunction: false # for si26a analysis, you can modify it
+      DetectorParameter: prm_detectors
 
   - name: outputtree
     type: art::TOutputTreeProcessor

@@ -1,0 +1,40 @@
+Anchor:
+
+ - &input output/beamsingle/beam_@NAME@@NUM@.root
+ - &output output/simulation/BeamPosition/beampos_@NAME@@NUM@.root
+
+Processor:
+  - name: timer
+    type: art::TTimerProcessor
+
+  - name: root_eventstore
+    type: art::TTreeEventStore
+    parameter:
+      OutputTransparency: 1
+      FileName: *input
+      TreeName: tree
+
+
+  - name: proc_simulation_generator
+    type: art::TSimTrackBeamGenerator
+    parameter:
+      UpstreamInput:   f3appac
+      DownstreamInput: f3bppac
+      OutputCollection: beam
+      WindowZPos: 677.0
+
+  - name: proc_simulation
+    type: art::TSimBeamPosProcessor
+    parameter:
+      InputCollection:  beam
+      OutputCollection: result
+      LayerNumber: 1
+      RotationZpos: 999.0
+
+
+
+  - name: outputtree
+    type: art::TOutputTreeProcessor
+    parameter:
+      FileName:
+        - *output
