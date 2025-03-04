@@ -1,170 +1,220 @@
 /**
  * @file    TTGTIKProcessor.h
- * @brief
+ * @brief   Processor for reconstructing reaction positions using the Thick Gas Target Inverse Kinematics (TGTIK) method.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 11:11:02
- * @note    last modified: 2025-01-08 10:34:28
+ * @note    last modified: 2025-03-04 16:44:11
  * @details
  */
 
-#ifndef _CRIB_TTGTIKPROCESSOR_H_
-#define _CRIB_TTGTIKPROCESSOR_H_
+#ifndef CRIB_TTGTIKPROCESSOR_H_
+#define CRIB_TTGTIKPROCESSOR_H_
 
 #include "../telescope/TTelescopeData.h"
 #include <TProcessor.h>
 #include <TSrim.h> // TSrim library
 #include <TTrack.h>
 
-namespace art::crib {
-class TTGTIKProcessor;
-} // namespace art::crib
-
 class TClonesArray;
 
-class art::crib::TTGTIKProcessor : public TProcessor {
+namespace art::crib {
+
+/**
+ *
+ * @class TTGTIKProcessor
+ * @brief Calculates the reaction position using telescope and tracking data.
+ *
+ * This class read two input data from a TClonesArray("art::crib::TTelescopeData")
+ * and a TClonesArray("art::TTrack").
+ * It applies Thick Gas Target Method and get reaction position and Ecm.
+ *
+ * ### Example Steering File
+ *
+ * ```yaml
+ * Processor:
+ *   - name: MyTTGTIKProcessor
+ *     type: art::crib::TTGTIKProcessor
+ *     parameter:
+ *       DetectorParameter: prm_detectors  # [TString] Name of the telescope parameter collection (detector parameters)
+ *       ExcitedEnergy: -1  # [Double_t] Excited state energy (MeV); use a negative value if not applicable
+ *       InitialBeamEnergy: 0  # [Double_t] Initial beam energy (in MeV) immediately after the exit window
+ *       InputCollection: tel  # [TString] Input collection of telescope data objects (derived from TTelescopeData)
+ *       InputTrackCollection: track  # [TString] Input collection of tracking data objects (derived from TTrack)
+ *       OutputCollection: result  # [TString] Output collection containing reaction reconstruction information using the TGTIK method
+ *       OutputTransparency: 0  # [Bool_t] Output is persistent if false (default)
+ *       ParticleAArray: []  # [IntVec_t] Array of mass numbers (A) for reaction particles
+ *       ParticleZArray: []  # [IntVec_t] Array of atomic numbers (Z) for reaction particles
+ *       TargetName: ""  # [TString] Name of the target gas (used in TSrim calculation)
+ *       TargetParameter: prm_targets  # [TString] Name of the target parameter collection
+ *       TargetPressure: 0  # [Double_t] Target gas pressure in Torr
+ *       TargetTemperature: 0  # [Double_t] Target gas temperature in Kelvin
+ *       UseCenterPosition: 0  # [Bool_t] Flag to use the detector's center position (useful when the DSSSD is not operational)
+ *       UseCustomFunction: 0  # [Bool_t] Flag to enable custom processing functions for additional corrections
+ *       Verbose: 1  # [Int_t] verbose level (default 1 : non quiet)
+ * ```
+ */
+
+class TTGTIKProcessor : public TProcessor {
   public:
-    /// @brief Default constructor.
+    /**
+     * @brief Constructor.
+     */
     TTGTIKProcessor();
-    /// @brief Default destructor.
+
+    /**
+     * @brief Default destructor.
+     */
     ~TTGTIKProcessor() override;
 
-    /// @brief Initialization
+    /**
+     * @brief Initialize the processor with an event collection.
+     * @param col Pointer to the event collection.
+     */
     void Init(TEventCollection *col) override;
-    /// @brief Main process
+
+    /**
+     * @brief Main processing function.
+     */
     void Process() override;
 
-  protected:
-    /// @brief input telescope collection name (art::TTelescopeData)
-    TString fInputColName;
-    /// @brief input tracking collection name (art::TTrack)
-    TString fInputTrackColName;
-    /// @brief output collection name (art::TReactionInfo)
-    TString fOutputColName;
-    /// @brief detector parameter name (art::TDetectorParameter)
-    TString fDetectorParameterName;
-    /// @brief target parameter name (art::TTargetParameter)
-    TString fTargetParameterName;
+  private:
+    // Collection names
+    TString fInputColName;          ///< Name of the input telescope data collection (TTelescopeData)
+    TString fInputTrackColName;     ///< Name of the input tracking data collection (TTrack)
+    TString fOutputColName;         ///< Name of the output reaction information collection (TReactionInfo)
+    TString fDetectorParameterName; ///< Name of the detector parameter (TDetectorParameter)
+    TString fTargetParameterName;   ///< Name of the target parameter (TTargetParameter)
 
-    /// @brief telescope input object (TClonesArray(art::TTelescopeData))
-    TClonesArray **fInData; //!
-    /// @brief tracking input object (TClonesArray(art::TTrack))
-    TClonesArray **fInTrackData; //!
-    /// @brief output object (TClonesArray(art::TReactionInfo))
-    TClonesArray *fOutData;
+    // Data pointers
+    TClonesArray *fInData;      ///<! Pointer to the input telescope data (TClonesArray of TTelescopeData)
+    TClonesArray *fInTrackData; ///<! Pointer to the input tracking data (TClonesArray of TTrack)
+    TClonesArray *fOutData;     ///<! Pointer to the output reaction information (TClonesArray of TReactionInfo)
 
-    /// @brief detector parameter object (TClonesArray(art::TDetectorParameter))
-    TClonesArray **fDetectorPrm; //!
-    /// @brief target parameter obejct (TClonesArray(art::TTargetParameter))
-    TClonesArray **fTargetPrm; //!
+    // Parameter pointers
+    TClonesArray **fDetectorPrm; ///<! Pointer to detector parameter objects (TClonesArray of TDetectorParameter)
+    TClonesArray **fTargetPrm;   ///<! Pointer to target parameter objects (TClonesArray of TTargetParameter)
 
-    /// @brief initial (after window) beam energy (MeV)
-    Double_t fInitialBeamEnergy;
-    /// @brief gas target name used in TSrim calculation
-    TString fTargetName;
-    /// @brief gas pressure in Torr unit
-    Double_t fPressure;
-    /// @brief gas temperature in K unit
-    Double_t fTemperature;
-    /// @brief reaction particles Atomic num array
-    IntVec_t fParticleZArray;
-    /// @brief reaction particles Mass num array
-    IntVec_t fParticleAArray;
-    /// @brief Excited Energy
-    Double_t fExcitedEnergy;
-    /// @brief Flag of custom processor
-    Bool_t fDoCustom;
-    /// @brief Flag of custom processor
-    Bool_t fDoCenterPos;
+    // Experimental parameters
+    Double_t fInitialBeamEnergy; ///< Beam energy immediately after the window (MeV)
+    TString fTargetName;         ///< Name of the gas target used in TSrim calculations
+    Double_t fPressure;          ///< Gas pressure in Torr
+    Double_t fTemperature;       ///< Gas temperature in Kelvin
+    IntVec_t fParticleZArray;    ///< Array of atomic numbers for reaction particles
+    IntVec_t fParticleAArray;    ///< Array of mass numbers for reaction particles
+    Double_t fExcitedEnergy;     ///< Excited state energy (MeV)
+    Bool_t fDoCustom;            ///< Flag to enable custom processing
+    Bool_t fDoCenterPos;         ///< Flag to use the detector center position
 
-    /// @brief TSrim object to calculate energy loss
-    TSrim *srim;
+    // TSrim calculator for energy loss computation
+    TSrim *srim; ///<! TSrim object to calculate energy loss
 
-    /// @brief initial minimum value of bisection method
-    const Double_t kInitialMin = -250.0;
-    /// @brief initial maximum value of bisection method
-    const Double_t kInitialMax = 1000.0;
-    /// @brief Accuracy of the bisection method
-    const Double_t kEpsilon = 1.0e-3;
-    /// @brief Max iteration number of the bisection method
-    const Int_t kMaxIteration = 1000;
+    // Constants for bisection method
+    const Double_t kInitialMin = -250.0; ///< Initial minimum value for bisection method (mm)
+    const Double_t kInitialMax = 1000.0; ///< Initial maximum value for bisection method (mm)
+    const Double_t kEpsilon = 1.0e-3;    ///< Convergence threshold for the bisection method
+    const Int_t kMaxIteration = 1000;    ///< Maximum number of iterations for the bisection method
 
+    // Mass parameters (set these according to the reaction specifics)
     Double_t M1;
     Double_t M2;
     Double_t M3_default;
     Double_t M3;
     Double_t M4;
 
-  private:
-    /// @brief Calculate reaction Z position
-    /// @param track (art::TTrack)
-    /// @param data (art::TTelescopeData)
-    /// @return Z position (mm)
+    /**
+     * @brief Calculate the reaction position along the Z-axis.
+     * @param track Pointer to the tracking data (TTrack).
+     * @param data Pointer to the telescope data (TTelescopeData).
+     * @return Calculated reaction Z position (mm).
+     */
     Double_t GetReactionPosition(const TTrack *track, const TTelescopeData *data);
 
-    /// @brief Newtom method (unavalable)
-    /// @param track (art::TTrack)
-    /// @param data (art::TTelescopeData)
-    /// @return Z position (mm)
+    /**
+     * @brief (Deprecated) Newton method for calculating reaction position.
+     * @param track Pointer to the tracking data (TTrack).
+     * @param data Pointer to the telescope data (TTelescopeData).
+     * @return Calculated reaction Z position (mm).
+     */
     Double_t newton(const TTrack *, const TTelescopeData *);
 
-    /// @brief Bisection method
-    /// @param track (art::TTrack)
-    /// @param data (art::TTelescopeData)
-    /// @return Z position (mm)
+    /**
+     * @brief Bisection method for calculating reaction position.
+     * @param track Pointer to the tracking data (TTrack).
+     * @param data Pointer to the telescope data (TTelescopeData).
+     * @return Calculated reaction Z position (mm).
+     */
     Double_t bisection(const TTrack *track, const TTelescopeData *data);
 
-    /// @brief Target function to be set to 0 by bisection (newton) method
-    /// @param z (mm)
-    /// @param track (art::TTrack)
-    /// @param data (art::TTelescopeData)
-    /// @return Ecm (beam) - Ecm (data)
+    /**
+     * @brief Target function for the bisection (and Newton) method.
+     * Computes the difference between the beam and detected particle center-of-mass energies.
+     * @param z Reaction position (mm).
+     * @param track Pointer to the tracking data (TTrack).
+     * @param data Pointer to the telescope data (TTelescopeData).
+     * @return Difference in center-of-mass energy (MeV).
+     */
     Double_t TargetFunction(Double_t z, const TTrack *track, const TTelescopeData *data);
 
-    /// @brief Get Ecm from beam information
-    /// @param z (mm)
-    /// @param track (art::TTrack)
-    /// @return Ecm (MeV)
+    /**
+     * @brief Calculate the center-of-mass energy from beam data.
+     * @param z Reaction position (mm).
+     * @param track Pointer to the tracking data (TTrack).
+     * @return Calculated center-of-mass energy (MeV).
+     */
     Double_t GetEcmFromBeam(Double_t z, const TTrack *track);
 
-    /// @brief Get LAB energy and angle from detected particle information
-    /// @param z (mm)
-    /// @param track (art::TTrack)
-    /// @param data (art::TTelescopeData)
-    /// @return Ecm (MeV)
+    /**
+     * @brief Calculate the LAB energy and LAB angle from detected particle data.
+     * @param z Reaction position (mm).
+     * @param track Pointer to the tracking data (TTrack).
+     * @param data Pointer to the telescope data (TTelescopeData).
+     * @return A pair containing the LAB energy (MeV) and LAB angle (radian).
+     */
     std::pair<Double_t, Double_t> GetELabALabPair(Double_t z, const TTrack *track, const TTelescopeData *data);
 
-    /// @brief Get Ecm from detected particle information
-    /// @param z (mm)
-    /// @param track (art::TTrack)
-    /// @param data (art::TTelescopeData)
-    /// @return Ecm (MeV)
+    /**
+     * @brief Calculate the center-of-mass energy from detected particle data.
+     * @param z Reaction position (mm).
+     * @param track Pointer to the tracking data (TTrack).
+     * @param data Pointer to the telescope data (TTelescopeData).
+     * @return Calculated center-of-mass energy (MeV).
+     */
     Double_t GetEcmFromDetectParticle(Double_t z, const TTrack *track, const TTelescopeData *data);
 
-    /// @brief Get Ecm from detected particle information (relativity kinematics)
-    /// @param energy (MeV)
-    /// @param theta (radian)
-    /// @param low_e (minimum energy)
-    /// @param high_e (maxmum energy)
-    /// @return Ecm (MeV)
+    /**
+     * @brief Calculate the center-of-mass energy using relativistic kinematics.
+     * @param energy LAB energy (MeV).
+     * @param theta LAB angle (radian).
+     * @param low_e Lower bound for energy (MeV).
+     * @param high_e Upper bound for energy (MeV).
+     * @return Calculated center-of-mass energy (MeV).
+     */
     Double_t GetEcm_kinematics(Double_t energy, Double_t theta, Double_t low_e, Double_t high_e);
 
-    /// @brief Get Ecm from detected particle information (classic kinematics)
-    /// @param energy (MeV)
-    /// @param theta (radian)
-    /// @return Ecm (MeV)
+    /**
+     * @brief Calculate the center-of-mass energy using classical kinematics.
+     * @param energy LAB energy (MeV).
+     * @param theta LAB angle (radian).
+     * @return Calculated center-of-mass energy (MeV).
+     */
     Double_t GetEcm_classic_kinematics(Double_t energy, Double_t theta);
 
-    /// @brief Get Lab Angle after reconstruction
-    /// @param ELab (MeV)
-    /// @param Ecm (MeV)
-    /// @param ALab (radian)
-    /// @return angle (radian)
+    /**
+     * @brief Recalculate the LAB angle after reconstruction.
+     * @param Elab LAB energy (MeV).
+     * @param Ecm Center-of-mass energy (MeV).
+     * @param ALab LAB angle (radian).
+     * @return Reconstructed LAB angle (radian).
+     */
     Double_t GetCMAngle(Double_t ELab, Double_t Ecm, Double_t ALab);
 
-    /// @brief Custom function, random excited energy generator
-    /// @param telID
-    /// @param Etotal (MeV)
-    /// @return Excited energy (MeV)
+    /**
+     * @brief Generate a custom excited state energy.
+     * This function is used for custom processing (e.g., handling excited state effects).
+     * @param telID Identifier for the telescope.
+     * @param Etotal Total measured energy (MeV).
+     * @return Generated excited state energy (MeV).
+     */
     Double_t GetCustomExcitedEnergy(Int_t telID, Double_t Etotal);
 
     // Copy constructor (prohibited)
@@ -172,7 +222,8 @@ class art::crib::TTGTIKProcessor : public TProcessor {
     // Assignment operator (prohibited)
     TTGTIKProcessor &operator=(const TTGTIKProcessor &rhs) = delete;
 
-    ClassDefOverride(TTGTIKProcessor, 1)
+    ClassDefOverride(TTGTIKProcessor, 1); ///< ROOT class definition macro.
 };
+} // namespace art::crib
 
-#endif // end of #ifndef _TTGTIKPROCESSOR_H_
+#endif // end of #ifndef CRIB_TTGTIKPROCESSOR_H_

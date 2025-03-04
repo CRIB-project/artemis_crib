@@ -14,10 +14,12 @@ output
 ridf
 rootfile
 .vncdisplay
-figure
-build
-install
-public
+figure/
+build/
+install/
+public/
+c1.png
+ana/
 
 # scripts logs
 .log_mux

@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 22:36:36
- * @note    last modified: 2025-01-08 20:02:02
+ * @note    last modified: 2025-03-04 19:20:39
  * @details just modify the process() from TTreeEventStore to return 0
  */
 
@@ -251,7 +251,7 @@ void TTreePeriodicEventStore::Process() {
     ++fEventNum;
 
     // Wrap around if we reach the end of the tree
-    if (fEventNum == fTreeEventNum) {
+    if (fCurrentNum == fTreeEventNum) {
         fCurrentNum = 0;
     }
     // Stop if we reached the maximum events

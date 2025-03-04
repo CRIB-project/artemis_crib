@@ -6,7 +6,7 @@ endif()
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(
   artemis-crib
-  VERSION 2025.1.0
+  VERSION 2025.3.0
   LANGUAGES CXX)
 
 # Default installation dir
