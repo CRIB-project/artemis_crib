@@ -3,7 +3,7 @@
  * @brief   Processor for reconstructing reaction positions using the Thick Gas Target Inverse Kinematics (TGTIK) method.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 11:11:02
- * @note    last modified: 2025-03-05 16:10:20
+ * @note    last modified: 2025-03-05 16:12:38
  * @details
  */
 
@@ -156,7 +156,7 @@ namespace art::crib {
  *
  * In inverse kinematics, ion 4 is detected.
  * Therefore, the indices 3 and 4 should be swapped,
- * and the transformation \f$ \theta_{\mathrm{CM}} \rightarrow \pi \rightarrow \theta_{\mathrm{CM}} \f$ should be applied.
+ * and the transformation \f$ \theta_{\mathrm{CM}} \rightarrow \pi - \theta_{\mathrm{CM}} \f$ should be applied.
  */
 
 class TTGTIKProcessor : public TProcessor {
