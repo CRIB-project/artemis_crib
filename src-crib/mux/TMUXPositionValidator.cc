@@ -3,7 +3,7 @@
  * @brief   Implementation of the TMUXPositionValidator class for validating positions in MUX data.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-30 10:02:46
- * @note    last modified: 2025-01-03 15:48:01
+ * @note    last modified: 2025-03-05 18:31:54
  * @details
  */
 
@@ -66,7 +66,7 @@ void TMUXPositionValidator::Init(TEventCollection *col) {
         SetStateError(std::get<TString>(result));
         return;
     }
-    fInData = std::get<TClonesArray *>(result);
+    fInData = std::get<TClonesArray **>(result);
     Info("Init", "%s => %s", fInputColName.Data(), fOutputColName.Data());
 
     // Validate the position range parameter
@@ -105,9 +105,9 @@ void TMUXPositionValidator::Process() {
     fOutData->Clear("C");
 
     // Process each entry in the input collection
-    const int nData = fInData->GetEntriesFast();
+    const int nData = (*fInData)->GetEntriesFast();
     for (int iData = 0; iData < nData; ++iData) {
-        const auto *data = dynamic_cast<const TMUXData *>(fInData->At(iData));
+        const auto *data = dynamic_cast<const TMUXData *>((*fInData)->At(iData));
         if (!data) {
             // Warning("Process", "Invalid TMUXData object at index %d", iData);
             continue;

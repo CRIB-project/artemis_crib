@@ -3,7 +3,7 @@
  * @brief   Processor for reconstructing reaction positions using the Thick Gas Target Inverse Kinematics (TGTIK) method.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 11:11:02
- * @note    last modified: 2025-03-05 16:12:38
+ * @note    last modified: 2025-03-05 18:29:56
  * @details
  */
 
@@ -191,9 +191,9 @@ class TTGTIKProcessor : public TProcessor {
     TString fTargetParameterName;   ///< Name of the target parameter (TTargetParameter)
 
     // Data pointers
-    TClonesArray *fInData;      ///<! Pointer to the input telescope data (TClonesArray of TTelescopeData)
-    TClonesArray *fInTrackData; ///<! Pointer to the input tracking data (TClonesArray of TTrack)
-    TClonesArray *fOutData;     ///<! Pointer to the output reaction information (TClonesArray of TReactionInfo)
+    TClonesArray **fInData;      ///<! Pointer to the input telescope data (TClonesArray of TTelescopeData)
+    TClonesArray **fInTrackData; ///<! Pointer to the input tracking data (TClonesArray of TTrack)
+    TClonesArray *fOutData;      ///<! Pointer to the output reaction information (TClonesArray of TReactionInfo)
 
     // Parameter pointers
     TClonesArray *fDetectorPrm; ///<! Pointer to detector parameter objects (TClonesArray of TDetectorParameter)
@@ -240,7 +240,7 @@ class TTGTIKProcessor : public TProcessor {
      * @param data Pointer to the telescope data (TTelescopeData).
      * @return Calculated reaction Z position (mm).
      */
-    Double_t newton(const TTrack *, const TTelescopeData *);
+    Double_t newton(const TTrack *track, const TTelescopeData *data);
 
     /**
      * @brief Bisection method for calculating reaction position.
@@ -306,7 +306,7 @@ class TTGTIKProcessor : public TProcessor {
 
     /**
      * @brief Recalculate the LAB angle after reconstruction.
-     * @param Elab LAB energy (MeV).
+     * @param ELab LAB energy (MeV).
      * @param Ecm Center-of-mass energy (MeV).
      * @param ALab LAB angle (radian).
      * @return Reconstructed LAB angle (radian).

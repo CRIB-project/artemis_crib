@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-06-13 16:06:15
- * @note    last modified: 2025-01-10 11:02:19
+ * @note    last modified: 2025-03-05 18:34:56
  * @details
  */
 
@@ -42,10 +42,10 @@ void TBranchCopyProcessor::Init(TEventCollection *col) {
         return;
     }
 
-    fInData = std::get<TClonesArray *>(result);
+    fInData = std::get<TClonesArray **>(result);
     Info("Init", "%s => %s copy", fInputColName.Data(), fOutputColName.Data());
 
-    const auto *cl = fInData->GetClass();
+    const auto *cl = (*fInData)->GetClass();
     if (!cl) {
         SetStateError(Form("Failed to get TClass at branch: %s",
                            fInputColName.Data()));
@@ -64,8 +64,8 @@ void TBranchCopyProcessor::Init(TEventCollection *col) {
 void TBranchCopyProcessor::Process() {
     fOutData->Clear("C");
 
-    for (int iData = 0; iData < fInData->GetEntriesFast(); iData++) {
-        const auto *inData = static_cast<TDataObject *>(fInData->At(iData));
+    for (int iData = 0; iData < (*fInData)->GetEntriesFast(); iData++) {
+        const auto *inData = static_cast<TDataObject *>((*fInData)->At(iData));
         auto *outData = static_cast<TDataObject *>(fOutData->ConstructedAt(iData));
 
         inData->Copy(*outData);

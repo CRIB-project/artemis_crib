@@ -3,7 +3,7 @@
  * @brief   extract one catid data
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-23 11:56:51
- * @note    last modified: 2025-01-08 10:27:57
+ * @note    last modified: 2025-03-05 18:36:51
  * @details
  */
 
@@ -33,8 +33,8 @@ class TMapSelector : public TProcessor {
 
     IntVec_t fCatID; //!
 
-    TCategorizedData *fCategorizedData; //!
-    TClonesArray *fOutData;             //!
+    TCategorizedData **fCategorizedData; //!
+    TClonesArray *fOutData;              //!
 
     TMapSelector(const TMapSelector &) = delete;
     TMapSelector &operator=(const TMapSelector &) = delete;

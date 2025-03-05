@@ -3,7 +3,7 @@
  * @brief   Implementation of the TMUXCalibrationProcessor class for calibrating timing, charge, and position data.
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:09:46
- * @note    last modified: 2025-03-05 14:49:18
+ * @note    last modified: 2025-03-05 18:33:27
  * @details
  */
 
@@ -99,7 +99,7 @@ void TMUXCalibrationProcessor::Init(TEventCollection *col) {
         SetStateError(std::get<TString>(result));
         return;
     }
-    fInData = std::get<TClonesArray *>(result);
+    fInData = std::get<TClonesArray **>(result);
     Info("Init", "%s => %s", fInputColName.Data(), fOutputColName.Data());
 
     initConverterArray(fTimingConverterArrayName, fTimingConverterArray, "TimingConverterArray");
@@ -135,7 +135,7 @@ void TMUXCalibrationProcessor::Process() {
         return;
     }
 
-    const int nData = fInData->GetEntriesFast();
+    const int nData = (*fInData)->GetEntriesFast();
     if (nData == 0)
         return;
     else if (nData > 1) {
@@ -143,7 +143,7 @@ void TMUXCalibrationProcessor::Process() {
         return;
     }
 
-    const auto *data = dynamic_cast<const TMUXData *>(fInData->At(0));
+    const auto *data = dynamic_cast<const TMUXData *>((*fInData)->At(0));
     if (!data)
         return;
 

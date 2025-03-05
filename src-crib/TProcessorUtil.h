@@ -3,7 +3,7 @@
  * @brief   Utility functions for handling input and parameter objects in TEventCollection.
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2025-01-02 14:48:14
- * @note    last modified: 2025-03-05 14:35:46
+ * @note    last modified: 2025-03-05 18:34:27
  * @details
  */
 
@@ -40,29 +40,32 @@ namespace art::crib::util {
 template <typename T>
 std::enable_if_t<
     std::is_base_of_v<TObject, T>,
-    std::variant<T *, TString>>
+    std::variant<T **, TString>>
 GetInputObject(TEventCollection *col,
                const TString &name,
                const TString &expectedTypeName,
                const TString &elementTypeName = "TObject") {
-    auto *objRef = col->GetObjectRef(name);
+    void **objRef = col->GetObjectRef(name);
     if (!objRef) {
         return TString::Format("No input collection '%s'", name.Data());
     }
 
-    auto *obj = static_cast<TObject *>(*objRef);
-    if (!obj->InheritsFrom(expectedTypeName)) {
-        return TString::Format("Invalid input collection '%s': not %s",
-                               name.Data(), expectedTypeName.Data());
-    }
-
-    auto *cast_obj = static_cast<T *>(obj);
+    T **cast_obj = reinterpret_cast<T **>(objRef);
 
     if constexpr (std::is_same_v<T, TClonesArray>) {
-        const auto *cl = cast_obj->GetClass();
+        if (!cast_obj) {
+            return TString::Format("Input collection '%s' is null", name.Data());
+        }
+        const auto *cl = (*cast_obj)->GetClass();
         if (!cl || !cl->InheritsFrom(elementTypeName)) {
             return TString::Format("Invalid input collection '%s': not %s elements",
                                    name.Data(), elementTypeName.Data());
+        }
+    } else {
+        TObject *obj = static_cast<TObject *>(*cast_obj);
+        if (!obj->InheritsFrom(expectedTypeName)) {
+            return TString::Format("Invalid input collection '%s': not %s",
+                                   name.Data(), expectedTypeName.Data());
         }
     }
     return cast_obj;

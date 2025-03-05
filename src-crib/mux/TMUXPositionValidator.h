@@ -3,7 +3,7 @@
  * @brief   Header file for the TMUXPositionValidator class.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-01-30 10:02:32
- * @note    last modified: 2025-01-08 20:01:24
+ * @note    last modified: 2025-03-05 18:31:28
  * @details
  */
 
@@ -63,7 +63,7 @@ class TMUXPositionValidator : public TProcessor {
   private:
     TString fInputColName;  ///< Name of the input collection.
     TString fOutputColName; ///< Name of the output collection.
-    TClonesArray *fInData;  ///<! Pointer to the input data collection.
+    TClonesArray **fInData; ///<! Pointer to the input data collection.
     TClonesArray *fOutData; ///<! Pointer to the output data collection.
 
     std::vector<Double_t> fValidPositionRange; ///< Range of valid positions for validation.

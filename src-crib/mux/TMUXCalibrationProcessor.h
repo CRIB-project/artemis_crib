@@ -3,7 +3,7 @@
  * @brief   Processor for calibrating timing, charge, and position data in the MUX system.
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:08:53
- * @note    last modified: 2025-01-08 10:31:22
+ * @note    last modified: 2025-03-05 18:32:59
  * @details
  */
 
@@ -69,7 +69,7 @@ class TMUXCalibrationProcessor : public TProcessor {
   private:
     TString fInputColName;  ///< Name of the input collection.
     TString fOutputColName; ///< Name of the output collection.
-    TClonesArray *fInData;  ///<! Pointer to the input data collection.
+    TClonesArray **fInData; ///<! Pointer to the input data collection.
     TClonesArray *fOutData; ///<! Pointer to the output data collection.
 
     TString fTimingConverterArrayName;   ///< Name of the timing converter array parameter.

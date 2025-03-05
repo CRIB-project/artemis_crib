@@ -3,7 +3,7 @@
  * @brief   extract one channel data
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-18 15:41:32
- * @note    last modified: 2024-12-31 23:27:02
+ * @note    last modified: 2025-03-05 18:38:43
  * @details
  */
 
@@ -34,7 +34,7 @@ TChannelSelector::~TChannelSelector() {
 
 void TChannelSelector::Init(TEventCollection *col) {
     // Segmented data initialization
-    auto *seg_ref = col->GetObjectRef(fSegmentedDataName);
+    void **seg_ref = col->GetObjectRef(fSegmentedDataName);
     if (!seg_ref) {
         SetStateError(Form("No input collection '%s'", fSegmentedDataName.Data()));
         return;
@@ -46,7 +46,7 @@ void TChannelSelector::Init(TEventCollection *col) {
                            fSegmentedDataName.Data()));
         return;
     }
-    fSegmentedData = static_cast<TSegmentedData *>(seg_obj);
+    fSegmentedData = reinterpret_cast<TSegmentedData **>(seg_ref);
 
     // SegID validation
     if (fSegID.size() != 5) {
@@ -70,7 +70,7 @@ void TChannelSelector::Process() {
         return;
     }
 
-    auto *seg_array = fSegmentedData->FindSegment(fSegID[0], fSegID[1], fSegID[2]);
+    auto *seg_array = (*fSegmentedData)->FindSegment(fSegID[0], fSegID[1], fSegID[2]);
     if (!seg_array) {
         Warning("Process", "No segment having segid = [dev=%d, fp=%d, mod=%d]",
                 fSegID[0], fSegID[1], fSegID[2]);

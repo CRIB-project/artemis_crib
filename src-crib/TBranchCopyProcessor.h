@@ -3,7 +3,7 @@
  * @brief
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-06-13 16:06:58
- * @note    last modified: 2025-01-10 10:55:15
+ * @note    last modified: 2025-03-05 18:28:23
  * @details
  */
 
@@ -60,7 +60,7 @@ class TBranchCopyProcessor : public TProcessor {
   protected:
     TString fInputColName{"origin"}; ///< Name of the input collection.
     TString fOutputColName{"copy"};  ///< Name of the output collection.
-    TClonesArray *fInData{nullptr};  ///<! Pointer to the input data
+    TClonesArray **fInData{nullptr}; ///<! Pointer to the input data
     TClonesArray *fOutData{nullptr}; ///<! Pointer to the output data.
 
   private:

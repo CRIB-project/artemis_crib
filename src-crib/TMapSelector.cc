@@ -3,7 +3,7 @@
  * @brief   extract one catid data
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-23 11:56:21
- * @note    last modified: 2024-12-31 23:27:23
+ * @note    last modified: 2025-03-05 18:39:21
  * @details
  */
 
@@ -34,7 +34,7 @@ TMapSelector::~TMapSelector() {
 
 void TMapSelector::Init(TEventCollection *col) {
     // Categorized data initialization
-    auto *cat_ref = col->GetObjectRef(fCategorizedDataName);
+    void **cat_ref = col->GetObjectRef(fCategorizedDataName);
     if (!cat_ref) {
         SetStateError(Form("No input collection '%s'", fCategorizedDataName.Data()));
         return;
@@ -46,7 +46,7 @@ void TMapSelector::Init(TEventCollection *col) {
                            fCategorizedDataName.Data()));
         return;
     }
-    fCategorizedData = static_cast<TCategorizedData *>(cat_obj);
+    fCategorizedData = reinterpret_cast<TCategorizedData **>(cat_ref);
 
     // CatID validation
     if (fCatID.size() != 3) {
@@ -69,7 +69,7 @@ void TMapSelector::Process() {
         return;
     }
 
-    auto *cat_array = fCategorizedData->FindCategory(fCatID[0]);
+    auto *cat_array = (*fCategorizedData)->FindCategory(fCatID[0]);
     if (!cat_array) {
         // Warning("Process", "No data having catid = %d", fCatID[0]);
         return;

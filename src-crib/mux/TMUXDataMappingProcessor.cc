@@ -3,7 +3,7 @@
  * @brief   Implementation of TMUXDataMappingProcessor for mapping categorized data.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:47:17
- * @note    last modified: 2025-01-02 16:57:45
+ * @note    last modified: 2025-03-05 18:32:52
  * @details
  */
 
@@ -65,7 +65,7 @@ void TMUXDataMappingProcessor::Init(TEventCollection *col) {
         SetStateError(std::get<TString>(result));
         return;
     }
-    fCategorizedData = std::get<TCategorizedData *>(result);
+    fCategorizedData = std::get<TCategorizedData **>(result);
 
     // CatID validation
     if (fCatID < 0) {
@@ -97,7 +97,7 @@ void TMUXDataMappingProcessor::Process() {
         return;
     }
 
-    const auto *cat_array = fCategorizedData->FindCategory(fCatID);
+    const auto *cat_array = (*fCategorizedData)->FindCategory(fCatID);
     if (!cat_array)
         return;
 

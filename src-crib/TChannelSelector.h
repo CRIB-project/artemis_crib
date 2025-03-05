@@ -3,7 +3,7 @@
  * @brief   extract one channel data
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2024-12-18 15:39:13
- * @note    last modified: 2025-01-08 10:27:26
+ * @note    last modified: 2025-03-05 18:35:51
  * @details
  */
 
@@ -33,8 +33,8 @@ class TChannelSelector : public TProcessor {
 
     IntVec_t fSegID; //!
 
-    TSegmentedData *fSegmentedData; //!
-    TClonesArray *fOutData;         //!
+    TSegmentedData **fSegmentedData; //!
+    TClonesArray *fOutData;          //!
 
     TChannelSelector(const TChannelSelector &) = delete;
     TChannelSelector &operator=(const TChannelSelector &) = delete;

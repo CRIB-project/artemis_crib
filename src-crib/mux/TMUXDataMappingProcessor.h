@@ -3,7 +3,7 @@
  * @brief   Declaration of TMUXDataMappingProcessor class for mapping categorized data to TMUXData objects.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 09:46:45
- * @note    last modified: 2025-01-08 10:31:44
+ * @note    last modified: 2025-03-05 18:32:13
  * @details
  */
 
@@ -80,8 +80,8 @@ class TMUXDataMappingProcessor : public TProcessor {
     TString fCategorizedDataName; ///< Name of the input categorized data collection.
     TString fOutputColName;       ///< Name of the output TMUXData collection.
 
-    TCategorizedData *fCategorizedData; ///<! Pointer to the categorized data collection.
-    TClonesArray *fOutData;             ///<! Pointer to the output TMUXData array.
+    TCategorizedData **fCategorizedData; ///<! Pointer to the categorized data collection.
+    TClonesArray *fOutData;              ///<! Pointer to the output TMUXData array.
 
     Int_t fCatID; ///< Category ID used for filtering input data.
 
