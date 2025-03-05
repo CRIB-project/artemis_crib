@@ -3,7 +3,7 @@
  * @brief   Processor for reconstructing reaction positions using the Thick Gas Target Inverse Kinematics (TGTIK) method.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 11:11:02
- * @note    last modified: 2025-03-04 16:44:11
+ * @note    last modified: 2025-03-05 14:49:58
  * @details
  */
 
@@ -91,8 +91,8 @@ class TTGTIKProcessor : public TProcessor {
     TClonesArray *fOutData;     ///<! Pointer to the output reaction information (TClonesArray of TReactionInfo)
 
     // Parameter pointers
-    TClonesArray **fDetectorPrm; ///<! Pointer to detector parameter objects (TClonesArray of TDetectorParameter)
-    TClonesArray **fTargetPrm;   ///<! Pointer to target parameter objects (TClonesArray of TTargetParameter)
+    TClonesArray *fDetectorPrm; ///<! Pointer to detector parameter objects (TClonesArray of TDetectorParameter)
+    TClonesArray *fTargetPrm;   ///<! Pointer to target parameter objects (TClonesArray of TTargetParameter)
 
     // Experimental parameters
     Double_t fInitialBeamEnergy; ///< Beam energy immediately after the window (MeV)

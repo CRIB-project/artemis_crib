@@ -3,7 +3,7 @@
  * @brief   Implementation of the TTGTIKProcessor class.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 22:35:07
- * @note    last modified: 2025-03-04 18:21:05
+ * @note    last modified: 2025-03-05 14:52:50
  * @details bisection method (not Newton method)
  */
 
@@ -35,6 +35,10 @@ TTGTIKProcessor::TTGTIKProcessor()
                             fInputTrackColName, TString("track"));
     RegisterOutputCollection("OutputCollection", "Output collection containing reaction reconstruction information using the TGTIK method",
                              fOutputColName, TString("result"));
+    RegisterProcessorParameter("DetectorParameter", "Name of the telescope parameter collection (detector parameters)",
+                               fDetectorParameterName, TString("prm_detectors"));
+    RegisterProcessorParameter("TargetParameter", "Name of the target parameter collection",
+                               fTargetParameterName, TString("prm_targets"));
 
     IntVec_t init_i_vec;
     RegisterProcessorParameter("InitialBeamEnergy", "Initial beam energy (in MeV) immediately after the exit window",
@@ -56,11 +60,6 @@ TTGTIKProcessor::TTGTIKProcessor()
     // custom function
     RegisterProcessorParameter("UseCustomFunction", "Flag to enable custom processing functions for additional corrections",
                                fDoCustom, false);
-
-    RegisterOptionalInputInfo("DetectorParameter", "Name of the telescope parameter collection (detector parameters)",
-                              fDetectorParameterName, TString("prm_detectors"), &fDetectorPrm, "TClonesArray", "art::crib::TDetectorParameter");
-    RegisterOptionalInputInfo("TargetParameter", "Name of the target parameter collection",
-                              fTargetParameterName, TString("prm_targets"), &fTargetPrm, "TClonesArray", "art::crib::TTargetParameter");
     RegisterProcessorParameter("UseCenterPosition", "Flag to use the detector's center position (useful when the DSSSD is not operational)",
                                fDoCenterPos, false);
 }
@@ -100,15 +99,23 @@ void TTGTIKProcessor::Init(TEventCollection *col) {
     }
     fInTrackData = std::get<TClonesArray *>(result_track);
 
-    if (!fDetectorPrm) {
-        SetStateError(Form("Input not found: %s", fDetectorParameterName.Data()));
+    // Retrieve the input detector parameter object.
+    auto result_det_prm = util::GetParameterObject<TClonesArray>(
+        col, fDetectorParameterName, "TClonesArray", "art::crib::TDetectorParameter");
+    if (std::holds_alternative<TString>(result_det_prm)) {
+        SetStateError(std::get<TString>(result_det_prm));
         return;
     }
+    fDetectorPrm = std::get<TClonesArray *>(result_det_prm);
 
-    if (!fTargetPrm) {
-        SetStateError(Form("Input not found: %s", fTargetParameterName.Data()));
+    // Retrieve the input target parameter object.
+    auto result_tar_prm = util::GetParameterObject<TClonesArray>(
+        col, fTargetParameterName, "TClonesArray", "art::crib::TTargetParameter");
+    if (std::holds_alternative<TString>(result_tar_prm)) {
+        SetStateError(std::get<TString>(result_tar_prm));
         return;
     }
+    fTargetPrm = std::get<TClonesArray *>(result_tar_prm);
 
     if (fParticleZArray.size() != 4 || fParticleAArray.size() != 4) {
         SetStateError("Particle array size should be 4 in the steering file");
@@ -468,8 +475,7 @@ Double_t TTGTIKProcessor::GetEcmFromDetectParticle(Double_t z, const TTrack *tra
 std::pair<Double_t, Double_t> TTGTIKProcessor::GetELabALabPair(Double_t z, const TTrack *track, const TTelescopeData *data) {
     // Retrieve detector parameters based on the telescope ID.
     Int_t tel_id = data->GetTelID();
-    const TParameterObject *const inPrm = static_cast<TParameterObject *>((*fDetectorPrm)->At(tel_id - 1));
-    const TDetectorParameter *Prm = dynamic_cast<const TDetectorParameter *>(inPrm);
+    const TDetectorParameter *Prm = static_cast<const TDetectorParameter *>(fDetectorPrm->At(tel_id - 1));
     if (!Prm) {
         Warning("GetELabALabPair", "Parameter is not found");
         return {kInvalidD, kInvalidD};

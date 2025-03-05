@@ -3,7 +3,7 @@
  * @brief   Implementation of the TMUXCalibrationProcessor class for calibrating timing, charge, and position data.
  * @author  Kodai Okawa<okawa@cns.s.u-tokyo.ac.jp>
  * @date    2022-01-30 11:09:46
- * @note    last modified: 2025-01-03 17:04:36
+ * @note    last modified: 2025-03-05 14:49:18
  * @details
  */
 
@@ -81,7 +81,14 @@ void TMUXCalibrationProcessor::Init(TEventCollection *col) {
             array = nullptr;
         } else {
             // need to inherit from art::TConverterBase
-            array = util::GetParameterObject(col, name, "art::TConverterBase");
+            auto result = util::GetParameterObject<TClonesArray>(
+                col, name, "TClonesArray", "art::TConverterBase");
+            if (std::holds_alternative<TString>(result)) {
+                Warning("Init", std::get<TString>(result));
+                array = nullptr;
+            } else {
+                array = std::get<TClonesArray *>(result);
+            }
         }
     };
 
@@ -97,13 +104,11 @@ void TMUXCalibrationProcessor::Init(TEventCollection *col) {
 
     initConverterArray(fTimingConverterArrayName, fTimingConverterArray, "TimingConverterArray");
     initConverterArray(fChargeConverterArrayName, fChargeConverterArray, "ChargeConverterArray");
-
-    if (fPositionConverterArrayName == kNoConversion) {
+    initConverterArray(fPositionConverterArrayName, fPositionConverterArray, "PositionConverterArray");
+    if (!fPositionConverterArray) {
         SetStateError("Position parameters are required");
         return;
     }
-    // need to inherit from art::TConverterBase
-    fPositionConverterArray = util::GetParameterObject(col, fPositionConverterArrayName, "art::TConverterBase");
 
     fOutData = new TClonesArray("art::TTimingChargeData");
     fOutData->SetName(fOutputColName);
