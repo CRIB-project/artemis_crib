@@ -3,7 +3,7 @@
  * @brief   Processor for reconstructing reaction positions using the Thick Gas Target Inverse Kinematics (TGTIK) method.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 11:11:02
- * @note    last modified: 2025-03-05 14:49:58
+ * @note    last modified: 2025-03-05 15:26:58
  * @details
  */
 
@@ -52,6 +52,31 @@ namespace art::crib {
  *       UseCustomFunction: 0  # [Bool_t] Flag to enable custom processing functions for additional corrections
  *       Verbose: 1  # [Int_t] verbose level (default 1 : non quiet)
  * ```
+ *
+ * \warning `UseCustomFunction` is designed for specific analysis, currently for 26Si(a, p) analysis.
+ *
+ * ### Kinematics Calculation
+ *
+ * This processor is using classical (non-relativistic) kinematics.
+ * Okawa note the relationship. See my master thesis (Japanese) for the details.
+ *
+ * Consider Ion1 + Ion2 -> Ion3 + Ion4 reaction, that is, Ion2(Ion1, Ion3)Ion4 reaction.
+ *
+ * - \f$ M \f$: mass
+ * - \f$ v \f$: velocity
+ * - \f$ v_2 = 0 \f$: for the target ion
+ * - \f$ L \f$: LAB system
+ * - \f$ CM \f$: center-of-mass system
+ * - \f$ \theta\f$: scatter angle of Ion3
+ *
+ * The speed of the center of mass, \f$ v_{\mathrm{CM}} \f$, and kinetic energy, \f$ E_{\mathrm{CM}} \f$
+ * can be expressed as follows based on the definition of the center of mass.
+ * $$
+ * v_{\mathrm{CM}} &= \frac{M_2}{M_1 + M_2} v_1
+ * E_{\mathrm{CM}} &= \frac{M_2(M_1 + M_2)}{2M_1} v_{\mathrm{CM}}^2
+ * &= \alpha v_{\mathrm{CM}}^2
+ * $$
+ *
  */
 
 class TTGTIKProcessor : public TProcessor {
