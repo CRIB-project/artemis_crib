@@ -3,7 +3,7 @@
  * @brief   Processor for reconstructing reaction positions using the Thick Gas Target Inverse Kinematics (TGTIK) method.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 11:11:02
- * @note    last modified: 2025-03-05 15:26:58
+ * @note    last modified: 2025-03-05 16:10:20
  * @details
  */
 
@@ -65,18 +65,98 @@ namespace art::crib {
  * - \f$ M \f$: mass
  * - \f$ v \f$: velocity
  * - \f$ v_2 = 0 \f$: for the target ion
- * - \f$ L \f$: LAB system
- * - \f$ CM \f$: center-of-mass system
+ * - \f$ {}_{\mathrm{CM}} \f$: center-of-mass system
  * - \f$ \theta\f$: scatter angle of Ion3
+ * - \f$ Q \f$: Q-value
+ *
+ * Based on the relationship between the center-of-mass frame and the laboratory frame,
+ *
+ * \f[
+ * \begin{align}
+ * v_{\mathrm{CM}} &= \frac{M_2}{M_1 + M_2} v_1 \\
+ * v_{1\mathrm{CM}} &= v_1 - v_{\mathrm{CM}} = \frac{M_2}{M_1}v_{\mathrm{CM}} \\
+ * v_{2\mathrm{CM}} &= 0 - v_{\mathrm{CM}} = -v_{\mathrm{CM}}
+ * \end{align}
+ * \f]
  *
  * The speed of the center of mass, \f$ v_{\mathrm{CM}} \f$, and kinetic energy, \f$ E_{\mathrm{CM}} \f$
  * can be expressed as follows based on the definition of the center of mass.
- * $$
- * v_{\mathrm{CM}} &= \frac{M_2}{M_1 + M_2} v_1
- * E_{\mathrm{CM}} &= \frac{M_2(M_1 + M_2)}{2M_1} v_{\mathrm{CM}}^2
- * &= \alpha v_{\mathrm{CM}}^2
- * $$
  *
+ * \f[
+ * \begin{align}
+ * E_{\mathrm{CM}} &= \frac{M_2(M_1 + M_2)}{2M_1} v_{\mathrm{CM}}^2 \\
+ * &= \alpha v_{\mathrm{CM}}^2
+ * \end{align}
+ * \f]
+ *
+ * Here, \f$ \alpha \f$ is defined as:
+ *
+ * \f[
+ * \begin{align}
+ * \alpha = \frac{M_2(M_1 + M_2)}{2M_1}
+ * \end{align}
+ * \f]
+ *
+ * Based on the relationship between the reaction Q-value and the conservation laws,
+ *
+ * \f[
+ * \begin{align}
+ * \frac{1}{2}M_1 v_{1\mathrm{CM}}^2 + \frac{1}{2}M_2 v_{2\mathrm{CM}}^2 + Q &= \frac{1}{2}M_3 v_{3\mathrm{CM}}^2 + \frac{1}{2}M_4 v_{4\mathrm{CM}}^2 \\
+ * M_1 v_{1\mathrm{CM}} &= M_2 v_{2\mathrm{CM}} \\
+ * M_3 v_{3\mathrm{CM}} &= M_4 v_{4\mathrm{CM}} \\
+ * \end{align}
+ * \f]
+ *
+ * Cancelling \f$ v_{4\mathrm{CM}} \f$, we obtain:
+ * \f[
+ * \begin{align}
+ * \alpha v_{\mathrm{CM}}^2 + Q &= \frac{M_3(M_3 + M_4)}{2M_4}v_{3\mathrm{CM}}^2 \\
+ * \alpha v_{\mathrm{CM}}^2 + Q &= \beta v_{3\mathrm{CM}}^2
+ * \end{align}
+ * \f]
+ *
+ * Here, \f$ \beta \f$ is defined as:
+ *
+ * \f[
+ * \begin{align}
+ * \beta = \frac{M_3(M_3+M_4)}{2M_4}
+ * \end{align}
+ * \f]
+ *
+ * For Ion 3, the velocity component perpendicular to the z-axis remains unchanged between the LAB and CM frames,
+ * while the parallel component can be transformed using vcm. Therefore,
+ *
+ * \f[
+ * \begin{align}
+ * v_{3\mathrm{CM}}\sin{\theta_{\mathrm{CM}}} &= v_3\sin{\theta} \\
+ * v_{3\mathrm{CM}}\cos{\theta_{\mathrm{CM}}} &= v_3\cos{\theta} - v_{\mathrm{CM}}
+ * \end{align}
+ * \f]
+ *
+ * Cancelling \f$ \theta_{\mathrm{CM}} \f$ from these two equations, we obtain:
+ *
+ * \f[
+ * \begin{align}
+ * v_{3\mathrm{cm}}^2 &= v_3^2 -2v_3 v_{\mathrm{CM}}\cos\theta + v_{\mathrm{cm}}^2
+ * \end{align}
+ * \f]
+ *
+ * \f$ v_3 \f$ and \f$ \theta \f$ can be considered observable quantities.
+ * Cancelling \f$ v_{3\mathrm{CM}} \f$, we obtain:
+ *
+ * \f[
+ * \begin{align}
+ * \alpha v_{\mathrm{CM}}^2 + Q = \beta\left(v_3^2 -2v_3v_{\mathrm{cm}}\cos\theta + v_{\mathrm{CM}}^2\right) \\
+ * (\alpha - \beta)v_{\mathrm{CM}}^2 + 2(\beta v_3 \cos\theta)v_{\mathrm{CM}} + (Q - \beta v_3^2) = 0
+ * \end{align}
+ * \f]
+ *
+ * By solving this quadratic equation, various quantities can be obtained.
+ * These relationships are utilized in the methods of this class.
+ *
+ * In inverse kinematics, ion 4 is detected.
+ * Therefore, the indices 3 and 4 should be swapped,
+ * and the transformation \f$ \theta_{\mathrm{CM}} \rightarrow \pi \rightarrow \theta_{\mathrm{CM}} \f$ should be applied.
  */
 
 class TTGTIKProcessor : public TProcessor {
