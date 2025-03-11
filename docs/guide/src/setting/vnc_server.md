@@ -34,6 +34,10 @@ vncserver :10
 
 Here, `:10` specifies the display number, and the VNC server will run on port `5910` (calculated as `5900 + display number`).
 
+However, sometimes you may find that even though VNC is running, the plot you’re trying to display does not appear. In this case, you should check the `DISPLAY` settings on the remote computer.
+```shell
+export DISPLAY=:5
+```
 #### Checking Active VNC Servers
 
 If multiple VNC processes are active, using an already occupied display number will cause an error.
