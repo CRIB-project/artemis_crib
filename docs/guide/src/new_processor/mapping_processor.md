@@ -123,7 +123,7 @@ class TMapSelector : public TProcessor {
 
     IntVec_t fCatID; //! [cid, id, type]
 
-    TCategorizedData *fCategorizedData; //!
+    TCategorizedData **fCategorizedData; //!
     TClonesArray *fOutData;             //!
 
     TMapSelector(const TMapSelector &) = delete;
@@ -164,19 +164,19 @@ TMapSelector::TMapSelector() : fCategorizedData(nullptr), fOutData(nullptr) {
 
 void TMapSelector::Init(TEventCollection *col) {
     // Categorized data initialization
-    auto cat_ref = col->GetObjectRef(fCategorizedDataName);
+    void** cat_ref = col->GetObjectRef(fCategorizedDataName);
     if (!cat_ref) {
         SetStateError(Form("No input collection '%s'", fCategorizedDataName.Data()));
         return;
     }
 
-    auto cat_obj = static_cast<TObject *>(*cat_ref);
+    auto *cat_obj = static_cast<TObject *>(*cat_ref);
     if (!cat_obj->InheritsFrom("art::TCategorizedData")) {
         SetStateError(Form("Invalid input collection '%s': not TCategorizedData",
                            fCategorizedDataName.Data()));
         return;
     }
-    fCategorizedData = static_cast<TCategorizedData *>(cat_obj);
+    fCategorizedData = reinterpret_cast<TCategorizedData **>(cat_ref);
 
     // CatID validation
     if (fCatID.size() != 3) {

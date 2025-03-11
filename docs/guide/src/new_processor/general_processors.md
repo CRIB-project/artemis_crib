@@ -113,15 +113,8 @@ class THogeProcessor : public TProcessor {
 
 To integrate the class with ROOT, follow these conventions:
 
-- Add `//!` to pointer-to-pointer members to exclude them from ROOT's streaming mechanism (`TStreamer`).
+- Add `//!` (or `///<!` for Doxygen comment) to pointer-to-pointer members to exclude them from ROOT's streaming mechanism (`TStreamer`).
 - Use `ClassDefOverride` if the class has `override` methods; otherwise, use `ClassDef`.
-
-<div class="warning">
-
-Double pointers can be complex and often reduce code readability.
-While they are commonly seen in existing code, it is recommended to avoid using double pointers unless absolutely necessary.
-
-</div>
 
 The macro’s second argument indicates the class version.
 Increment the version number when making changes to maintain compatibility.

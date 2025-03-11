@@ -89,7 +89,7 @@ To access `segdata`, add the following member variables to the header file:
 class TChannelSelector : public TProcessor {
   private:
     TString fSegmentedDataName; // Name of the input object
-    TSegmentedData *fSegmentedData; //! Pointer to the segdata object
+    TSegmentedData **fSegmentedData; //! Pointer to the segdata object
 
     ClassDefOverride(TChannelSelector, 0);
 };
@@ -117,7 +117,7 @@ Finally, retrieve the actual object in the `Init` method:
 #include <TSegmentedData.h>
 
 void TChannelSelector::Init(TEventCollection *col) {
-    auto seg_ref = col->GetObjectRef(fSegmentedDataName);
+    void** seg_ref = col->GetObjectRef(fSegmentedDataName);
     if (!seg_ref) {
         SetStateError(Form("No such input collection '%s'\n", fSegmentedDataName.Data()));
         return;
@@ -129,7 +129,7 @@ void TChannelSelector::Init(TEventCollection *col) {
         return;
     }
 
-    fSegmentedData = static_cast<TSegmentedData *>(seg_obj);
+    fSegmentedData = reinterpret_cast<TSegmentedData **>(seg_obj);
 }
 ```
 
