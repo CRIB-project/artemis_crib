@@ -3,7 +3,7 @@
  * @brief   Implementation of the TTGTIKProcessor class.
  * @author  Kodai Okawa <okawa@cns.s.u-tokyo.ac.jp>
  * @date    2023-08-01 22:35:07
- * @note    last modified: 2025-03-05 18:31:03
+ * @note    last modified: 2025-03-05 21:44:31
  * @details bisection method (not Newton method)
  */
 
@@ -291,11 +291,11 @@ Double_t TTGTIKProcessor::bisection(const TTrack *track, const TTelescopeData *d
         }
     }
     if (firstValid) {
-        // Warning("bisection", "No valid function value found in the initial range. (E = %lf)", data->GetEtotal());
+        Warning("bisection", "No valid function value found in the initial range. (E = %lf)", data->GetEtotal());
         return kInvalidD;
     }
     if (!signChanged) {
-        // Warning("bisection", "Could not find a valid zero crossing in the initial range. (E = %lf)", data->GetEtotal());
+        Warning("bisection", "Could not find a valid zero crossing in the initial range. (E = %lf)", data->GetEtotal());
         return kInvalidD;
     }
 
@@ -303,16 +303,16 @@ Double_t TTGTIKProcessor::bisection(const TTrack *track, const TTelescopeData *d
     Double_t f_low = TargetFunction(z_low, track, data);
     Double_t f_high = TargetFunction(z_high, track, data);
     if (!IsValid(f_low) || !IsValid(f_high)) {
-        // Warning("bisection", "f(z_low) or f(z_high) is invalid.");
+        Warning("bisection", "f(z_low) or f(z_high) is invalid.");
         return kInvalidD;
     }
     if (f_low * f_high > 0.0) {
-        //.Warning("bisection", "f(z_low) and f(z_high) do not bracket a zero: L = %lf /  H = %lf, E = %lf",
-        //        f_low, f_high, data->GetEtotal());
+        Warning("bisection", "f(z_low) and f(z_high) do not bracket a zero: L = %lf /  H = %lf, E = %lf",
+                f_low, f_high, data->GetEtotal());
         return kInvalidD;
     }
     if (z_low == kInitialMin || z_high == kInitialMax) {
-        // Warning("bisection", "Bracketing failed: interval touches boundaries.");
+        Warning("bisection", "Bracketing failed: interval touches boundaries.");
         return kInvalidD;
     }
 
@@ -338,7 +338,7 @@ Double_t TTGTIKProcessor::bisection(const TTrack *track, const TTelescopeData *d
 
         iteration++;
         if (iteration >= kMaxIteration) {
-            // Warning("bisection", "Convergence not achieved within maximum iteration!");
+            Warning("bisection", "Convergence not achieved within maximum iteration!");
             return kInvalidD;
         }
     }
@@ -477,7 +477,7 @@ std::pair<Double_t, Double_t> TTGTIKProcessor::GetELabALabPair(Double_t z, const
     Int_t tel_id = data->GetTelID();
     const TDetectorParameter *Prm = static_cast<const TDetectorParameter *>(fDetectorPrm->At(tel_id - 1));
     if (!Prm) {
-        // Warning("GetELabALabPair", "Parameter is not found");
+        Warning("GetELabALabPair", "Parameter is not found");
         return {kInvalidD, kInvalidD};
     }
 
@@ -571,14 +571,14 @@ Double_t TTGTIKProcessor::GetEcm_classic_kinematics(Double_t energy, Double_t th
     if (TMath::Abs(alpha - beta) < 1.0e-5) {
         Double_t cosTheta = TMath::Cos(theta);
         if (TMath::Abs(cosTheta) < 1.0e-5) {
-            // Warning("GetEcm_classic_kinematics", "cos(theta) is too small in elastic scattering calculation");
+            Warning("GetEcm_classic_kinematics", "cos(theta) is too small in elastic scattering calculation");
             return kInvalidD;
         }
         // Calculate the center-of-mass velocity for elastic scattering.
         Double_t vcm_elastic = -(qvalue - beta * v4 * v4) / (2.0 * beta * v4 * cosTheta);
         if (vcm_elastic < 0) {
-            // Warning("GetEcm_classic_kinematics", "vcm < 0! : vcm = %lf, det_energy = %lf, theta = %lf",
-            //         vcm_elastic, energy, theta);
+            Warning("GetEcm_classic_kinematics", "vcm < 0! : vcm = %lf, det_energy = %lf, theta = %lf",
+                    vcm_elastic, energy, theta);
             return kInvalidD;
         }
         return alpha * vcm_elastic * vcm_elastic;
@@ -596,16 +596,16 @@ Double_t TTGTIKProcessor::GetEcm_classic_kinematics(Double_t energy, Double_t th
         if (TMath::Abs(D) < 1.0e-5) {
             D = 0.0;
         } else {
-            // Warning("GetEcm_classic_kinematics", "b^2 - c = %lf < 0, det_energy = %lf, theta = %lf",
-            //         D, energy, theta);
+            Warning("GetEcm_classic_kinematics", "b^2 - c = %lf < 0, det_energy = %lf, theta = %lf",
+                    D, energy, theta);
             return kInvalidD;
         }
     }
 
     Double_t vcm = -b + TMath::Sqrt(D);
     if (vcm < 0) {
-        // Warning("GetEcm_classic_kinematics", "vcm < 0!, vcm = %lf + %lf, det_energy = %lf, theta = %lf",
-        //         -b, TMath::Sqrt(D), energy, theta);
+        Warning("GetEcm_classic_kinematics", "vcm < 0!, vcm = %lf + %lf, det_energy = %lf, theta = %lf",
+                -b, TMath::Sqrt(D), energy, theta);
         return kInvalidD;
     }
 
