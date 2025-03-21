@@ -1,0 +1,3 @@
+[submodule "ana/mk_figure"]
+	path = ana/mk_figure
+	url = git@github.com:CRIB-project/si26_figure_py.git
